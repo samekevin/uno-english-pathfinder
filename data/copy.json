@@ -1,0 +1,33 @@
+{
+  "callbacks": {
+    "record_for_science": "We had a feeling after “Can I record you? For science.” 🎙️",
+    "marginalia": "You picked the marginalia over the book. We haven't forgotten.",
+    "assembly_haunting": "Those assembly instructions are apparently still haunting you.",
+    "take_to_grave": "We are respectfully not asking about the story you chose to take to the grave.",
+    "gossip_table": "For the record, choosing the gossip table told us almost nothing academically. Excellent choice."
+  },
+  "confidence": {
+    "CONFIDENT": "We're seeing a pretty clear pattern...",
+    "MIXED": "Your answers keep refusing to stay in one lane. That is useful information.",
+    "AMBIGUOUS": "You're making this difficult. We like that.",
+    "INSUFFICIENT": "You're harder to read than we expected. In fairness, several of your choices were gloriously unhelpful. Academically? We have almost nothing. Spiritually? Immaculate. Give us three actual answers and we'll take another shot."
+  },
+  "profile_shape": {
+    "BROAD": "Apparently the problem is that English contains too many things you like. Your answers spread across the department rather than forming one obvious winner.",
+    "EXPLORATORY": "You're still exploring - and your answers actually look like it. Nothing is dominating yet, so we're not going to pretend one path is ‘the answer.’"
+  },
+  "bonus": {
+    "invite": "Think we've got you wrong? Challenge the result.",
+    "OVERTURN": "Okay, you changed the picture.",
+    "CONFIRM": "You made us check. The pattern held.",
+    "SHARPEN": "Same neighborhood, sharper map."
+  },
+  "community": {
+    "heading": "Want to stay connected to English?",
+    "body": "Leave your email and we can send you relevant English opportunities, events, resources, or ways to explore the parts of English that caught your attention.",
+    "submit": "Keep me in the loop",
+    "skip": "No thanks - I'll keep exploring.",
+    "email_required": false,
+    "result_gated": false
+  }
+}

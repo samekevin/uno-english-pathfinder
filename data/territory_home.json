@@ -1,0 +1,109 @@
+{
+  "language_linguistics": {
+    "undergraduate": [
+      "ug_language_studies",
+      "ug_english_minor",
+      "ug_tesol"
+    ],
+    "graduate": [
+      "grad_ma",
+      "grad_tesol_cert"
+    ],
+    "resources": [
+      "solas_lab"
+    ]
+  },
+  "language_learning_multilingualism": {
+    "undergraduate": [
+      "ug_tesol",
+      "ug_language_studies",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_tesol_cert",
+      "grad_ma"
+    ],
+    "resources": [
+      "solas_lab"
+    ]
+  },
+  "rhetoric_composition": {
+    "undergraduate": [
+      "ug_language_studies",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_ma",
+      "grad_tech_comm_cert"
+    ],
+    "resources": [
+      "writing_center"
+    ]
+  },
+  "technical_professional_communication": {
+    "undergraduate": [
+      "ug_language_studies",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_tech_comm_cert",
+      "grad_ma"
+    ],
+    "resources": []
+  },
+  "literature_culture": {
+    "undergraduate": [
+      "ug_literatures",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_lit_culture_cert",
+      "grad_ma"
+    ],
+    "resources": []
+  },
+  "creative_nonfiction": {
+    "undergraduate": [
+      "ug_cnf",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_cnf_cert",
+      "grad_ma"
+    ],
+    "resources": [
+      "linden_review"
+    ]
+  },
+  "editing_publishing": {
+    "undergraduate": [
+      "ug_cnf",
+      "ug_language_studies",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_cnf_cert",
+      "grad_tech_comm_cert",
+      "grad_ma"
+    ],
+    "resources": [
+      "linden_review"
+    ]
+  },
+  "teaching_pedagogy": {
+    "undergraduate": [
+      "ug_secondary_english",
+      "ug_tesol",
+      "ug_english_minor"
+    ],
+    "graduate": [
+      "grad_tesol_cert",
+      "grad_dual_enrollment_cert",
+      "grad_ma"
+    ],
+    "resources": [
+      "writing_center",
+      "graduate_ta"
+    ]
+  }
+}

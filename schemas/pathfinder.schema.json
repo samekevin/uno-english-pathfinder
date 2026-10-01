@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UNO English Pathfinder master specification",
+  "type": "object",
+  "required": [
+    "manifest",
+    "config",
+    "dimensions",
+    "questions",
+    "subprofiles",
+    "routes",
+    "pathways",
+    "territory_home",
+    "combinations",
+    "resources",
+    "copy"
+  ],
+  "properties": {
+    "manifest": {
+      "type": "object"
+    },
+    "config": {
+      "type": "object"
+    },
+    "dimensions": {
+      "type": "object"
+    },
+    "questions": {
+      "type": "array"
+    },
+    "subprofiles": {
+      "type": "object"
+    },
+    "routes": {
+      "type": "object"
+    },
+    "pathways": {
+      "type": "object"
+    },
+    "territory_home": {
+      "type": "object"
+    },
+    "combinations": {
+      "type": "array"
+    },
+    "resources": {
+      "type": "object"
+    },
+    "copy": {
+      "type": "object"
+    }
+  }
+}

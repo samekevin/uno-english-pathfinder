@@ -1,0 +1,31 @@
+{
+  "name": "UNO English Pathfinder Machine-Readable Specification",
+  "version": "1.3.0-machine",
+  "source": "UNO English Pathfinder Question Bank v1.3",
+  "generated_on": "2026-10-01",
+  "principles": [
+    "intellectual affinities first; credentials second",
+    "territory is separate from curricular home",
+    "professional intent is separate from intellectual profile",
+    "results are never gated by contact information",
+    "zero-point humor is nonpunitive",
+    "same rules should support GitHub and future QSF implementations"
+  ],
+  "files": [
+    "manifest.json",
+    "config.json",
+    "dimensions.json",
+    "questions.json",
+    "subprofiles.json",
+    "routes.json",
+    "pathways.json",
+    "territory_home.json",
+    "combinations.json",
+    "resources.json",
+    "copy.json",
+    "tests/regression_cases.json",
+    "schemas/pathfinder.schema.json",
+    "README.md",
+    "docs/qsf-portability.md"
+  ]
+}

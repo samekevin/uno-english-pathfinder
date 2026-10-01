@@ -1,0 +1,94 @@
+[
+  {
+    "id": "lang_tesol_ug",
+    "kind": "structurally_natural",
+    "pathways": [
+      "ug_language_studies",
+      "ug_tesol"
+    ],
+    "show_if": {
+      "territory_any": [
+        "language_linguistics",
+        "language_learning_multilingualism"
+      ]
+    },
+    "copy": "Language Studies + TESOL may be worth exploring together."
+  },
+  {
+    "id": "minor_tesol_ug",
+    "kind": "structurally_natural",
+    "pathways": [
+      "ug_english_minor",
+      "ug_tesol"
+    ],
+    "show_if": {
+      "route": "ug_addon_open",
+      "territory_any": [
+        "language_linguistics",
+        "language_learning_multilingualism"
+      ]
+    },
+    "copy": "An English minor and TESOL may fit the same language-focused curiosity; advising can explain the curricular mechanics."
+  },
+  {
+    "id": "secondary_tesol",
+    "kind": "structurally_natural",
+    "pathways": [
+      "ug_secondary_english",
+      "ug_tesol"
+    ],
+    "show_if": {
+      "intent_all": [
+        "secondary_education_intent",
+        "tesol_teaching_intent"
+      ]
+    },
+    "copy": "Secondary English Teaching and TESOL connect around teaching, but they are distinct credentials with different professional purposes."
+  },
+  {
+    "id": "ma_certificate",
+    "kind": "structurally_natural",
+    "pathways": [
+      "grad_ma",
+      "*graduate_certificate"
+    ],
+    "show_if": {
+      "route": "graduate_open",
+      "commitment": "full_ma",
+      "certificate_fit": "strong"
+    },
+    "copy": "The MA and a graduate certificate may be worth discussing together; do not imply the certificate requires the MA."
+  },
+  {
+    "id": "cnf_lit",
+    "kind": "intellectually_natural",
+    "territories": [
+      "creative_nonfiction",
+      "literature_culture"
+    ]
+  },
+  {
+    "id": "lang_cnf",
+    "kind": "intellectually_natural",
+    "territories": [
+      "language_linguistics",
+      "creative_nonfiction"
+    ]
+  },
+  {
+    "id": "lit_lang",
+    "kind": "intellectually_natural",
+    "territories": [
+      "literature_culture",
+      "language_linguistics"
+    ]
+  },
+  {
+    "id": "tech_rhet",
+    "kind": "intellectually_natural",
+    "territories": [
+      "technical_professional_communication",
+      "rhetoric_composition"
+    ]
+  }
+]
