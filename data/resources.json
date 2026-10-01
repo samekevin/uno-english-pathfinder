@@ -15,7 +15,7 @@
   },
   "english_catalog": {
     "type": "catalog",
-    "title": "English courses and catalog",
+    "title": "Explore English courses",
     "url": "https://catalog.unomaha.edu/undergraduate/coursesaz/engl/",
     "priority": 60,
     "verified_on": "2026-10-01"

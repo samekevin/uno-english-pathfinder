@@ -1,0 +1,10 @@
+{
+  "name": "uno-english-pathfinder",
+  "version": "0.9.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/engine.test.js",
+    "serve": "python3 -m http.server 4173"
+  }
+}

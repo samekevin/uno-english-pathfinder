@@ -1,0 +1,476 @@
+import { computeResult, scoreAnswers } from './src/engine.js';
+
+const app = document.querySelector('#app');
+let spec;
+let answers = {};
+let cursor = 0;
+let phase = 'welcome';
+let quickPlan = [];
+let bonusPlan = [];
+let provisionalResult = null;
+let advanceLock = false;
+
+const routeLabels = {
+  ug_major_open:'Undergraduate major',
+  ug_addon_open:'Undergraduate add-on',
+  graduate_open:'Graduate study',
+  current_grad_open:'Current graduate / graduate add-on',
+  open_exploration:'Open exploration'
+};
+
+const pathwayLinks = {
+  ug_literatures:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_cnf:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/creative-nonfiction-writing.php',
+  ug_language_studies:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_secondary_english:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_english_minor:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_tesol:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  grad_ma:'https://www.unomaha.edu/academic-programs/graduate-degrees/english-ma.php',
+  grad_cnf_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_lit_culture_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_tech_comm_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_tesol_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_dual_enrollment_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php'
+};
+
+const resourceLabels = {
+  solas_lab: 'SoLaS Lab',
+  writing_center: 'UNO Writing Center',
+  linden_review: 'The Linden Review',
+  graduate_ta: 'English Graduate Teaching Assistantships',
+  english_undergraduate: 'English undergraduate programs',
+  english_graduate: 'English graduate programs',
+  english_catalog: 'English course catalog',
+  english_advising: 'English academic advising',
+  english_contact: 'Contact the Department of English'
+};
+
+function getQuestion(id){ return spec.questions.find(q=>q.id===id); }
+function getRouteLabel(result){ return routeLabels[result.route] || 'Open exploration'; }
+function answeredIds(){ return new Set(Object.keys(answers)); }
+function answersSoFarSignals(){ return scoreAnswers(spec, answers).scores; }
+
+function currentRankedFamilies(){
+  const scores = answersSoFarSignals();
+  const groups = {
+    language:['LANG','MLT'], literature:['LIT','CUL'], cnf:['CRA'], editing:['EDP'],
+    rhetoric:['RHE'], professional:['PRO'], teaching:['TCH'], wildcard:['INQ']
+  };
+  return Object.entries(groups)
+    .map(([family, keys]) => ({family, score: keys.reduce((sum,k)=>sum + Number(scores[k] || 0),0)}))
+    .sort((a,b)=>b.score-a.score || a.family.localeCompare(b.family));
+}
+
+function buildQuickPlan(){
+  const used = answeredIds();
+  const plan = [];
+  // v1.3 Initial interests architecture: 2 broad samplers + 2 domain discriminators
+  // + 1 wildcard + 1 adaptive follow-up/tie-breaker. OPEN is not included.
+  const broad = spec.questions.filter(q => q.family === 'broad' && !used.has(q.id));
+  for (const q of broad) {
+    if (plan.length < 2 && !plan.includes(q.id)) plan.push(q.id);
+  }
+  return plan;
+}
+
+function chooseDomainQuestion(excluded = new Set(), preferredFamilies = []){
+  const available = spec.questions.filter(q => !excluded.has(q.id) && !['route','broad','wildcard','followup','personalization'].includes(q.family));
+  for (const family of preferredFamilies){
+    const q = available.find(x => x.family === family);
+    if(q) return q;
+  }
+  return available[0] || null;
+}
+
+function chooseWildcardQuestion(excluded = new Set()){
+  // W02 is the true Initial interests wildcard: it is scored and intentionally not a
+  // follow-up. W01 is reserved for its explicit W01_FU pairing.
+  return spec.questions.find(q => q.id === 'W02' && !excluded.has(q.id))
+      || spec.questions.find(q => q.family === 'wildcard' && !excluded.has(q.id));
+}
+
+function chooseAdaptiveFollowup(excluded = new Set()){
+  const ranked = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
+  const map = {language:'FU_LANG_A', literature:'FU_LIT_A', cnf:'FU_CNF_A', professional:'FU_PRO_A', teaching:'FU_TEACH_A'};
+  for(const family of ranked){
+    const id = map[family];
+    if(id && !excluded.has(id) && getQuestion(id)) return getQuestion(id);
+  }
+  // Tie-breaker for editing/rhetoric or unresolved profiles.
+  return spec.questions.find(q => q.id === 'W03' && !excluded.has(q.id))
+      || spec.questions.find(q => q.family === 'followup' && !excluded.has(q.id))
+      || null;
+}
+
+function buildNextQuickQuestion(){
+  const used = answeredIds();
+  const scored = Object.keys(answers).filter(id => id !== 'OPEN' && (getQuestion(id)?.score_budget ?? 0) > 0).length;
+  const meaningful = scoreAnswers(spec, answers).meaningfulAnswers;
+  const families = new Set(scoreAnswers(spec, answers).domainFamilies.filter(f => f !== 'route'));
+
+  // Broad sampler slots.
+  if(scored < 2){
+    const q = spec.questions.find(q => q.family === 'broad' && !used.has(q.id));
+    if(q) return q;
+  }
+
+  // Two domain discriminators, chosen after seeing the first two broad answers.
+  if(scored < 4){
+    const ranked = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
+    const represented = new Set(ranked.slice(0, 2));
+    const preferred = [...represented];
+    for(const fallback of ['language','literature','cnf','professional','teaching','editing','rhetoric']){
+      if(!preferred.includes(fallback)) preferred.push(fallback);
+    }
+    // First domain question follows the strongest emerging family; second gets
+    // a different plausible family when possible so we avoid feedback loops.
+    if(scored === 2){
+      const q = chooseDomainQuestion(used, preferred);
+      if(q) return q;
+    }
+    if(scored === 3){
+      const ranked2 = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
+      const firstDomain = [...used].map(id=>getQuestion(id)?.family).filter(Boolean);
+      const avoidFamily = firstDomain.find(f => !['broad','route'].includes(f));
+      const competing = ranked2.filter(f=>f!==avoidFamily);
+      const prefs = [...competing, ...preferred.filter(f=>f!==avoidFamily)];
+      const q = chooseDomainQuestion(used, prefs);
+      if(q) return q;
+    }
+  }
+
+  // Required Initial interests wildcard.
+  if(scored === 4){
+    const q = chooseWildcardQuestion(used);
+    if(q) return q;
+  }
+
+  // Required adaptive follow-up / tie-breaker.
+  if(scored === 5){
+    const q = chooseAdaptiveFollowup(used);
+    if(q) return q;
+  }
+
+  // Target is six. Continue to 8 only when evidence is still unresolved.
+  const profile = scoreAnswers(spec, answers);
+  if(scored >= 6 && scored < 8){
+    const result = computeResult(spec, answers);
+    const enough = profile.meaningfulAnswers >= Number(spec.config.quick_path.min_meaningful_answers || 4)
+      && families.size >= Number(spec.config.quick_path.min_domain_families || 3);
+    const unresolved = !enough || ['INSUFFICIENT','AMBIGUOUS'].includes(result.confidence) || result.profileShape === 'EXPLORATORY';
+    if(unresolved){
+      const excluded = used;
+      const ranked = currentRankedFamilies().filter(x=>x.score>0).map(x=>x.family);
+      const q = chooseDomainQuestion(excluded, [...ranked, 'editing','rhetoric','language','literature','cnf','professional','teaching']);
+      if(q) return q;
+    }
+  }
+  return null;
+}
+
+function rebuildQuickPlan(){
+  const ids=[];
+  // Reconstruct only the questions actually asked so Back navigation remains stable.
+  // OPEN is always separate and never enters this list.
+  for(const id of Object.keys(answers)){
+    if(id !== 'OPEN' && getQuestion(id) && !ids.includes(id)) ids.push(id);
+  }
+  quickPlan = ids;
+}
+
+function adaptiveFamilyCandidates(){
+  const ranked = currentRankedFamilies().filter(x=>x.score>0);
+  const result = ranked.map(x=>x.family);
+  for(const fallback of ['language','literature','cnf','professional','teaching','editing','rhetoric','wildcard']){
+    if(!result.includes(fallback)) result.push(fallback);
+  }
+  return result;
+}
+
+function buildBonusPlan(result){
+  const used = answeredIds();
+  const topTerritories = (result.territories || []).map(x=>x.id);
+  const territoryFamily = {
+    language_linguistics:'language', language_learning_multilingualism:'language', literature_culture:'literature',
+    creative_nonfiction:'cnf', technical_professional_communication:'professional', editing_rhetoric:'professional',
+    teaching_learning:'teaching'
+  };
+  const primaryFamily = territoryFamily[topTerritories[0]] || adaptiveFamilyCandidates()[0];
+  const candidates = [];
+  const add = (id) => {
+    if(id && !used.has(id) && getQuestion(id) && !candidates.includes(id)) candidates.push(id);
+  };
+  const addBest = (family, predicate=()=>true) => {
+    const q = spec.questions.find(x=>x.family===family && !used.has(x.id) && predicate(x) && !candidates.includes(x.id));
+    if(q) candidates.push(q.id);
+  };
+  const followupMap = { language:'FU_LANG_A', cnf:'FU_CNF_A', literature:'FU_LIT_A', professional:'FU_PRO_A', teaching:'FU_TEACH_A' };
+  // 1) Ask the most diagnostic follow-up for the leading territory.
+  add(followupMap[primaryFamily]);
+
+  // 2) Probe the strongest competing family, creating a genuine cross-check.
+  const families = adaptiveFamilyCandidates();
+  const secondary = families.find(f=>f!==primaryFamily);
+  if(secondary) addBest(secondary);
+
+  // 3) Use a second follow-up when one exists, preferably for the strongest
+  // competing family represented in the emerging answers.
+  const secondaryFollowup = { language:'FU_LANG_A', cnf:'FU_CNF_A', literature:'FU_LIT_A', professional:'FU_PRO_A', teaching:'FU_TEACH_A' };
+  add(secondaryFollowup[secondary]);
+
+  // 4) Force a more open-ended check rather than simply accumulating points.
+  addBest('wildcard');
+
+  // 5) Use a personalization question last, unless it would be redundant.
+  addBest('personalization');
+
+  // The spec calls for a 3–5 interaction bonus round. Prefer the full five
+  // questions when the data supports them, while never exceeding the config max.
+  const max = Number(spec.config.bonus_round?.max_interactions || 5);
+  const min = Number(spec.config.bonus_round?.min_interactions || 3);
+  const unique = [...new Set(candidates)];
+  if(unique.length < min){
+    for(const family of ['language','literature','cnf','professional','teaching','editing','rhetoric']) addBest(family);
+  }
+  return [...new Set(candidates)].slice(0,max);
+}
+
+function optionButton(q,o){
+  const selected = Array.isArray(answers[q.id]) ? answers[q.id].includes(o.id) : answers[q.id]===o.id;
+  return `<button class="option ${selected?'selected':''}" data-option="${o.id}" aria-pressed="${selected}"><span>${escapeHtml(o.text)}</span>${selected?'<span class="checkmark" aria-hidden="true">✓</span>':''}</button>`;
+}
+
+function planForPhase(){ return phase==='quick' ? quickPlan : bonusPlan; }
+function questionForCursor(){
+  if(phase==='quick') return cursor===0 && quickPlan.length===0 ? getQuestion('OPEN') : getQuestion(quickPlan[cursor]);
+  return getQuestion(bonusPlan[cursor]);
+}
+
+function advanceCurrent(){
+  const q = questionForCursor();
+  const selected = answers[q.id];
+  const complete = Array.isArray(selected) ? selected.length>0 : Boolean(selected);
+  if(!complete || advanceLock) return;
+  advanceLock = true;
+  window.setTimeout(()=>{
+    advanceLock = false;
+    if(phase==='quick'){
+      // OPEN is routing only. It must never trigger a provisional result.
+      if(q.id==='OPEN'){
+        cursor=0;
+        quickPlan=[];
+        const first=getQuestion('Q01');
+        if(first) quickPlan=[first.id];
+        renderQuestion();
+        return;
+      }
+      if(cursor===quickPlan.length){
+        provisionalResult = computeResult(spec, answers);
+        phase='provisional';
+        renderProvisional();
+        return;
+      }
+      // Record the completed question, then choose the next module from the current evidence.
+      rebuildQuickPlan();
+      const next=buildNextQuickQuestion();
+      const scored=Object.keys(answers).filter(id=>id!=='OPEN' && (getQuestion(id)?.score_budget ?? 0)>0).length;
+      if(next && scored < Number(spec.config.quick_path.max_scored_interactions || 8)){
+        if(!quickPlan.includes(next.id)) quickPlan.push(next.id);
+        cursor=quickPlan.length-1;
+        renderQuestion();
+        return;
+      }
+      if(scored >= Number(spec.config.quick_path.min_scored_interactions || 5)){
+        provisionalResult=computeResult(spec, answers);
+        phase='provisional';
+        renderProvisional();
+        return;
+      }
+      renderQuestion();
+      return;
+    }
+    if(phase==='bonus' && cursor===bonusPlan.length-1){ renderFinalResult(); return; }
+    if(phase==='bonus'){ cursor++; renderQuestion(); }
+  }, 220);
+}
+
+function renderQuestion(){
+  const q = questionForCursor();
+  if(!q){ renderFinalResult(); return; }
+  const plan = planForPhase();
+  const selected = answers[q.id];
+  const complete = Array.isArray(selected) ? selected.length>0 : Boolean(selected);
+  const totalSteps = phase==='quick' ? Math.max(1, quickPlan.length) + (answers.OPEN ? 1 : 0) : bonusPlan.length;
+  const currentStep = cursor+1 + (phase==='quick' && answers.OPEN ? 1 : 0);
+  const progressPct=Math.min(100,Math.round((currentStep/totalSteps)*100));
+  const eyebrow = phase==='quick' ? (!answers.OPEN ? 'Starting point' : `Initial interests · ${Object.keys(answers).filter(id=>id!=='OPEN' && (getQuestion(id)?.score_budget ?? 0)>0).length} of ${Number(spec.config.quick_path.target_scored_interactions || 6)}`) : `Bonus Round · ${cursor+1} of ${bonusPlan.length}`;
+  const nextLabel = phase==='bonus' && cursor===bonusPlan.length-1 ? 'Finish my map' : 'Continue';
+  const isMulti = q.select_mode==='up_to_two';
+  app.innerHTML=`
+    <div class="progress">${eyebrow}</div>
+    <div class="question">${escapeHtml(q.prompt)}</div>
+    ${q.id==='OPEN' ? '<div class="helper">This only sets your starting route. Your next answers are what Pathfinder reads for curiosity.</div>' : isMulti ? '<div class="helper">Choose up to two. Your selections will stay visible until you continue.</div>' : ''}
+    <div class="option-grid">${q.options.map(o=>optionButton(q,o)).join('')}</div>
+    <div class="selection-status" aria-live="polite">${isMulti && complete ? `${Array.isArray(selected)?selected.length:1} selected` : ''}</div>
+    <div class="actions">
+      ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : '<span class="auto-note">Selecting advances</span>'}
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${progressPct}%"></div></div>`;
+
+  app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
+    if(advanceLock) return;
+    const id=btn.dataset.option;
+    if(isMulti){
+      const c=Array.isArray(answers[q.id])?answers[q.id]:[];
+      answers[q.id]=c.includes(id)?c.filter(x=>x!==id):c.length<2?[...c,id]:[...c.slice(1),id];
+      renderQuestion();
+      return;
+    }
+    answers[q.id]=id;
+    renderQuestion();
+    window.setTimeout(advanceCurrent, 80);
+  }));
+
+  const next=app.querySelector('#next');
+  if(next) next.addEventListener('click',advanceCurrent);
+}
+
+function renderWelcome(){
+  app.innerHTML=`<div class="progress">A curiosity map, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before giving you a map.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
+  app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
+}
+
+function resourceLink(id){
+  const r=spec.resources[id];
+  if(!r || !r.url) return `<span>${escapeHtml(resourceLabels[id]||id)}</span>`;
+  return `<a class="resource-link" href="${r.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(r.title || resourceLabels[id] || id)}</span><span aria-hidden="true">↗</span></a>`;
+}
+
+function pathwayDisplay(id, result){
+  const pathway = spec.pathways[id];
+  if (!pathway) return '';
+  const label = pathway.name || 'Explore this path';
+  const route = result.route;
+  if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
+  return pathwayLink(id, label);
+}
+
+function addOnGuidance(result){
+  if (result.route !== 'ug_addon_open') return '';
+  const top = result.territories?.[0]?.id;
+  const tesolMatch = result.primaryPathway === 'ug_tesol';
+  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>';
+  if (top === 'language_linguistics' || top === 'language_learning_multilingualism') return '<p class="quiet">Your language interests do not require a major switch. Explore English courses and the English Minor to see what fits alongside what you already study.</p>';
+  return '<p class="quiet">Because you came in looking to add English rather than replace your current program, we are keeping the map focused on add-on options and courses.</p>';
+}
+
+function pathwayLink(id, fallbackLabel='Explore this path'){
+  const pathway=spec.pathways[id];
+  if(!pathway) return '';
+  const url=pathway.url || pathwayLinks[id];
+  const label=pathway.name || fallbackLabel;
+  return url ? `<a class="pathway-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} <span aria-hidden="true">↗</span></a>` : `<span>${escapeHtml(label)}</span>`;
+}
+
+function getAlsoIds(result){
+  const base = Array.isArray(result.alsoExplore) ? [...result.alsoExplore] : [];
+  if(result.route === 'ug_addon_open'){
+    const supported = base.filter(id => ['ug_tesol'].includes(id));
+    return supported.length ? supported : ['ug_tesol'];
+  }
+  if(result.route === 'graduate_open' && result.primaryPathway !== 'grad_ma' && !base.includes('grad_ma')){
+    return ['grad_ma', ...base].slice(0,2);
+  }
+  return base.slice(0,2);
+}
+
+function renderProvisional(){
+  const result=provisionalResult;
+  const profile=result.profile;
+  const domainCount=new Set((profile.domainFamilies||[]).filter(f=>f!=='route')).size;
+  const evidenceEnough=profile.meaningfulAnswers >= Number(spec.config.quick_path.min_meaningful_answers||4) && domainCount >= Number(spec.config.quick_path.min_domain_families||3);
+  if(!evidenceEnough){
+    const next=buildNextQuickQuestion();
+    if(next){
+      quickPlan=[...new Set([...quickPlan,next.id])];
+      cursor=quickPlan.length-1;
+      phase='quick';
+      app.innerHTML=`<div class="result provisional"><div class="progress">Still exploring</div><div class="map-kicker">We are not going to pretend we know you from too little evidence.</div><h2>${escapeHtml(spec.copy.profile_shape?.EXPLORATORY || 'You’re making us work for it.')}</h2><p class="lede">We need a little more signal from a few different corners of English before we show a provisional map.</p><div class="challenge"><strong>One more question before the first read.</strong><p>This is a targeted follow-up, not a result.</p><button class="btn primary" id="continueQuick">Keep exploring</button></div></div>`;
+      app.querySelector('#continueQuick').addEventListener('click',renderQuestion);
+      return;
+    }
+  }
+  const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
+  const primary=result.primaryPathway ? spec.pathways[result.primaryPathway] : null;
+  const alsoIds = getAlsoIds(result);
+  const also=alsoIds.map(id=>({id, pathway:spec.pathways[id]})).filter(x=>x.pathway);
+  const copy = result.profileShape === 'BROAD'
+    ? (spec.copy.profile_shape?.BROAD || 'Your answers opened several distinct doors in English.')
+    : result.profileShape === 'EXPLORATORY'
+      ? (spec.copy.profile_shape?.EXPLORATORY || 'We have some real signals, but they are still moving around.')
+      : (result.confidence === 'CONFIDENT' ? (spec.copy.confidence?.CONFIDENT || 'We’re seeing a pretty clear pattern.') : (spec.copy.confidence?.[result.confidence] || 'This is a useful first read.'));
+  const primaryTerritory = result.territories?.[0]?.id;
+  const territoryCopy = {
+    language_linguistics: 'You kept circling back to language: how it varies, how people use it, and what we can discover by looking closely at the evidence.',
+    language_learning_multilingualism: 'You kept returning to languages in motion: how people learn them, move between them, and make sense of them in real life.',
+    literature_culture: 'You kept leaning toward texts and the worlds around them: interpretation, history, culture, and perspective.',
+    creative_nonfiction: 'You kept turning toward real stories, voice, evidence, and the craft of making lived experience into a compelling piece of writing.',
+    technical_professional_communication: 'You kept noticing how communication works for actual people: audience, clarity, usability, and revision.',
+    editing_publishing: 'You kept noticing what makes a piece work better: editing, shaping, audience, and what happens when writing reaches readers.',
+    teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
+  };
+  const profileCopy = result.profileShape === 'BROAD'
+    ? 'Your answers opened several distinct doors in English. That breadth is useful information; this map shows the territories that kept recurring rather than pretending one favorite has already won.'
+    : result.profileShape === 'EXPLORATORY'
+      ? 'We have some real signals, but they are still moving around. A few sharper questions will help us see what keeps recurring.'
+      : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
+  const route=getRouteLabel(result);
+  bonusPlan=buildBonusPlan(result);
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional map · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${addOnGuidance(result)}<div class="result-block"><h3>Also worth exploring</h3>${also.length?`<div class="resource-list">${also.map(x=>pathwayDisplay(x.id, result)).join('')}</div>`:''}</div></div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or overturn the provisional map.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final map'}</button></div><div class="welcome-actions"><button class="btn secondary" id="debugToggle">Show debug</button></div><details class="debug" id="debug"><summary>Prototype debug output</summary><pre>${escapeHtml(JSON.stringify(result,null,2))}</pre></details></div>`;
+  app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
+  app.querySelector('#debugToggle').addEventListener('click',()=>{app.querySelector('#debug').open=true;app.querySelector('#debug').scrollIntoView({behavior:'smooth'});});
+}
+
+function classifyBonus(before, after){
+  if(before.primaryPathway === after.primaryPathway && before.confidence === after.confidence) return 'CONFIRM';
+  if(before.primaryPathway === after.primaryPathway) return 'SHARPEN';
+  return 'OVERTURN';
+}
+
+function renderFinalResult(){
+  const result=computeResult(spec,answers);
+  const outcome=classifyBonus(provisionalResult,result);
+  const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
+  const primary=result.primaryPathway ? spec.pathways[result.primaryPathway] : null;
+  const alsoIds = getAlsoIds(result);
+  const also=alsoIds.map(id=>({id, pathway:spec.pathways[id]})).filter(x=>x.pathway);
+  const copy = result.profileShape === 'BROAD'
+    ? (spec.copy.profile_shape?.BROAD || 'Your answers opened several distinct doors in English.')
+    : result.profileShape === 'EXPLORATORY'
+      ? (spec.copy.profile_shape?.EXPLORATORY || 'We have some real signals, but they are still moving around.')
+      : (result.confidence === 'CONFIDENT' ? (spec.copy.confidence?.CONFIDENT || 'We’re seeing a pretty clear pattern.') : (spec.copy.confidence?.[result.confidence] || 'This is a useful first read.'));
+  const primaryTerritory = result.territories?.[0]?.id;
+  const territoryCopy = {
+    language_linguistics: 'You kept circling back to language: how it varies, how people use it, and what we can discover by looking closely at the evidence.',
+    language_learning_multilingualism: 'You kept returning to languages in motion: how people learn them, move between them, and make sense of them in real life.',
+    literature_culture: 'You kept leaning toward texts and the worlds around them: interpretation, history, culture, and perspective.',
+    creative_nonfiction: 'You kept turning toward real stories, voice, evidence, and the craft of making lived experience into a compelling piece of writing.',
+    technical_professional_communication: 'You kept noticing how communication works for actual people: audience, clarity, usability, and revision.',
+    editing_publishing: 'You kept noticing what makes a piece work better: editing, shaping, audience, and what happens when writing reaches readers.',
+    teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
+  };
+  const profileCopy = result.profileShape === 'BROAD'
+    ? 'Your answers opened several distinct doors in English. That breadth is useful information; this map shows the territories that kept recurring rather than pretending one favorite has already won.'
+    : result.profileShape === 'EXPLORATORY'
+      ? 'We have some real signals, but they are still moving around. A few sharper questions will help us see what keeps recurring.'
+      : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
+  const resources=result.resources;
+  app.innerHTML=`<div class="result"><div class="progress">Your map · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${addOnGuidance(result)}<div class="result-block"><h3>Also worth exploring</h3>${also.length?`<div class="resource-list">${also.map(x=>pathwayDisplay(x.id, result)).join('')}</div>`:''}</div><div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div><div class="result-block"><h3>Confidence</h3><p>${escapeHtml(result.confidence)}. This remains a guide, not a diagnosis.</p></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Keep the curiosity moving.')}</strong><p>${escapeHtml(spec.copy.community?.body || 'Explore the resources above, and when you’re ready, connect with the English community at UNO.')}</p>${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button><button class="btn secondary" id="debugToggle">Show debug</button></div><details class="debug" id="debug"><summary>Prototype debug output</summary><pre>${escapeHtml(JSON.stringify({outcome, provisional:provisionalResult, final:result},null,2))}</pre></details></div>`;
+  app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
+  app.querySelector('#debugToggle').addEventListener('click',()=>{app.querySelector('#debug').open=true;app.querySelector('#debug').scrollIntoView({behavior:'smooth'});});
+}
+
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+
+loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json'); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
