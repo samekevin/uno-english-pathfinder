@@ -9,3 +9,7 @@
 .quiet{margin:.35rem 0 0;color:var(--muted);font-size:.95rem}
 
 .uno-link{color:inherit;text-decoration:none}.uno-link:hover,.uno-link:focus-visible{text-decoration:underline;text-underline-offset:3px}.community{margin-top:26px;padding-top:18px;border-top:1px solid #ded5c9}.community p{max-width:720px;color:#554d45}
+/* v1.0.2: keep UNO English as a quiet masthead link, not body-link styling. */
+.eyebrow .uno-link,.eyebrow .uno-link:visited{color:inherit;text-decoration:none;border:0}
+.eyebrow .uno-link:hover{opacity:.78;text-decoration:none}
+.eyebrow .uno-link:focus-visible{outline:1px dotted currentColor;outline-offset:4px;text-decoration:none}
