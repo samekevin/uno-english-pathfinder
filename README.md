@@ -36,6 +36,8 @@ python3 tests/validate_spec.py
 
 GitHub Pages deploys the static application from the `main` branch. Commits to `main` automatically update the published site after the Pages workflow completes.
 
+Release v1.0.6 adds versioned asset URLs (`?v=1.0.6`) and a no-store request for the Pathfinder specification so browsers do not keep serving stale JavaScript or JSON after a deployment.
+
 ## Implementation principle
 
 Pathfinder discovers intellectual territory first and maps that territory to an appropriate curricular home second. Route/credential context should not distort the underlying intellectual profile.
