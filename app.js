@@ -309,7 +309,7 @@ function renderQuestion(){
   app.innerHTML=`
     <div class="progress">${eyebrow}</div>
     <div class="question">${escapeHtml(q.prompt)}</div>
-    ${q.id==='OPEN' ? '<div class="helper">This only sets your starting route. Your next answers are what Pathfinder reads for curiosity.</div>' : isMulti ? '<div class="helper">Choose up to two. Your selections will stay visible until you continue.</div>' : ''}
+    ${isMulti ? '<div class="helper">Choose up to two. Your selections will stay visible until you continue.</div>' : ''}
     <div class="option-grid">${q.options.map(o=>optionButton(q,o)).join('')}</div>
     <div class="selection-status" aria-live="polite">${isMulti && complete ? `${Array.isArray(selected)?selected.length:1} selected` : ''}</div>
     <div class="actions">

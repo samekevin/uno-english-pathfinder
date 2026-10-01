@@ -27,6 +27,3 @@ The v1.3 specification is frozen for implementation testing. Changes after this 
 ## Change-control rule
 
 When a scoring rule, ID, question, answer vector, pathway mapping, or result behavior changes, increment the relevant version and rerun validation plus the regression suite.
-
-
-v0.8 prototype changes: route-aware add-on result handling, linguistics-sensitive profile shape, “Initial interests” UI label, compact resource links.

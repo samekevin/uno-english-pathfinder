@@ -23,10 +23,10 @@
     "SHARPEN": "Same neighborhood, sharper map."
   },
   "community": {
-    "heading": "Want to stay connected to English?",
-    "body": "Leave your email and we can send you relevant English opportunities, events, resources, or ways to explore the parts of English that caught your attention.",
-    "submit": "Keep me in the loop",
-    "skip": "No thanks - I'll keep exploring.",
+    "heading": "Want to keep exploring?",
+    "body": "Send English a note, explore advising, or — since this is still a test version — hound the person who shared this Pathfinder with you and tell them what you thought. We can take it.",
+    "submit": "Email the Department of English",
+    "skip": "Keep exploring on your own.",
     "email_required": false,
     "result_gated": false
   }
