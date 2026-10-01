@@ -28,5 +28,5 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder canonical web release v1.0.6; content remains based on frozen v1.3 specification."
+  "implementation_note": "Synchronized with Pathfinder pilot UX release v1.0.3; content remains based on frozen v1.3 specification."
 }
