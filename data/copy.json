@@ -24,8 +24,8 @@
   },
   "community": {
     "heading": "Want to keep exploring?",
-    "body": "Send English a note, explore advising, or — since this is still a test version — hound the person who shared this Pathfinder with you and tell them what you thought. We can take it.",
-    "submit": "Email the Department of English",
+    "body": "Have a question about where your interests might lead? Email the Department Chair and tell us what caught your attention. You can also explore English advising and department resources below.",
+    "submit": "Email the Department Chair",
     "skip": "Keep exploring on your own.",
     "email_required": false,
     "result_gated": false

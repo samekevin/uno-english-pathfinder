@@ -27,3 +27,7 @@ The v1.3 specification is frozen for implementation testing. Changes after this 
 ## Change-control rule
 
 When a scoring rule, ID, question, answer vector, pathway mapping, or result behavior changes, increment the relevant version and rerun validation plus the regression suite.
+
+## Application status
+
+The v1.3 specification remains the frozen conceptual/scoring baseline. The repository now also contains the maintained participant-facing web application; UX copy and presentation may evolve without changing the frozen scoring model.

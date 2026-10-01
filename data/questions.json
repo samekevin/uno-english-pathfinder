@@ -144,11 +144,11 @@
   },
   {
     "id": "Q02",
-    "title": "Pick a rabbit hole",
+    "title": "Two tabs",
     "family": "broad",
     "format": "snap",
     "select_mode": "up_to_two",
-    "prompt": "You've got 20 minutes to disappear down an internet rabbit hole. Pick up to two.",
+    "prompt": "Two tabs are allowed. Which ones are you opening? Pick up to two.",
     "options": [
       {
         "id": "Q02_ACCENTS",

@@ -1,45 +1,41 @@
 # UNO English Pathfinder
 
-## Frozen source packet — v1.3
+UNO English Pathfinder is a working web application for exploring intellectual interests across English and connecting those interests to appropriate UNO English curricular homes, credentials, and experiences.
 
-This repository packet contains the verified, platform-neutral Pathfinder specification that should serve as the source of truth for the web prototype.
+The application is built from the frozen Pathfinder v1.3 conceptual/scoring specification. The machine-readable source remains in `data/`, while the participant-facing web app lives at the repository root.
 
-### What is frozen here
+## Repository structure
 
-- 38 Pathfinder questions
-- 200 answer options
-- 10 latent dimensions
-- 8 interpretive subprofiles
-- 12 pathways / credentials
-- 9 resources
-- 12 regression cases from Simulations 1–3
-- the v1.3 configuration and portability rules
+- `index.html`, `app.js`, `styles.css` — participant-facing web application
+- `data/` — canonical machine-readable Pathfinder specification
+- `src/` — scoring/result engine
+- `tests/` — engine regression cases and specification validation
+- `schemas/` — JSON schema
+- `reference/` — human-readable Question Bank
+- `docs/` — implementation and portability notes
+- `.github/workflows/` — GitHub Pages deployment
 
-### Source of truth
+## Run locally
 
-The machine-readable specification is in `data/`. The combined file is `data/pathfinder.spec.json`.
+From the repository root:
 
-The reference Question Bank is retained in `reference/` for human review.
+```bash
+python3 -m http.server 8000
+```
 
-### Verified checks
+Then open `http://localhost:8000`.
 
-Before this packet was frozen:
+## Tests
 
-1. `tests/validate_spec.py` passed.
-2. All component JSON files matched the corresponding sections of `data/pathfinder.spec.json`.
-3. `schemas/pathfinder.schema.json` validated the master specification.
+```bash
+npm test
+python3 tests/validate_spec.py
+```
 
-### Important implementation rule
+## Deployment
 
-Pathfinder should discover an intellectual territory first and map that territory to a curricular home second. The web application should implement the v1.3 rules rather than replacing them with ordinary survey point totals.
+GitHub Pages deploys the static application from the `main` branch. Commits to `main` automatically update the published site after the Pages workflow completes.
 
-Qualtrics/QSF is a future portability target, not the primary implementation target.
+## Implementation principle
 
-### Next build stage
-
-The next repository change should add the web application and a scoring engine that consumes `data/pathfinder.spec.json` and reproduces the regression cases in `tests/regression_cases.json`.
-
-
-
-## v1.0.3 synchronized pilot UX
-This package synchronizes the browser prototype with the machine-readable v1.3 source. The pilot UI does not collect email addresses; the result offers direct department/advising links instead. Single-select questions advance from selection without a floating helper label.
+Pathfinder discovers intellectual territory first and maps that territory to an appropriate curricular home second. Route/credential context should not distort the underlying intellectual profile.
