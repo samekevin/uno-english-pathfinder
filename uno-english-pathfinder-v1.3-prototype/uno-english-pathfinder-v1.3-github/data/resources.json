@@ -1,0 +1,91 @@
+{
+  "english_undergraduate": {
+    "type": "program_hub",
+    "title": "Undergraduate Programs in English",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php",
+    "priority": 70,
+    "verified_on": "2026-10-01"
+  },
+  "english_graduate": {
+    "type": "program_hub",
+    "title": "Graduate Programs in English",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php",
+    "priority": 70,
+    "verified_on": "2026-10-01"
+  },
+  "english_catalog": {
+    "type": "catalog",
+    "title": "English courses and catalog",
+    "url": "https://catalog.unomaha.edu/undergraduate/coursesaz/engl/",
+    "priority": 60,
+    "verified_on": "2026-10-01"
+  },
+  "solas_lab": {
+    "type": "experience",
+    "title": "SoLaS Lab",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/solas-lab/index.php",
+    "priority": 90,
+    "territories": [
+      "language_linguistics",
+      "language_learning_multilingualism"
+    ],
+    "copy": "A place to explore language curiosities through sociolinguistics and language-structure research.",
+    "do_not_imply": [
+      "guaranteed position",
+      "required participation",
+      "course credit",
+      "exclusive to one credential"
+    ],
+    "verified_on": "2026-10-01"
+  },
+  "linden_review": {
+    "type": "experience",
+    "title": "The Linden Review",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/creative-nonfiction-writing.php",
+    "priority": 85,
+    "territories": [
+      "creative_nonfiction",
+      "editing_publishing"
+    ],
+    "copy": "Explore editing and publishing experience connected to Creative Nonfiction.",
+    "verified_on": "2026-10-01"
+  },
+  "writing_center": {
+    "type": "experience",
+    "title": "UNO Writing Center",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/writing-center/",
+    "priority": 70,
+    "territories": [
+      "teaching_pedagogy",
+      "rhetoric_composition"
+    ],
+    "copy": "A writing and mentoring environment that may appeal to visitors drawn to teaching, feedback, and composition.",
+    "verified_on": "2026-10-01"
+  },
+  "graduate_ta": {
+    "type": "opportunity",
+    "title": "English Graduate Teaching Assistantships",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/english-graduate-teaching-assistantships.php",
+    "priority": 80,
+    "routes": [
+      "graduate_open",
+      "current_grad_open"
+    ],
+    "copy": "Eligible English graduate degree and certificate students can explore competitive Teaching Assistantships; check the current page for duties, deadlines, compensation, and eligibility.",
+    "verified_on": "2026-10-01"
+  },
+  "english_advising": {
+    "type": "human_handoff",
+    "title": "English Academic Advising",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/advising.php",
+    "priority": 100,
+    "verified_on": "2026-10-01"
+  },
+  "english_contact": {
+    "type": "human_handoff",
+    "title": "Contact the Department of English",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/about-us/contact-us/index.php",
+    "priority": 100,
+    "verified_on": "2026-10-01"
+  }
+}

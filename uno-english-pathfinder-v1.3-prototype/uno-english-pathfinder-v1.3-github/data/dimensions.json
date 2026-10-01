@@ -1,0 +1,42 @@
+{
+  "LANG": {
+    "name": "Language",
+    "description": "Structure, variation, accents/dialects, language change, discourse."
+  },
+  "LIT": {
+    "name": "Literature",
+    "description": "Close reading, genre, literary history, interpretation."
+  },
+  "CUL": {
+    "name": "Culture & Identity",
+    "description": "History, race/ethnicity, gender, migration, power, popular/visual culture."
+  },
+  "CRA": {
+    "name": "Creative Craft",
+    "description": "Fact-based storytelling, voice, form, scene, style."
+  },
+  "RHE": {
+    "name": "Rhetoric & Persuasion",
+    "description": "Audience, argument, discourse, how communication accomplishes things."
+  },
+  "TCH": {
+    "name": "Teaching & Learning",
+    "description": "Explaining, mentoring, pedagogy, designing learning."
+  },
+  "MLT": {
+    "name": "Multilingualism",
+    "description": "Language learning, bilingualism, cross-linguistic experience, intercultural communication."
+  },
+  "EDP": {
+    "name": "Editing & Publishing",
+    "description": "Revision, selection, shaping texts, publication processes."
+  },
+  "PRO": {
+    "name": "Professional Communication",
+    "description": "Clarity, usability, information design, audience-centered communication."
+  },
+  "INQ": {
+    "name": "Inquiry & Analysis",
+    "description": "Evidence, patterns, research questions, independent investigation."
+  }
+}

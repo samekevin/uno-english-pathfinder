@@ -1,0 +1,77 @@
+{
+  "spec_version": "1.3.0-machine",
+  "source_design_version": "v1.3",
+  "quick_path": {
+    "min_scored_interactions": 5,
+    "target_scored_interactions": 6,
+    "max_scored_interactions": 8,
+    "min_meaningful_answers": 4,
+    "min_domain_families": 3
+  },
+  "bonus_round": {
+    "min_interactions": 3,
+    "max_interactions": 5,
+    "effects": [
+      "CONFIRM",
+      "SHARPEN",
+      "OVERTURN"
+    ]
+  },
+  "confidence": {
+    "provisional_margin": 0.09,
+    "margin_calibration_range": [
+      0.08,
+      0.1
+    ],
+    "single_answer_can_establish_confident": false,
+    "states": [
+      "CONFIDENT",
+      "MIXED",
+      "AMBIGUOUS",
+      "INSUFFICIENT"
+    ]
+  },
+  "profile": {
+    "shapes": [
+      "FOCUSED",
+      "CLUSTERED_MIXED",
+      "BROAD",
+      "EXPLORATORY"
+    ],
+    "coherence_formula": "implementation_pending_pilot",
+    "dispersion_formula": "implementation_pending_pilot"
+  },
+  "multi_select": {
+    "method": "fixed_budget_normalized",
+    "max_selections": 2,
+    "rule": "If two options are selected, combine vectors then normalize to the same total module score budget as a single selection.",
+    "preserve_raw_selections": true
+  },
+  "result": {
+    "max_quoted_or_paraphrased_deciding_responses": 2,
+    "layers": [
+      "territory",
+      "curricular_home_or_credential",
+      "also_explore",
+      "resources",
+      "human_voice",
+      "community_handoff"
+    ],
+    "quick_result_is_provisional": true
+  },
+  "privacy": {
+    "result_requires_email": false,
+    "collect_minimum_contact_data": true,
+    "do_not_build_detailed_prospect_dossier_from_answers": true,
+    "analytics_prefer_aggregate_events": true
+  },
+  "platforms": {
+    "github_pages": {
+      "status": "primary_planned"
+    },
+    "qualtrics_qsf": {
+      "status": "future_target",
+      "do_not_simplify_engine_for_native_scoring": true
+    }
+  }
+}

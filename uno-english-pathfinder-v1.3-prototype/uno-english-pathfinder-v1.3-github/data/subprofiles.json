@@ -1,0 +1,147 @@
+{
+  "language_linguistics": {
+    "name": "Language & Linguistics",
+    "clusters": [
+      [
+        "LANG",
+        "INQ"
+      ],
+      [
+        "LANG",
+        "CUL"
+      ],
+      [
+        "LANG",
+        "MLT"
+      ]
+    ],
+    "description": "Language structure and variation, accents, sociolinguistics, psycholinguistics, and empirical language questions.",
+    "resource_hooks": [
+      "solas_lab"
+    ]
+  },
+  "language_learning_multilingualism": {
+    "name": "Language Learning & Multilingualism",
+    "clusters": [
+      [
+        "MLT",
+        "LANG",
+        "TCH"
+      ],
+      [
+        "MLT",
+        "LANG",
+        "INQ"
+      ]
+    ],
+    "description": "Bilingualism, acquisition, applied linguistics, multilingual learning and use.",
+    "resource_hooks": [
+      "solas_lab"
+    ]
+  },
+  "rhetoric_composition": {
+    "name": "Rhetoric & Composition",
+    "clusters": [
+      [
+        "RHE",
+        "INQ"
+      ],
+      [
+        "RHE",
+        "EDP"
+      ],
+      [
+        "RHE",
+        "TCH"
+      ]
+    ],
+    "description": "Audience, persuasion, discourse, writing, composition, and pedagogy."
+  },
+  "technical_professional_communication": {
+    "name": "Technical / Professional Communication",
+    "clusters": [
+      [
+        "PRO",
+        "RHE"
+      ],
+      [
+        "PRO",
+        "INQ"
+      ],
+      [
+        "PRO",
+        "EDP"
+      ]
+    ],
+    "description": "Usability, information design, audience-centered communication, testing, and revision."
+  },
+  "literature_culture": {
+    "name": "Literature & Culture",
+    "clusters": [
+      [
+        "LIT",
+        "CUL"
+      ],
+      [
+        "LIT",
+        "INQ"
+      ]
+    ],
+    "description": "Interpretation, literary history, culture, identity, and textual inquiry."
+  },
+  "creative_nonfiction": {
+    "name": "Creative Nonfiction",
+    "clusters": [
+      [
+        "CRA",
+        "INQ"
+      ],
+      [
+        "CRA",
+        "EDP"
+      ],
+      [
+        "CRA",
+        "CUL"
+      ],
+      [
+        "CRA",
+        "LIT"
+      ]
+    ],
+    "description": "True-story craft, voice, form, research, ethics, and lived experience."
+  },
+  "editing_publishing": {
+    "name": "Editing & Publishing",
+    "clusters": [
+      [
+        "EDP",
+        "CRA"
+      ],
+      [
+        "EDP",
+        "PRO"
+      ],
+      [
+        "EDP",
+        "RHE"
+      ]
+    ],
+    "description": "Revision, shaping texts, editorial judgment, publication, and reader experience.",
+    "resource_hooks": [
+      "linden_review"
+    ]
+  },
+  "teaching_pedagogy": {
+    "name": "Teaching & Pedagogy",
+    "clusters": [
+      [
+        "TCH"
+      ]
+    ],
+    "description": "Explaining, mentoring, and designing learning; route depends on context and explicit intent.",
+    "resource_hooks": [
+      "writing_center"
+    ]
+  }
+}

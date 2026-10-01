@@ -1,0 +1,59 @@
+{
+  "ug_major_open": {
+    "name": "Undergraduate major/open",
+    "eligible_primary": [
+      "ug_literatures",
+      "ug_cnf",
+      "ug_language_studies",
+      "ug_secondary_english"
+    ],
+    "eligible_secondary": [
+      "ug_tesol",
+      "ug_english_minor"
+    ]
+  },
+  "ug_addon_open": {
+    "name": "Undergraduate add-on/open",
+    "eligible_primary": [
+      "ug_english_minor",
+      "ug_tesol"
+    ],
+    "eligible_secondary": [
+      "ug_literatures",
+      "ug_cnf",
+      "ug_language_studies",
+      "ug_secondary_english"
+    ]
+  },
+  "graduate_open": {
+    "name": "Graduate study open",
+    "commitment_discriminator": true,
+    "eligible_primary": [
+      "grad_ma",
+      "grad_cnf_cert",
+      "grad_lit_culture_cert",
+      "grad_tech_comm_cert",
+      "grad_tesol_cert",
+      "grad_dual_enrollment_cert"
+    ]
+  },
+  "current_grad_open": {
+    "name": "Current graduate student / graduate add-on exploration",
+    "commitment_discriminator": true,
+    "eligible_primary": [
+      "grad_cnf_cert",
+      "grad_lit_culture_cert",
+      "grad_tech_comm_cert",
+      "grad_tesol_cert",
+      "grad_dual_enrollment_cert"
+    ],
+    "eligible_secondary": [
+      "grad_ma"
+    ]
+  },
+  "open_exploration": {
+    "name": "Open exploration",
+    "commitment_discriminator": true,
+    "eligible_primary": "determine_after_profile"
+  }
+}

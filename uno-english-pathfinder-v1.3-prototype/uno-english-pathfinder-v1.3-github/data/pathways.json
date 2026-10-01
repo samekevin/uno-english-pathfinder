@@ -1,0 +1,479 @@
+{
+  "ug_literatures": {
+    "name": "BA in English — Literatures in English",
+    "level": "undergraduate",
+    "type": "concentration",
+    "routes": [
+      "ug_major_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "LIT"
+        ]
+      },
+      {
+        "all": [
+          "LIT",
+          "CUL"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "LIT",
+        "CUL"
+      ],
+      [
+        "LIT",
+        "INQ"
+      ],
+      [
+        "LIT",
+        "RHE"
+      ]
+    ],
+    "boosters": [
+      "CUL",
+      "INQ",
+      "RHE",
+      "CRA"
+    ],
+    "territories": [
+      "literature_culture"
+    ],
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/literature.php"
+  },
+  "ug_cnf": {
+    "name": "BA in English — Creative Nonfiction",
+    "level": "undergraduate",
+    "type": "concentration",
+    "routes": [
+      "ug_major_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "CRA"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "CRA",
+        "INQ"
+      ],
+      [
+        "CRA",
+        "EDP"
+      ],
+      [
+        "CRA",
+        "CUL"
+      ],
+      [
+        "CRA",
+        "LIT"
+      ]
+    ],
+    "boosters": [
+      "EDP",
+      "INQ",
+      "CUL"
+    ],
+    "territories": [
+      "creative_nonfiction",
+      "editing_publishing"
+    ],
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/creative-nonfiction-writing.php"
+  },
+  "ug_language_studies": {
+    "name": "BA in English — Language Studies",
+    "level": "undergraduate",
+    "type": "concentration",
+    "routes": [
+      "ug_major_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "LANG",
+          "RHE"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "LANG",
+        "INQ"
+      ],
+      [
+        "LANG",
+        "CUL"
+      ],
+      [
+        "LANG",
+        "MLT"
+      ],
+      [
+        "RHE",
+        "PRO"
+      ],
+      [
+        "RHE",
+        "EDP"
+      ],
+      [
+        "RHE",
+        "INQ"
+      ]
+    ],
+    "boosters": [
+      "CUL",
+      "PRO",
+      "MLT",
+      "TCH"
+    ],
+    "territories": [
+      "language_linguistics",
+      "language_learning_multilingualism",
+      "rhetoric_composition",
+      "technical_professional_communication",
+      "editing_publishing"
+    ],
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/language-studies.php",
+    "resource_hooks": [
+      "solas_lab"
+    ]
+  },
+  "ug_secondary_english": {
+    "name": "Secondary English Teaching",
+    "level": "undergraduate",
+    "type": "professional_route",
+    "routes": [
+      "ug_major_open",
+      "open_exploration"
+    ],
+    "requires_intent": "secondary_education_intent",
+    "clusters": [
+      [
+        "TCH",
+        "LIT"
+      ],
+      [
+        "TCH",
+        "RHE"
+      ],
+      [
+        "TCH",
+        "LANG"
+      ]
+    ],
+    "boosters": [
+      "LIT",
+      "RHE",
+      "LANG"
+    ],
+    "territories": [
+      "teaching_pedagogy"
+    ],
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php"
+  },
+  "ug_english_minor": {
+    "name": "English Minor",
+    "level": "undergraduate",
+    "type": "minor",
+    "routes": [
+      "ug_addon_open",
+      "open_exploration"
+    ],
+    "fingerprint": "route_scope_only",
+    "territories": "visitor_profile",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/minor.php"
+  },
+  "ug_tesol": {
+    "name": "Undergraduate TESOL Certificate",
+    "level": "undergraduate",
+    "type": "certificate",
+    "routes": [
+      "ug_addon_open",
+      "ug_major_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "MLT"
+        ]
+      },
+      {
+        "intent": "tesol_teaching_intent"
+      }
+    ],
+    "clusters": [
+      [
+        "MLT",
+        "TCH"
+      ],
+      [
+        "MLT",
+        "LANG"
+      ],
+      [
+        "MLT",
+        "INQ"
+      ],
+      [
+        "LANG",
+        "TCH"
+      ]
+    ],
+    "boosters": [
+      "INQ",
+      "CUL",
+      "LANG"
+    ],
+    "territories": [
+      "language_learning_multilingualism",
+      "language_linguistics",
+      "teaching_pedagogy"
+    ],
+    "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/teaching-english-speakers-other-languages-tesol-certificate-course/#text",
+    "resource_hooks": [
+      "solas_lab"
+    ]
+  },
+  "grad_ma": {
+    "name": "MA in English",
+    "level": "graduate",
+    "type": "degree",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "requires_commitment": "full_ma",
+    "fingerprint": "broad_generalist_with_inquiry",
+    "territories": "visitor_profile",
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/english-ma/#text",
+    "resource_hooks": [
+      "graduate_ta"
+    ]
+  },
+  "grad_cnf_cert": {
+    "name": "Graduate Certificate in Creative Nonfiction Writing, Editing, and Publishing",
+    "level": "graduate",
+    "type": "certificate",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "CRA",
+          "EDP"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "CRA",
+        "EDP"
+      ],
+      [
+        "CRA",
+        "INQ"
+      ],
+      [
+        "EDP",
+        "PRO"
+      ],
+      [
+        "CRA",
+        "CUL"
+      ]
+    ],
+    "boosters": [
+      "INQ",
+      "PRO"
+    ],
+    "territories": [
+      "creative_nonfiction",
+      "editing_publishing"
+    ],
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/advanced-writing-certificate/",
+    "resource_hooks": [
+      "linden_review",
+      "graduate_ta"
+    ]
+  },
+  "grad_lit_culture_cert": {
+    "name": "Graduate Literature and Culture Certificate",
+    "level": "graduate",
+    "type": "certificate",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "LIT",
+          "CUL"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "LIT",
+        "CUL"
+      ],
+      [
+        "LIT",
+        "INQ"
+      ],
+      [
+        "CUL",
+        "INQ"
+      ]
+    ],
+    "boosters": [
+      "RHE"
+    ],
+    "territories": [
+      "literature_culture"
+    ],
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/literature-culture-certificate/",
+    "resource_hooks": [
+      "graduate_ta"
+    ]
+  },
+  "grad_tech_comm_cert": {
+    "name": "Graduate Technical Communication Certificate",
+    "level": "graduate",
+    "type": "certificate",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "PRO"
+        ]
+      },
+      {
+        "all": [
+          "PRO",
+          "RHE"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "PRO",
+        "RHE"
+      ],
+      [
+        "PRO",
+        "EDP"
+      ],
+      [
+        "PRO",
+        "INQ"
+      ]
+    ],
+    "boosters": [
+      "EDP",
+      "INQ"
+    ],
+    "territories": [
+      "technical_professional_communication",
+      "rhetoric_composition",
+      "editing_publishing"
+    ],
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/technical-communication-certificate/",
+    "resource_hooks": [
+      "graduate_ta"
+    ]
+  },
+  "grad_tesol_cert": {
+    "name": "Graduate TESOL Certificate",
+    "level": "graduate",
+    "type": "certificate",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "MLT"
+        ]
+      },
+      {
+        "intent": "tesol_teaching_intent"
+      }
+    ],
+    "clusters": [
+      [
+        "MLT",
+        "TCH"
+      ],
+      [
+        "MLT",
+        "LANG"
+      ],
+      [
+        "MLT",
+        "INQ"
+      ],
+      [
+        "LANG",
+        "TCH"
+      ]
+    ],
+    "boosters": [
+      "INQ",
+      "CUL",
+      "LANG"
+    ],
+    "territories": [
+      "language_learning_multilingualism",
+      "language_linguistics",
+      "teaching_pedagogy"
+    ],
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/teaching-english-speakers-other-languages-certificate/#text",
+    "resource_hooks": [
+      "solas_lab",
+      "graduate_ta"
+    ]
+  },
+  "grad_dual_enrollment_cert": {
+    "name": "English Dual Enrollment Graduate Certificate",
+    "level": "graduate",
+    "type": "certificate",
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "requires_context": "dual_enrollment_interest_or_eligibility",
+    "fingerprint": "teaching_plus_content_profile",
+    "territories": [
+      "teaching_pedagogy"
+    ],
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/english-dual-enrollment-certificate/",
+    "resource_hooks": [
+      "graduate_ta"
+    ]
+  }
+}
