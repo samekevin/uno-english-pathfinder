@@ -112,3 +112,5 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 
 ### Current question interaction
 Single- and multi-select answer choices fade in once when a question first appears. The entrance begins after 1.3 seconds and uses a 0.28-second stagger with overlapping fades. Selecting or deselecting a multi-select option updates the state in place and does not replay the animation. Reduced-motion preferences disable the animation.
+
+This build includes mobile UI hardening for questionnaire focus, option fade lifecycle, and compact graduate result labels.

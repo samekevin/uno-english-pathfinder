@@ -31,7 +31,16 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.18'));
-assert.ok(index.includes('app.js?v=1.1.18'));
+assert.ok(index.includes('styles.css?v=1.1.26'));
+assert.ok(index.includes('app.js?v=1.1.26'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 console.log('PASS: participant-facing UI copy, no-motion, link-typography, and release checks');
+
+assert.ok(styles.includes('body.quiz-active .masthead{display:none}'));
+assert.ok(index.includes('id="app" class="card" aria-live="polite" tabindex="-1"'));
+assert.ok(app.includes("const optionNodes=[...app.querySelectorAll('.option')]"));
+assert.ok(app.includes("window.setTimeout(()=>node.classList.add('is-visible'),1300 + index*280)"));
+assert.ok(styles.includes('.option-grid .option{opacity:0;transition:opacity .42s ease-out}'));
+assert.ok(styles.includes('.option-grid .option.is-visible{opacity:1}'));
+assert.ok(app.includes("grad_lit_culture_cert:'Literature & Culture Certificate'"));
+assert.ok(app.includes("grad_cnf_cert:'Creative Nonfiction Certificate'"));

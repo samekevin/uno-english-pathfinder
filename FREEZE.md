@@ -58,3 +58,5 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 
 ## Beta v1.1 maintenance update
 Participant-facing ambient motion was removed. Program-link maintenance, result-link typography normalization, suggestion-only Graduate Minor handling, and progress-label refinements do not alter the frozen intellectual scoring dimensions.
+
+Mobile UI hardening release: masthead collapses during questions; explicit option fade lifecycle; result labels compact.

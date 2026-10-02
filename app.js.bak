@@ -12,21 +12,6 @@ let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
 
-function resetViewport(){
-  window.scrollTo(0, 0);
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-  window.requestAnimationFrame(()=>{
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  });
-}
-
-function setQuizFocus(active){
-  document.body.classList.toggle('quiz-active', active);
-}
-
 const routeLabels = {
   ug_major_open:'Undergraduate major',
   ug_addon_open:'Undergraduate add-on',
@@ -49,15 +34,6 @@ const pathwayLinks = {
   grad_tesol_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
   grad_dual_enrollment_cert:'https://www.unomaha.edu/academic-programs/certificates/english-dual-enrollment-certificate.php',
   grad_english_minor:'https://www.unomaha.edu/academic-programs/graduate-minors/english-grad-minor.php'
-};
-
-const pathwayDisplayLabels = {
-  grad_ma:'MA in English',
-  grad_lit_culture_cert:'Literature & Culture Certificate',
-  grad_cnf_cert:'Creative Nonfiction Certificate',
-  grad_tech_comm_cert:'Technical Communication Certificate',
-  grad_tesol_cert:'TESOL Graduate Certificate',
-  grad_dual_enrollment_cert:'Dual Enrollment Certificate'
 };
 
 const resourceLabels = {
@@ -229,8 +205,6 @@ function advanceCurrent(){
 }
 
 function renderQuestion(){
-  setQuizFocus(true);
-  resetViewport();
   const q = questionForCursor();
   if(!q){ renderFinalResult(); return; }
   const plan = planForPhase();
@@ -251,17 +225,6 @@ function renderQuestion(){
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
     </div>
     ${progressHtml}`;
-
-  app.setAttribute('tabindex','-1');
-  const optionNodes=[...app.querySelectorAll('.option')];
-  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  optionNodes.forEach((node,index)=>{
-    if(reducedMotion){ node.classList.add('is-visible'); return; }
-    node.style.opacity='0';
-    window.setTimeout(()=>node.classList.add('is-visible'),1300 + index*280);
-  });
-  resetViewport();
-  window.requestAnimationFrame(()=>app.focus({preventScroll:true}));
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -295,9 +258,6 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
-  setQuizFocus(false);
-  resetViewport();
-  app.setAttribute('tabindex','-1');
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
 }
@@ -311,7 +271,7 @@ function resourceLink(id){
 function pathwayDisplay(id, result){
   const pathway = spec.pathways[id];
   if (!pathway) return '';
-  const label = pathwayDisplayLabels[id] || pathway.name || 'Explore this path';
+  const label = pathway.name || 'Explore this path';
   const route = result.route;
   if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
   if (id === 'ug_secondary_english') {
@@ -336,7 +296,7 @@ function pathwayLink(id, fallbackLabel='Explore this path'){
   const pathway=spec.pathways[id];
   if(!pathway) return '';
   const url=pathway.url || pathwayLinks[id];
-  const label=fallbackLabel !== 'Explore this path' ? fallbackLabel : (pathwayDisplayLabels[id] || pathway.name || fallbackLabel);
+  const label=fallbackLabel !== 'Explore this path' ? fallbackLabel : (pathway.name || fallbackLabel);
   return url ? `<a class="pathway-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} <span aria-hidden="true">↗</span></a>` : `<span>${escapeHtml(label)}</span>`;
 }
 
@@ -389,8 +349,6 @@ function secondaryOptionsMarkup(result){
 }
 
 function renderProvisional(){
-  setQuizFocus(false);
-  resetViewport();
   const result=provisionalResult;
   const profile=result.profile;
   const domainCount=new Set((profile.domainFamilies||[]).filter(f=>f!=='route')).size;
@@ -443,8 +401,6 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
-  setQuizFocus(false);
-  resetViewport();
   const result=computeResult(spec,answers);
   const outcome=classifyBonus(provisionalResult,result);
   const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
