@@ -124,12 +124,12 @@ const resourceLabels = {
   solas_lab: 'SoLaS Lab',
   writing_center: 'UNO Writing Center',
   linden_review: 'The Linden Review',
-  graduate_ta: 'English Graduate Teaching Assistantships',
+  graduate_ta: 'Graduate Teaching Assistantships',
   english_undergraduate: 'Undergraduate Programs',
   english_graduate: 'Graduate Programs',
   english_catalog: 'Course Catalog',
-  english_advising: 'English academic advising',
-  english_contact: 'Contact the Department of English'
+  english_advising: 'Academic Advising',
+  english_contact: 'Contact the Department'
 };
 
 function getQuestion(id){ return spec.questions.find(q=>q.id===id); }
@@ -400,7 +400,7 @@ function pathwayDisplay(id, result){
 function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
-  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current English minor requirements</a>.</p></div>`;
+  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Coordinator</a> or see the <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">English Minor requirements</a>.</p></div>`;
   if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+minorInfo;
   return minorInfo;
 }
@@ -465,7 +465,7 @@ function secondaryOptionsMarkup(result){
   const options = ids.map(id=>compactSecondaryLink(id,result)).filter(Boolean);
   if(!options.length) return '';
   let heading = 'Other paths that fit your interests';
-  if(result.route === 'ug_addon_open') heading = 'Related areas to explore';
+  if(result.route === 'ug_addon_open') heading = 'Related pathways to explore';
   else if(['graduate_open','current_grad_open'].includes(result.route)) heading = 'Other graduate options that fit';
   return `<div class="result-block secondary-options"><h3>${heading}</h3><div class="resource-list">${options.join('')}</div></div>`;
 }
@@ -515,7 +515,7 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
   app.querySelector('#restartProvisional').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
@@ -558,7 +558,7 @@ function renderFinalResult(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Department Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
+  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
   app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
 

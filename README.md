@@ -157,7 +157,7 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Between result states, show a full-screen darkest-palette Department of English interstitial with `Timeless skills.` / `Enduringly human.` The three dots are visible from the start and flicker sequentially; Department of English fades in over 0.20s after a 0.28s entrance, `Timeless skills.` follows, `Enduringly human.` begins 0.50s after the first line completes, and the whole screen fades out over 0.28s while revealing the result underneath. The interstitial duration is randomized among 3, 5, and 7 seconds before each provisional or final result.
 - Preserve the existing mobile result-link, fade, Start Over, and follow-up progress behavior.
 
-## Beta v1.1.35 result-masthead and transition refinement
+## Beta v1.1.36 result-masthead and transition refinement
 - Result-page Department of English / Pathfinder masthead now reuses the landing-page typography exactly; result slogan is `Timeless skills. Enduringly human.`
 - Result computation interstitial now uses the warm result-page background and dark text/dots instead of the dark screen.
 - Randomized result interstitial durations are now 8, 10, or 12 seconds; existing 0.20-second department fade, staggered slogan reveals, sequential dot motion, and 0.28-second fade-out remain intact.

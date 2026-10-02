@@ -15,10 +15,12 @@ assert.ok(!index.includes('UNO English Pathfinder · Beta v1.1'));
 assert.ok(!index.includes('Selecting advances'));
 assert.ok(!app.includes('Show debug'));
 assert.ok(!app.includes('Prototype debug output'));
-assert.ok(app.includes('the Department Coordinator'));
+assert.ok(app.includes('the Coordinator'));
+assert.ok(!app.includes('the Department Coordinator'));
 assert.ok(app.includes('Other graduate options that fit'));
 assert.ok(app.includes('Other paths that fit your interests'));
-assert.ok(app.includes('Related areas to explore'));
+assert.ok(app.includes('Related pathways to explore'));
+assert.ok(!app.includes('Related areas to explore'));
 assert.ok(!app.includes('since this is still a test version'));
 
 // No participant-facing ambient motion remains.
@@ -35,8 +37,8 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.35'));
-assert.ok(index.includes('app.js?v=1.1.35'));
+assert.ok(index.includes('styles.css?v=1.1.36'));
+assert.ok(index.includes('app.js?v=1.1.36'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 
 assert.ok(app.includes('class="link-arrow" aria-hidden="true">↗</span>'));
@@ -72,8 +74,8 @@ for (const blurb of [
 ]) assert.ok(app.includes(blurb), `missing primary-home blurb: ${blurb}`);
 assert.ok(styles.includes('.primary-home-blurb{margin:.45rem 0 0;color:#554d45;font-size:1rem;line-height:1.45;font-style:normal}'));
 assert.ok(styles.includes('@media (max-width:700px){.primary-home-blurb{font-size:.98rem;line-height:1.45;max-width:100%;overflow-wrap:anywhere}}'));
-assert.ok(index.includes('styles.css?v=1.1.35'));
-assert.ok(index.includes('app.js?v=1.1.35'));
+assert.ok(index.includes('styles.css?v=1.1.36'));
+assert.ok(index.includes('app.js?v=1.1.36'));
 
 for (const label of ['Undergraduate Programs','Graduate Programs','Course Catalog']) assert.ok(app.includes(label), `missing shortened resource label: ${label}`);
 for (const stale of ["english_undergraduate: 'English undergraduate programs'","english_graduate: 'English graduate programs'","english_catalog: 'English course catalog'"]) assert.ok(!app.includes(stale), `stale long resource label mapping: ${stale}`);
@@ -123,3 +125,6 @@ assert.ok(styles.includes('.result-active .masthead p{display:block'));
 assert.ok(styles.includes('.result-active .masthead .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:700;opacity:.65}'));
 assert.ok(styles.includes('color:#514a42;font-size:1.15rem'));
 console.log('PASS: transition, result-header, and question-copy refinements');
+
+for (const label of ['Graduate Teaching Assistantships','Dual Enrollment','Academic Advising','Contact the Department','Email the Chair','English Minor requirements','Strongest curricular pathway','Related pathways to explore']) assert.ok(app.includes(label) || specData.includes(label), `missing streamlined label: ${label}`);
+assert.ok(app.includes('Places to explore the curiosity'));

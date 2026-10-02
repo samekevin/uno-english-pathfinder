@@ -4262,7 +4262,7 @@
     },
     "graduate_ta": {
       "type": "opportunity",
-      "title": "English Graduate Teaching Assistantships",
+      "title": "Graduate Teaching Assistantships",
       "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/english-graduate-teaching-assistantships.php",
       "priority": 80,
       "routes": [
@@ -4274,14 +4274,14 @@
     },
     "english_advising": {
       "type": "human_handoff",
-      "title": "English Academic Advising",
+      "title": "Academic Advising",
       "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/advising.php",
       "priority": 100,
       "verified_on": "2026-10-01"
     },
     "english_contact": {
       "type": "human_handoff",
-      "title": "Contact the Department of English",
+      "title": "Contact the Department",
       "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/about-us/contact-us/index.php",
       "priority": 100,
       "verified_on": "2026-10-01"
@@ -4316,7 +4316,7 @@
     },
     "dual_enrollment_english": {
       "type": "program_experience",
-      "title": "Dual Enrollment English",
+      "title": "Dual Enrollment",
       "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/community-engagement/dual-enrollment-english.php",
       "priority": 90,
       "routes": [
@@ -4365,8 +4365,8 @@
     },
     "community": {
       "heading": "Want to keep exploring?",
-      "body": "Have a question about where your interests might lead? Email the Department Chair and tell us what caught your attention. You can also explore English advising and department resources below.",
-      "submit": "Email the Department Chair",
+      "body": "Have a question about where your interests might lead? Email the Chair and tell us what caught your attention. You can also explore English advising and department resources below.",
+      "submit": "Email the Chair",
       "skip": "Keep exploring on your own.",
       "email_required": false,
       "result_gated": false
