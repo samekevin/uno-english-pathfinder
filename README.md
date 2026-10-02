@@ -64,6 +64,11 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Territory labels remain interpretive interests, separate from the curricular-home recommendation below.
 - No scoring, routing, pathway, or resource logic changed in this release.
 
+## Implementation patch 1.1.4
+- Corrected Initial Interests and Bonus Round counters to track actual completed interactions.
+- The route opener and non-scoring context/personalization questions are excluded from the scored counter.
+- The progress bar now follows the same source-of-truth calculation as the visible counter.
+
 ## Beta v1.1
 
 - Participant-facing release label is `Beta v1.1`.

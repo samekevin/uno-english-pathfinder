@@ -1,5 +1,6 @@
 import { computeResult, scoreAnswers } from './src/engine.js';
 import { buildNextQuickQuestion as planNextQuickQuestion } from './src/planner.js';
+import { getInitialProgress, getBonusProgress } from './src/progress.js';
 
 const app = document.querySelector('#app');
 let spec;
@@ -208,10 +209,9 @@ function renderQuestion(){
   const plan = planForPhase();
   const selected = answers[q.id];
   const complete = Array.isArray(selected) ? selected.length>0 : Boolean(selected);
-  const totalSteps = phase==='quick' ? Math.max(1, quickPlan.length) + (answers.OPEN ? 1 : 0) : bonusPlan.length;
-  const currentStep = cursor+1 + (phase==='quick' && answers.OPEN ? 1 : 0);
-  const progressPct=Math.min(100,Math.round((currentStep/totalSteps)*100));
-  const eyebrow = phase==='quick' ? (!answers.OPEN ? 'Starting point' : `Initial interests · ${Object.keys(answers).filter(id=>id!=='OPEN' && (getQuestion(id)?.score_budget ?? 0)>0).length} of ${Number(spec.config.quick_path.target_scored_interactions || 6)}`) : `Bonus Round · ${cursor+1} of ${bonusPlan.length}`;
+  const progress = phase==='quick' ? getInitialProgress(spec, answers, q) : getBonusProgress(cursor, bonusPlan.length);
+  const eyebrow = progress.label;
+  const progressHtml = progress.showBar ? `<div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="${progress.total}" aria-valuenow="${progress.current}" aria-label="${escapeHtml(progress.label)}"><div class="progress-fill" style="width:${progress.percent}%"></div></div>` : '';
   const nextLabel = phase==='bonus' && cursor===bonusPlan.length-1 ? 'Finish my map' : 'Continue';
   const isMulti = q.select_mode==='up_to_two';
   app.innerHTML=`
@@ -223,7 +223,7 @@ function renderQuestion(){
     <div class="actions">
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
     </div>
-    <div class="progress-track"><div class="progress-fill" style="width:${progressPct}%"></div></div>`;
+    ${progressHtml}`;
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -395,4 +395,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.3', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.4', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
