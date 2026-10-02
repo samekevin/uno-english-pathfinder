@@ -4328,7 +4328,7 @@
       "INSUFFICIENT": "You're harder to read than we expected. In fairness, several of your choices were gloriously unhelpful. Academically? We have almost nothing. Spiritually? Immaculate. Give us three actual answers and we'll take another shot."
     },
     "profile_shape": {
-      "BROAD": "Your answers crossed several areas of English, with more than one interest staying in the picture. Rather than force a single winner, this map shows the areas that kept recurring.",
+      "BROAD": "Your interests span several areas of English.",
       "EXPLORATORY": "You're still exploring - and your answers actually look like it. Nothing is dominating yet, so we're not going to pretend one path is ‘the answer.’"
     },
     "bonus": {

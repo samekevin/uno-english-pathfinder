@@ -85,3 +85,10 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 - Participant-facing result copy uses **areas** rather than **territories**.
 - Approved prompt edits were synchronized in `questions.json` and `pathfinder.spec.json`.
 - Q02, L01, W02, and FU_LANG_A received modest signal recalibration to match their revised meanings; IDs and overall engine architecture remain unchanged.
+
+## Beta v1.1 result/mobile refinement
+
+- Broad/mixed results now use one short headline plus one supporting sentence instead of two repetitive paragraphs.
+- Undergraduate add-on guidance keeps the English Minor primary and mentions a possible English double major without adding a second department-contact prompt.
+- The English Minor handoff reads “Contact our English Department Coordinator” and retains the live catalog requirements link.
+- Result typography and spacing now scale down on phones; this is one responsive app, not a separate mobile version.

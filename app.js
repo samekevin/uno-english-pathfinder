@@ -25,7 +25,7 @@ const pathwayLinks = {
   ug_cnf:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/creative-nonfiction-writing.php',
   ug_language_studies:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
   ug_secondary_english:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
-  ug_english_minor:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_english_minor:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/minor.php',
   ug_tesol:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
   grad_ma:'https://www.unomaha.edu/academic-programs/graduate-degrees/english-ma.php',
   grad_cnf_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
@@ -272,8 +272,8 @@ function pathwayDisplay(id, result){
 function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
-  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">English Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current catalog requirements</a>.</p></div>`;
-  const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, an English double major may also be worth exploring. <a href="https://www.unomaha.edu/college-of-arts-and-sciences/english/about-us/contact-us/index.php" target="_blank" rel="noopener noreferrer">Contact the Department of English</a> to see how it could fit your plan.</p>`;
+  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">our English Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current catalog requirements</a>.</p></div>`;
+  const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, pursuing a double major in English may also be worth exploring.</p>`;
   if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+doubleMajor+minorInfo;
   return doubleMajor+minorInfo;
 }
@@ -370,7 +370,7 @@ function renderProvisional(){
     teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
   };
   const profileCopy = result.profileShape === 'BROAD'
-    ? 'Your answers opened several distinct doors in English. That breadth is useful information; this map shows the areas that kept recurring rather than pretending one favorite has already won.'
+    ? 'Rather than force a single winner, this map highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
       ? 'We have some real signals, but they are still moving around. A few sharper questions will help us see what keeps recurring.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
@@ -409,7 +409,7 @@ function renderFinalResult(){
     teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
   };
   const profileCopy = result.profileShape === 'BROAD'
-    ? 'Your answers opened several distinct doors in English. That breadth is useful information; this map shows the areas that kept recurring rather than pretending one favorite has already won.'
+    ? 'Rather than force a single winner, this map highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
       ? 'Your answers crossed several connected areas of English, so this map is best read as a set of starting points. Not seeing yourself here? Start over and make a different set of choices.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
@@ -422,4 +422,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.7', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.8', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
