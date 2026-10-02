@@ -19,7 +19,7 @@ const six = {OPEN:'UG_MAJOR'};
 for(const id of ['Q01','Q02','Q03','Q04','Q05','L01']) six[id]=spec.questions.find(q=>q.id===id).options[0].id;
 const q7 = {id:'Q07', family:'language', score_budget:1};
 assert.deepEqual(getInitialProgress(spec, six, q7), {
-  showCounter:true, showBar:false, label:'Initial interests · follow-up', current:6, total:6, percent:100
+  showCounter:true, showBar:true, label:'Initial interests · follow-up 1 of 2', current:6, total:6, percent:100
 });
 
 const context = spec.questions.find(q => q.id === 'GD01');

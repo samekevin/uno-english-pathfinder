@@ -24,26 +24,14 @@ for (const stale of ['playAmbientMotion','scheduleAmbientMotion','dust-canvas','
   assert.ok(!styles.includes(stale), `stale motion token in styles.css: ${stale}`);
 }
 
-assert.ok(!app.includes('pursuing a double major in English may also be worth exploring.')); // route-explanation paragraph intentionally removed
+assert.ok(app.includes('pursuing a double major in English may also be worth exploring.'));
 assert.ok(app.includes('Rather than force a single winner, this path highlights the areas that kept recurring.'));
 assert.ok(app.includes('Provisional path ·'));
 assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('id="app" class="card" aria-live="polite" tabindex="-1"'));
-assert.ok(index.includes('styles.css?v=1.1.25'));
-assert.ok(index.includes('app.js?v=1.1.25'));
+assert.ok(index.includes('styles.css?v=1.1.18'));
+assert.ok(index.includes('app.js?v=1.1.18'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 console.log('PASS: participant-facing UI copy, no-motion, link-typography, and release checks');
-assert.ok(app.includes("ug_language_studies: 'For people who notice what language is doing—and want to know the systems that make it work.'"));
-assert.ok(app.includes("ug_literatures: 'For readers interested in what texts mean—and the worlds that shaped them and that they helped shape.'"));
-assert.ok(app.includes("ug_cnf: 'For people who find a true story and immediately start wondering how to tell it—and tell it well.'"));
-assert.ok(app.includes("ug_secondary_english: 'For people who keep finding things worth reading, writing, discussing—and teaching.'"));
-assert.ok(app.includes("ug_english_minor: 'Make English part of your world—and see the human experience from a few more angles.'"));
-assert.ok(app.includes('primaryBlurbs[id]'));
-
-assert.ok(app.includes('setQuizFocus(true)'));
-assert.ok(app.includes('setQuizFocus(false)'));
-assert.ok(app.includes('app.focus({preventScroll:true})'));
-assert.ok(styles.includes('body.quiz-active .masthead{display:none}'));

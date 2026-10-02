@@ -12,19 +12,6 @@ let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
 
-function resetViewport(){
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-  window.requestAnimationFrame(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  });
-}
-function setQuizFocus(active){ document.body.classList.toggle('quiz-active', active); }
-
-
 const routeLabels = {
   ug_major_open:'Undergraduate major',
   ug_addon_open:'Undergraduate add-on',
@@ -218,8 +205,6 @@ function advanceCurrent(){
 }
 
 function renderQuestion(){
-  setQuizFocus(true);
-  resetViewport();
   const q = questionForCursor();
   if(!q){ renderFinalResult(); return; }
   const plan = planForPhase();
@@ -240,8 +225,6 @@ function renderQuestion(){
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
     </div>
     ${progressHtml}`;
-  resetViewport();
-  window.requestAnimationFrame(()=>app.focus({preventScroll:true}));
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -275,8 +258,6 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
-  setQuizFocus(false);
-  resetViewport();
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
 }
@@ -292,27 +273,23 @@ function pathwayDisplay(id, result){
   if (!pathway) return '';
   const label = pathway.name || 'Explore this path';
   const route = result.route;
-  const primaryBlurbs = {
-    ug_language_studies: 'For people who notice what language is doing—and want to know the systems that make it work.',
-    ug_literatures: 'For readers interested in what texts mean—and the worlds that shaped them and that they helped shape.',
-    ug_cnf: 'For people who find a true story and immediately start wondering how to tell it—and tell it well.',
-    ug_secondary_english: 'For people who keep finding things worth reading, writing, discussing—and teaching.',
-    ug_english_minor: 'Make English part of your world—and see the human experience from a few more angles.'
-  };
-  const link = (route === 'ug_addon_open' && id === 'ug_english_minor') ? pathwayLink(id, 'English Minor') : pathwayLink(id, label);
-  if (primaryBlurbs[id]) return `${link}<p class="primary-home-blurb">${escapeHtml(primaryBlurbs[id])}</p>`;
-  if (id === 'grad_dual_enrollment_cert') {
-    return `${link}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
+  if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
+  if (id === 'ug_secondary_english') {
+    return `${pathwayLink(id, label)}<p class="quiet">This is a special double-major route for students pursuing the BS in Secondary Education with the Secondary English 7-12 endorsement. The English undergraduate programs page explains how the English concentration fits that route.</p>`;
   }
-  return link;
+  if (id === 'grad_dual_enrollment_cert') {
+    return `${pathwayLink(id, label)}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
+  }
+  return pathwayLink(id, label);
 }
 
 function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
   const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current English minor requirements</a>.</p></div>`;
-  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+minorInfo;
-  return minorInfo;
+  const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, pursuing a double major in English may also be worth exploring.</p>`;
+  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+doubleMajor+minorInfo;
+  return doubleMajor+minorInfo;
 }
 
 function pathwayLink(id, fallbackLabel='Explore this path'){
@@ -372,8 +349,6 @@ function secondaryOptionsMarkup(result){
 }
 
 function renderProvisional(){
-  setQuizFocus(false);
-  resetViewport();
   const result=provisionalResult;
   const profile=result.profile;
   const domainCount=new Set((profile.domainFamilies||[]).filter(f=>f!=='route')).size;
@@ -415,8 +390,9 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button></div></div>`;
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn quiet-action" id="provisionalRestart">Start Over</button></div></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
+  app.querySelector('#provisionalRestart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
 
 function classifyBonus(before, after){
@@ -426,8 +402,6 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
-  setQuizFocus(false);
-  resetViewport();
   const result=computeResult(spec,answers);
   const outcome=classifyBonus(provisionalResult,result);
   const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
@@ -463,4 +437,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.22', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
