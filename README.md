@@ -114,3 +114,10 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 Single- and multi-select answer choices fade in once when a question first appears. The entrance begins after 1.3 seconds and uses a 0.28-second stagger with overlapping fades. Selecting or deselecting a multi-select option updates the state in place and does not replay the animation. Reduced-motion preferences disable the animation.
 
 This build includes mobile UI hardening for questionnaire focus, option fade lifecycle, and compact graduate result labels.
+
+### Mobile UI / provisional-result patch
+
+- Fixed option entrance fades by removing the inline opacity override that prevented the visible-state CSS from taking effect.
+- Graduate secondary result links use compact participant-facing labels, including Literature & Culture Certificate and Creative Nonfiction Certificate, with mobile-safe wrapping.
+- Added the requested provisional **Start Over** control beside **Take the Bonus Round**; it uses transparent fill, regular-weight inherited/muted text, and resets to the welcome screen.
+

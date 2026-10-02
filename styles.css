@@ -26,3 +26,20 @@ body.quiz-active .shell{padding-top:18px}
 .result .pathway-link{display:inline-flex;align-items:baseline;gap:.28em;color:#503719;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .result .pathway-link:hover,.result .pathway-link:focus-visible{color:#1e1b18}
 @media (max-width:700px){.result .pathway-link,.result .resource-link{font-size:1rem;line-height:1.42}}
+
+
+/* Mobile result links: let long graduate credential names wrap cleanly. */
+.result .resource-link,.result .pathway-link{box-sizing:border-box;min-width:0;max-width:100%;}
+.result .resource-link{width:100%;}
+.result .resource-link span:first-child,.result .pathway-link{min-width:0;overflow-wrap:break-word;hyphens:auto;}
+.result .resource-link span:last-child{flex:0 0 auto;}
+
+/* Provisional reset is secondary in hierarchy: transparent, muted, regular weight. */
+.provisional-actions{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.btn.ghost{background:transparent;color:inherit;font-weight:400;border:1px solid transparent;padding:12px 10px;}
+.btn.ghost:hover,.btn.ghost:focus-visible{background:transparent;color:inherit;border-color:rgba(30,27,24,.22);outline:none;}
+@media (max-width:700px){
+  .provisional-actions{width:100%;}
+  .provisional-actions .btn{width:auto;max-width:100%;}
+  .result .pathway-link{display:flex;width:100%;}
+}

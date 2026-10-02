@@ -31,9 +31,21 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.26'));
-assert.ok(index.includes('app.js?v=1.1.26'));
+assert.ok(index.includes('styles.css?v=1.1.27'));
+assert.ok(index.includes('app.js?v=1.1.27'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
+
+assert.ok(app.includes('id="restartProvisional"'));
+assert.ok(app.includes('id="bonus"'));
+assert.ok(app.includes("answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();"));
+assert.ok(app.includes("grad_lit_culture_cert: 'Literature & Culture Certificate'"));
+assert.ok(app.includes("grad_cnf_cert: 'Creative Nonfiction Certificate'"));
+assert.ok(!app.includes("node.style.opacity='0'"));
+assert.ok(styles.includes('.result .resource-link{width:100%;}'));
+assert.ok(styles.includes('.result .resource-link span:first-child,.result .pathway-link{min-width:0;overflow-wrap:break-word;hyphens:auto;}'));
+assert.ok(styles.includes('.btn.ghost{background:transparent;color:inherit;font-weight:400'));
+assert.ok(index.includes('styles.css?v=1.1.27'));
+assert.ok(index.includes('app.js?v=1.1.27'));
 console.log('PASS: participant-facing UI copy, no-motion, link-typography, and release checks');
 
 assert.ok(styles.includes('body.quiz-active .masthead{display:none}'));

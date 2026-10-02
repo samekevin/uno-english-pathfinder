@@ -257,7 +257,6 @@ function renderQuestion(){
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   optionNodes.forEach((node,index)=>{
     if(reducedMotion){ node.classList.add('is-visible'); return; }
-    node.style.opacity='0';
     window.setTimeout(()=>node.classList.add('is-visible'),1300 + index*280);
   });
   resetViewport();
@@ -371,7 +370,16 @@ function compactSecondaryLink(id, result){
     ug_language_studies: 'Language Studies',
     ug_secondary_english: 'Secondary English Teaching'
   } : {};
-  const label = shortLabels[id] || pathway.name || 'Explore this path';
+  const graduateShortLabels = {
+    grad_lit_culture_cert: 'Literature & Culture Certificate',
+    grad_cnf_cert: 'Creative Nonfiction Certificate',
+    grad_tech_comm_cert: 'Technical Communication Certificate',
+    grad_tesol_cert: 'TESOL Graduate Certificate',
+    grad_dual_enrollment_cert: 'Dual Enrollment Certificate',
+    grad_ma: 'MA in English',
+    grad_english_minor: 'English Graduate Minor'
+  };
+  const label = shortLabels[id] || graduateShortLabels[id] || pathway.name || 'Explore this path';
   const url = pathwayLinks[id] || pathway.url;
   return url
     ? `<a class="resource-link" href="${url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(label)}</span><span aria-hidden="true">↗</span></a>`
@@ -432,8 +440,9 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button></div></div>`;
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
+  app.querySelector('#restartProvisional').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
 
 function classifyBonus(before, after){

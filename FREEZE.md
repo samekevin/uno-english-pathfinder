@@ -60,3 +60,8 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 Participant-facing ambient motion was removed. Program-link maintenance, result-link typography normalization, suggestion-only Graduate Minor handling, and progress-label refinements do not alter the frozen intellectual scoring dimensions.
 
 Mobile UI hardening release: masthead collapses during questions; explicit option fade lifecycle; result labels compact.
+
+## Beta v1.1.27 mobile UI maintenance patch
+- Fixed option fade lifecycle so CSS opacity transitions are no longer overridden by inline styles.
+- Compactened graduate secondary result labels and added mobile-safe wrapping for long credential names.
+- Added the provisional-result **Start Over** action beside **Take the Bonus Round**; it resets the session to the welcome screen without changing scoring logic.
