@@ -17,9 +17,28 @@ assert.deepEqual(getInitialProgress(spec, oneAnswer, spec.questions.find(q => q.
 
 const six = {OPEN:'UG_MAJOR'};
 for(const id of ['Q01','Q02','Q03','Q04','Q05','L01']) six[id]=spec.questions.find(q=>q.id===id).options[0].id;
-const q7 = {id:'Q07', family:'language', score_budget:1};
-assert.deepEqual(getInitialProgress(spec, six, q7), {
-  showCounter:true, showBar:true, label:'Initial interests · follow-up 1 of 2', current:6, total:6, percent:100
+const q7 = spec.questions.find(q => q.id === 'FU_LANG_A');
+assert.deepEqual(getInitialProgress(spec, six, q7, ['Q01','Q02','Q03','Q04','Q05','L01','FU_LANG_A']), {
+  showCounter:false, showBar:false, label:'Follow-up question', current:6, total:6, percent:100
+});
+
+const q7b = spec.questions.find(q => q.id === 'FU_LIT_A');
+const q7c = spec.questions.find(q => q.id === 'FU_PRO_A');
+const q8 = spec.questions.find(q => q.id === 'R01');
+const expandedPlan = ['Q01','Q02','Q03','Q04','Q05','L01','FU_LIT_A','R01'];
+const twoFollowupPlan = ['Q01','Q02','Q03','Q04','Q05','L01','FU_LIT_A','FU_PRO_A'];
+assert.deepEqual(getInitialProgress(spec, six, q7b, expandedPlan), {
+  showCounter:false, showBar:false, label:'Follow-up question', current:6, total:6, percent:100
+});
+assert.deepEqual(getInitialProgress(spec, six, q7b, twoFollowupPlan), {
+  showCounter:true, showBar:true, label:'Follow-up question 1 of 2', current:1, total:2, percent:50
+});
+assert.deepEqual(getInitialProgress(spec, {...six, FU_LIT_A:'FU_LIT_A'}, q7c, twoFollowupPlan), {
+  showCounter:true, showBar:true, label:'Follow-up question 2 of 2', current:2, total:2, percent:100
+});
+
+assert.deepEqual(getInitialProgress(spec, {...six, FU_LIT_A:'FU_LIT_A'}, q8, expandedPlan), {
+  showCounter:true, showBar:true, label:'Initial interests · additional check 2 of 2', current:6, total:6, percent:100
 });
 
 const context = spec.questions.find(q => q.id === 'GD01');

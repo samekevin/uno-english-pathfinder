@@ -11,6 +11,10 @@ let quickPlan = [];
 let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
+let resultTransitionTimer = null;
+let resultTransitionCleanupTimer = null;
+const WELCOME_SLOGAN='There probably isn’t one right way into the English program. Let your curiosity guide you.';
+const RESULT_SLOGAN='Timeless skills. Enduringly human.';
 
 function resetViewport(){
   window.scrollTo(0, 0);
@@ -25,6 +29,62 @@ function resetViewport(){
 
 function setQuizFocus(active){
   document.body.classList.toggle('quiz-active', active);
+}
+
+function setResultChrome(active){
+  document.body.classList.toggle('result-active', active);
+  const slogan=document.querySelector('.masthead p');
+  if(slogan) slogan.textContent=active ? RESULT_SLOGAN : WELCOME_SLOGAN;
+}
+
+function clearResultTransition(){
+  if(resultTransitionTimer !== null){
+    window.clearTimeout(resultTransitionTimer);
+    resultTransitionTimer = null;
+  }
+  if(resultTransitionCleanupTimer !== null){
+    window.clearTimeout(resultTransitionCleanupTimer);
+    resultTransitionCleanupTimer = null;
+  }
+  const overlay=document.querySelector('#result-transition-overlay');
+  if(overlay) overlay.remove();
+  document.body.classList.remove('computing-active');
+  app.classList.remove('computing-app');
+}
+
+function renderComputingTransition(nextRender){
+  clearResultTransition();
+  setQuizFocus(false);
+  setResultChrome(false);
+  document.body.classList.add('computing-active');
+  app.classList.add('computing-app');
+  app.setAttribute('tabindex','-1');
+  const durations=[8000,10000,12000];
+  const duration=durations[Math.floor(Math.random()*durations.length)];
+  const fadeOutMs=280;
+  const overlay=document.createElement('div');
+  overlay.id='result-transition-overlay';
+  overlay.className='result-transition-overlay';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.setAttribute('aria-label','Computing your Pathfinder result');
+  overlay.innerHTML=`<div class="computing-screen" data-duration-ms="${duration}"><div class="computing-copy"><div class="computing-department">Department of English</div><div class="computing-tagline"><span>Timeless skills.</span><span>Enduringly human.</span></div><div class="computing-dots" aria-hidden="true"><span></span><span></span><span></span></div></div></div>`;
+  document.body.appendChild(overlay);
+  window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
+  resetViewport();
+  const revealAt=Math.max(0,duration-fadeOutMs);
+  resultTransitionTimer=window.setTimeout(()=>{
+    resultTransitionTimer=null;
+    app.classList.remove('computing-app');
+    setResultChrome(true);
+    nextRender();
+    overlay.classList.add('is-fading-out');
+    resultTransitionCleanupTimer=window.setTimeout(()=>{
+      resultTransitionCleanupTimer=null;
+      overlay.remove();
+      document.body.classList.remove('computing-active');
+    },fadeOutMs);
+  },revealAt);
 }
 
 const routeLabels = {
@@ -65,9 +125,9 @@ const resourceLabels = {
   writing_center: 'UNO Writing Center',
   linden_review: 'The Linden Review',
   graduate_ta: 'English Graduate Teaching Assistantships',
-  english_undergraduate: 'English undergraduate programs',
-  english_graduate: 'English graduate programs',
-  english_catalog: 'English course catalog',
+  english_undergraduate: 'Undergraduate Programs',
+  english_graduate: 'Graduate Programs',
+  english_catalog: 'Course Catalog',
   english_advising: 'English academic advising',
   english_contact: 'Contact the Department of English'
 };
@@ -201,7 +261,7 @@ function advanceCurrent(){
       if(cursor===quickPlan.length){
         provisionalResult = computeResult(spec, answers);
         phase='provisional';
-        renderProvisional();
+        renderComputingTransition(renderProvisional);
         return;
       }
       // Record the completed question, then choose the next module from the current evidence.
@@ -217,18 +277,20 @@ function advanceCurrent(){
       if(scored >= Number(spec.config.quick_path.min_scored_interactions || 5)){
         provisionalResult=computeResult(spec, answers);
         phase='provisional';
-        renderProvisional();
+        renderComputingTransition(renderProvisional);
         return;
       }
       renderQuestion();
       return;
     }
-    if(phase==='bonus' && cursor===bonusPlan.length-1){ renderFinalResult(); return; }
+    if(phase==='bonus' && cursor===bonusPlan.length-1){ renderComputingTransition(renderFinalResult); return; }
     if(phase==='bonus'){ cursor++; renderQuestion(); }
   }, 220);
 }
 
 function renderQuestion(){
+  clearResultTransition();
+  setResultChrome(false);
   setQuizFocus(true);
   resetViewport();
   const q = questionForCursor();
@@ -236,7 +298,7 @@ function renderQuestion(){
   const plan = planForPhase();
   const selected = answers[q.id];
   const complete = Array.isArray(selected) ? selected.length>0 : Boolean(selected);
-  const progress = phase==='quick' ? getInitialProgress(spec, answers, q) : getBonusProgress(cursor, bonusPlan.length);
+  const progress = phase==='quick' ? getInitialProgress(spec, answers, q, quickPlan) : getBonusProgress(cursor, bonusPlan.length);
   const eyebrow = progress.label;
   const progressHtml = progress.showBar ? `<div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="${progress.total}" aria-valuenow="${progress.current}" aria-label="${escapeHtml(progress.label)}"><div class="progress-fill" style="width:${progress.percent}%"></div></div>` : '';
   const nextLabel = phase==='bonus' && cursor===bonusPlan.length-1 ? 'Finish my path' : 'Continue';
@@ -294,6 +356,8 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
+  clearResultTransition();
+  setResultChrome(false);
   setQuizFocus(false);
   resetViewport();
   app.setAttribute('tabindex','-1');
@@ -312,23 +376,33 @@ function pathwayDisplay(id, result){
   if (!pathway) return '';
   const label = pathwayDisplayLabels[id] || pathway.name || 'Explore this path';
   const route = result.route;
-  if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
+  const primaryBlurbs = {
+    ug_language_studies: 'For people who notice what language is doing—and want to know the systems that make it work.',
+    ug_literatures: 'For readers interested in what texts mean—and the worlds that shaped them and that they helped shape.',
+    ug_cnf: 'For people who find a true story and immediately start wondering how to tell it—and tell it well.',
+    ug_secondary_english: 'For people who keep finding things worth reading, writing, discussing—and teaching.',
+    ug_english_minor: 'Make English part of your world—and see the human experience from a few more angles.'
+  };
+  if (route === 'ug_addon_open' && id === 'ug_english_minor') {
+    return `${pathwayLink(id, 'English Minor')}<p class="primary-home-blurb">${escapeHtml(primaryBlurbs.ug_english_minor)}</p>`;
+  }
+  const link = pathwayLink(id, label);
+  if (primaryBlurbs[id]) return `${link}<p class="primary-home-blurb">${escapeHtml(primaryBlurbs[id])}</p>`;
   if (id === 'ug_secondary_english') {
-    return `${pathwayLink(id, label)}<p class="quiet">This is a special double-major route for students pursuing the BS in Secondary Education with the Secondary English 7-12 endorsement. The English undergraduate programs page explains how the English concentration fits that route.</p>`;
+    return `${link}<p class="quiet">This is a special double-major route for students pursuing the BS in Secondary Education with the Secondary English 7-12 endorsement. The English undergraduate programs page explains how the English concentration fits that route.</p>`;
   }
   if (id === 'grad_dual_enrollment_cert') {
-    return `${pathwayLink(id, label)}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
+    return `${link}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
   }
-  return pathwayLink(id, label);
+  return link;
 }
 
 function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
   const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current English minor requirements</a>.</p></div>`;
-  const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, pursuing a double major in English may also be worth exploring.</p>`;
-  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+doubleMajor+minorInfo;
-  return doubleMajor+minorInfo;
+  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+minorInfo;
+  return minorInfo;
 }
 
 function pathwayLink(id, fallbackLabel='Explore this path'){
@@ -336,7 +410,7 @@ function pathwayLink(id, fallbackLabel='Explore this path'){
   if(!pathway) return '';
   const url=pathway.url || pathwayLinks[id];
   const label=fallbackLabel !== 'Explore this path' ? fallbackLabel : (pathwayDisplayLabels[id] || pathway.name || fallbackLabel);
-  return url ? `<a class="pathway-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} <span aria-hidden="true">↗</span></a>` : `<span>${escapeHtml(label)}</span>`;
+  return url ? `<a class="pathway-link" href="${url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(label)}</span><span class="link-arrow" aria-hidden="true">↗</span></a>` : `<span>${escapeHtml(label)}</span>`;
 }
 
 function getAlsoIds(result){
@@ -397,6 +471,7 @@ function secondaryOptionsMarkup(result){
 }
 
 function renderProvisional(){
+  setResultChrome(true);
   setQuizFocus(false);
   resetViewport();
   const result=provisionalResult;
@@ -452,6 +527,7 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
+  setResultChrome(true);
   setQuizFocus(false);
   resetViewport();
   const result=computeResult(spec,answers);
@@ -489,4 +565,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.35', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

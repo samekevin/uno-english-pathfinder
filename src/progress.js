@@ -13,7 +13,7 @@ export function countCompletedScoredInitial(spec, answers){
   }).length;
 }
 
-export function getInitialProgress(spec, answers, currentQuestion){
+export function getInitialProgress(spec, answers, currentQuestion, plan = []){
   const target = Number(spec.config.quick_path.target_scored_interactions || 6);
   const max = Number(spec.config.quick_path.max_scored_interactions || 8);
   const completed = countCompletedScoredInitial(spec, answers);
@@ -30,12 +30,38 @@ export function getInitialProgress(spec, answers, currentQuestion){
   const currentAnswered = isCompleteAnswer(answers[currentQuestion.id]);
   const current = currentAnswered ? Math.max(1, completed) : completed + 1;
   if (current > target) {
-    const extraCurrent = Math.min(max - target, current - target);
-    const extraTotal = Math.max(1, max - target);
+    const postTargetIds = Array.isArray(plan) ? plan.slice(target) : [];
+    const postTargetQuestions = postTargetIds.map(id => spec.questions.find(q => q.id === id)).filter(Boolean);
+    if(currentQuestion.family === 'followup'){
+      const followups = postTargetQuestions.filter(q => q.family === 'followup');
+      const followupIndex = Math.max(0, followups.findIndex(q => q.id === currentQuestion.id));
+      const followupTotal = Math.max(1, followups.length);
+      if(followupTotal === 1){
+        return {
+          showCounter:false,
+          showBar:false,
+          label:'Follow-up question',
+          current:target,
+          total:target,
+          percent:100
+        };
+      }
+      return {
+        showCounter:true,
+        showBar:true,
+        label:`Follow-up question ${followupIndex + 1} of ${followupTotal}`,
+        current:followupIndex + 1,
+        total:followupTotal,
+        percent:Math.min(100, Math.round(((followupIndex + 1) / followupTotal) * 100))
+      };
+    }
+    const extraTotal = Math.max(1, Math.min(max - target, postTargetQuestions.length || (max - target)));
+    const extraIndex = postTargetQuestions.findIndex(q => q.id === currentQuestion.id);
+    const extraCurrent = Math.max(1, Math.min(extraTotal, extraIndex + 1));
     return {
       showCounter:true,
       showBar:true,
-      label:`Initial interests · follow-up ${extraCurrent} of ${extraTotal}`,
+      label:`Initial interests · additional check ${extraCurrent} of ${extraTotal}`,
       current:target,
       total:target,
       percent:100

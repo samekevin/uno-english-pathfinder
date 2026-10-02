@@ -121,3 +121,43 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Graduate secondary result links use compact participant-facing labels, including Literature & Culture Certificate and Creative Nonfiction Certificate, with mobile-safe wrapping.
 - Added the requested provisional **Start Over** control beside **Take the Bonus Round**; it uses transparent fill, regular-weight inherited/muted text, and resets to the welcome screen.
 
+
+## Beta v1.1.28 primary-home copy + follow-up progress patch
+- Merged only the participant-facing primary-home blurb layer from the separate copy package; the existing mobile UI hardening remains intact.
+- Added concise primary-home blurbs for Language Studies, Literatures in English, Creative Nonfiction, Secondary English Teaching, and English Minor.
+- Kept the blurbs separate from scoring and pathway labels so the result hierarchy remains unchanged.
+- Corrected adaptive progress labels so an actual follow-up sequence is counted from the follow-up questions that are really present; a lone follow-up now reads “follow-up 1 of 1” rather than “1 of 2.”
+- Added regression coverage for one-follow-up and follow-up-plus-additional-check cases.
+
+
+
+## Beta v1.1.29 add-on copy + follow-up progress refinement
+
+- Removed the undergraduate add-on paragraph beginning ‘Because you came in looking to add English…’ from results.
+- A single adaptive follow-up now displays only ‘Follow-up question’ with no counter or progress bar.
+- A sequence of two or more actual follow-ups displays a follow-up-specific counter and proportional progress bar.
+
+
+## Beta v1.1.30 result-link spacing refinement
+- Result-page external-link arrows now sit directly beside their link labels instead of being pushed to the far edge of the result card.
+- The rule applies consistently to primary curricular-home links, related-path links, resource links, and the advising/contact resource links rendered on result pages.
+- Long result links retain mobile-safe wrapping while keeping the external-link arrow visually adjacent to the label.
+
+## Beta v1.1.32 compact result-resource labels
+
+- Shortened three generic result-resource labels to `Undergraduate Programs`, `Graduate Programs`, and `Course Catalog`.
+- Disabled automatic hyphenation/forced anywhere-breaking for result-page link labels so short labels stay visually intact on mobile.
+- Preserved all v1.1.30 result-link arrow spacing, mobile hardening, fade, progress, and provisional-result behavior.
+
+
+## Beta v1.1.34 result interstitial and language-mystery copy
+
+- Updated the language mystery option to `Why are some aspects of language automatic while others take work?`.
+- Results pages center the Department of English / Pathfinder masthead and show the existing welcome slogan in the same type treatment.
+- Between result states, show a full-screen darkest-palette Department of English interstitial with `Timeless skills.` / `Enduringly human.` The three dots are visible from the start and flicker sequentially; Department of English fades in over 0.20s after a 0.28s entrance, `Timeless skills.` follows, `Enduringly human.` begins 0.50s after the first line completes, and the whole screen fades out over 0.28s while revealing the result underneath. The interstitial duration is randomized among 3, 5, and 7 seconds before each provisional or final result.
+- Preserve the existing mobile result-link, fade, Start Over, and follow-up progress behavior.
+
+## Beta v1.1.35 result-masthead and transition refinement
+- Result-page Department of English / Pathfinder masthead now reuses the landing-page typography exactly; result slogan is `Timeless skills. Enduringly human.`
+- Result computation interstitial now uses the warm result-page background and dark text/dots instead of the dark screen.
+- Randomized result interstitial durations are now 8, 10, or 12 seconds; existing 0.20-second department fade, staggered slogan reveals, sequential dot motion, and 0.28-second fade-out remain intact.

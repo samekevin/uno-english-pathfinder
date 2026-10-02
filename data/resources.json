@@ -1,21 +1,21 @@
 {
   "english_undergraduate": {
     "type": "program_hub",
-    "title": "Undergraduate Programs in English",
+    "title": "Undergraduate Programs",
     "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php",
     "priority": 70,
     "verified_on": "2026-10-01"
   },
   "english_graduate": {
     "type": "program_hub",
-    "title": "Graduate Programs in English",
+    "title": "Graduate Programs",
     "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php",
     "priority": 70,
     "verified_on": "2026-10-01"
   },
   "english_catalog": {
     "type": "catalog",
-    "title": "Explore English courses",
+    "title": "Course Catalog",
     "url": "https://catalog.unomaha.edu/undergraduate/coursesaz/engl/",
     "priority": 60,
     "verified_on": "2026-10-01"

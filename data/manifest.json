@@ -28,5 +28,5 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder Beta v1.1 maintenance build: no ambient motion, current program links, consistent result-link typography, suggestion-only English Graduate Minor, and adaptive follow-up progress labels. Conceptual/scoring baseline remains frozen at v1.3."
+  "implementation_note": "Synchronized with Pathfinder Beta v1.1.33: current result-link/mobile hardening plus result interstitial, centered result masthead, and updated language-mystery copy."
 }
