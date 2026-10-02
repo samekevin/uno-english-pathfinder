@@ -16,7 +16,7 @@ The v1.3 specification is frozen for implementation testing. Changes after this 
 - Dimension count: 10
 - Subprofile count: 8
 - Pathway count: 12
-- Resource count at original v1.3 freeze: 9 (current beta resource layer: 12)
+- Resource count at original v1.3 freeze: 9 (current beta resource layer: 14)
 - Master/component parity: PASS for all 11 source sections
 - JSON Schema validation: PASS
 
@@ -56,5 +56,5 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 - Beta v1.1 participant-facing branding pass: map language was changed to path/guide where natural; scoring and route logic are unchanged.
 
 
-## UX-only beta motion refinement
-The participant-facing ambient effect is intentionally non-scoring: a million-grain dust field followed by a randomized gust on the landing, provisional-result, and final-result states. It does not run between questions and is disabled for reduced-motion settings.
+## Beta v1.1 maintenance update
+Participant-facing ambient motion was removed. Program-link maintenance, result-link typography normalization, suggestion-only Graduate Minor handling, and progress-label refinements do not alter the frozen intellectual scoring dimensions.

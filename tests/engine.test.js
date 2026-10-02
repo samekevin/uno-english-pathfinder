@@ -103,3 +103,13 @@ assert.ok(r.resources.includes('dual_enrollment_english'));
 const noDualContext={...dualContext, GD01:'GD01_SECONDARY_GENERAL'};
 r=computeResult(spec,noDualContext);
 assert.notEqual(r.primaryPathway,'grad_dual_enrollment_cert');
+
+
+// Current graduate students can see the English Graduate Minor as a flexible
+// secondary option, but it is suggestion-only and must never become primary.
+const currentGradLanguage={...accent, OPEN:'OPEN_CURRENT_GRAD'};
+r=computeResult(spec,currentGradLanguage);
+assert.equal(r.route,'current_grad_open');
+assert.notEqual(r.primaryPathway,'grad_english_minor');
+assert.ok(r.secondaryMatches.includes('grad_english_minor'));
+assert.equal(spec.pathways.grad_english_minor.suggestion_only,true);

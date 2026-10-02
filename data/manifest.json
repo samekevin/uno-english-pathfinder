@@ -28,5 +28,5 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder beta web release Beta v1.1; content remains based on the frozen v1.3 specification, with graduate-open route handling that keeps the MA in English visible alongside relevant certificates."
+  "implementation_note": "Synchronized with Pathfinder Beta v1.1 maintenance build: no ambient motion, current program links, consistent result-link typography, suggestion-only English Graduate Minor, and adaptive follow-up progress labels. Conceptual/scoring baseline remains frozen at v1.3."
 }

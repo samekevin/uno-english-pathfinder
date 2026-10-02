@@ -241,9 +241,10 @@
       "language_linguistics",
       "teaching_pedagogy"
     ],
-    "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/teaching-english-speakers-other-languages-tesol-certificate-course/#text",
+    "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/teaching-english-speakers-other-languages-tesol-certificate-course/",
     "resource_hooks": [
-      "solas_lab"
+      "solas_lab",
+      "ug_tesol_overview"
     ]
   },
   "grad_ma": {
@@ -399,7 +400,7 @@
       "rhetoric_composition",
       "editing_publishing"
     ],
-    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/technical-communication-certificate/",
+    "url": "https://www.unomaha.edu/academic-programs/certificates/technical-communication-certificate.php",
     "resource_hooks": [
       "graduate_ta"
     ]
@@ -451,7 +452,7 @@
       "language_linguistics",
       "teaching_pedagogy"
     ],
-    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/teaching-english-speakers-other-languages-certificate/#text",
+    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/teaching-english-speakers-other-languages-certificate/",
     "resource_hooks": [
       "solas_lab",
       "graduate_ta"
@@ -529,5 +530,18 @@
       "CRA",
       "EDP"
     ]
+  },
+  "grad_english_minor": {
+    "name": "English Graduate Minor",
+    "level": "graduate",
+    "type": "minor",
+    "routes": [
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "fingerprint": "route_scope_only",
+    "suggestion_only": true,
+    "territories": "visitor_profile",
+    "url": "https://www.unomaha.edu/academic-programs/graduate-minors/english-grad-minor.php"
   }
 }

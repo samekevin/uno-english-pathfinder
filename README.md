@@ -1,6 +1,6 @@
-# UNO English Pathfinder
+# Department of English Pathfinder
 
-UNO English Pathfinder is a working web application for exploring intellectual interests across English and connecting those interests to appropriate UNO English curricular homes, credentials, and experiences.
+The Department of English Pathfinder is a working web application for exploring intellectual interests across English and connecting those interests to appropriate Department of English curricular homes, credentials, and experiences.
 
 The application is built from the frozen Pathfinder v1.3 conceptual/scoring specification. The machine-readable source remains in `data/`, while the participant-facing web app lives at the repository root.
 
@@ -50,7 +50,7 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - UG-major visitors now reliably encounter the teaching-context discriminator during Initial Interests.
 - Only the explicit middle/high-school English classroom choice sets `secondary_education_intent`.
 - With adequate evidence, that intent elevates Secondary English Teaching as the professional route while preserving the visitor's strongest content territory separately.
-- Secondary English Teaching links to the UNO English undergraduate-programs page, which explains the BS Secondary Education / Secondary English 7-12 double-major route.
+- Secondary English Teaching links to the Department of English undergraduate-programs page, which explains the BS Secondary Education / Secondary English 7-12 double-major route.
 - Added adaptive-planner regression coverage so this pathway cannot silently become unreachable again.
 
 ## v1.1.0 Dual Enrollment context
@@ -101,6 +101,10 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 - English Minor/double-major handoff now directs visitors to **the Department Coordinator** or the current English minor requirements.
 - Internal data terms such as territory remain unchanged where they are implementation concepts rather than participant-facing copy.
 
-## Ambient motion
+## Beta v1.1 maintenance update
 
-The beta uses a dense dust field and a one-time randomized gust on landing and result states. The effect does not run between questions and is disabled for reduced-motion settings.
+- Removed all participant-facing ambient motion.
+- Normalized result-link typography across undergraduate and graduate routes.
+- Updated current program links for Language Studies, Literatures in English, undergraduate TESOL, Advanced Writing, and Technical Communication.
+- Reintroduced the English Graduate Minor as a suggestion-only option for current graduate students and appropriate open-exploration results; it can never be the primary scored match.
+- Initial Interests adaptive extensions are labeled as follow-ups rather than jumping from `6 of 6` to `7 of 8`.

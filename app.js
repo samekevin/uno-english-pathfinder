@@ -11,7 +11,6 @@ let quickPlan = [];
 let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
-let ambientMotionTimer = null;
 
 const routeLabels = {
   ug_major_open:'Undergraduate major',
@@ -22,18 +21,19 @@ const routeLabels = {
 };
 
 const pathwayLinks = {
-  ug_literatures:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_literatures:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/literature.php',
   ug_cnf:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/creative-nonfiction-writing.php',
-  ug_language_studies:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_language_studies:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/language-studies.php',
   ug_secondary_english:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
   ug_english_minor:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/minor.php',
-  ug_tesol:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/undergraduate-programs.php',
+  ug_tesol:'https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/teaching-english-speakers-other-languages-tesol-certificate-course/',
   grad_ma:'https://www.unomaha.edu/academic-programs/graduate-degrees/english-ma.php',
-  grad_cnf_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_cnf_cert:'https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/advanced-writing-certificate/',
   grad_lit_culture_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
-  grad_tech_comm_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
+  grad_tech_comm_cert:'https://www.unomaha.edu/academic-programs/certificates/technical-communication-certificate.php',
   grad_tesol_cert:'https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/graduate-programs/index.php',
-  grad_dual_enrollment_cert:'https://www.unomaha.edu/academic-programs/certificates/english-dual-enrollment-certificate.php'
+  grad_dual_enrollment_cert:'https://www.unomaha.edu/academic-programs/certificates/english-dual-enrollment-certificate.php',
+  grad_english_minor:'https://www.unomaha.edu/academic-programs/graduate-minors/english-grad-minor.php'
 };
 
 const resourceLabels = {
@@ -204,103 +204,7 @@ function advanceCurrent(){
   }, 220);
 }
 
-function clearAmbientMotion(){
-  if(ambientMotionTimer){
-    window.clearTimeout(ambientMotionTimer);
-    ambientMotionTimer = null;
-  }
-  document.querySelectorAll('.ambient-motion').forEach(el=>el.remove());
-  document.body.classList.remove('motion-target');
-}
-
-function scheduleAmbientMotion(kind){
-  clearAmbientMotion();
-  ambientMotionTimer = window.setTimeout(()=>{
-    ambientMotionTimer = null;
-    playAmbientMotion(kind);
-  }, 500);
-}
-
-function createDustTexture(width, height, density, seedSalt, moteCount){
-  const canvas = document.createElement('canvas');
-  canvas.className='dust-canvas';
-  canvas.width=width;
-  canvas.height=height;
-  const ctx=canvas.getContext('2d', {alpha:true});
-  if(!ctx) return canvas;
-
-  const image=ctx.createImageData(width,height);
-  const data=image.data;
-  let state=(seedSalt>>>0) || 1;
-  const rand=()=>{
-    state=(state*1664525+1013904223)>>>0;
-    return state/4294967296;
-  };
-
-  for(let i=0;i<data.length;i+=4){
-    if(rand() < density){
-      const a=24 + Math.floor(rand()*72);
-      data[i]=118;
-      data[i+1]=87;
-      data[i+2]=53;
-      data[i+3]=a;
-    }
-  }
-  ctx.putImageData(image,0,0);
-
-  for(let i=0;i<moteCount;i++){
-    const x=rand()*width;
-    const y=rand()*height;
-    const r=.45 + rand()*1.75;
-    const a=.08 + rand()*.20;
-    ctx.fillStyle=`rgba(118,87,53,${a.toFixed(3)})`;
-    ctx.beginPath();
-    ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.fill();
-  }
-  return canvas;
-}
-
-function playAmbientMotion(kind='landing'){
-  clearAmbientMotion();
-  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const presets = {
-    landing:{grain:.88, motes:17000, haze:1.0, gustDelay:1.92, gustDuration:1.68, driftX:150, driftY:-18},
-    provisional:{grain:.82, motes:14000, haze:.96, gustDelay:1.88, gustDuration:1.58, driftX:138, driftY:-14},
-    final:{grain:.92, motes:20000, haze:1.0, gustDelay:1.95, gustDuration:1.76, driftX:158, driftY:-22}
-  };
-  const preset = presets[kind] || presets.landing;
-  const dpr=Math.min(window.devicePixelRatio || 1, 1.15);
-  const width=Math.max(1, Math.floor(window.innerWidth*dpr));
-  const height=Math.max(1, Math.floor(window.innerHeight*dpr));
-  const layer=document.createElement('div');
-  layer.className=`ambient-motion ambient-${kind}`;
-  layer.setAttribute('aria-hidden','true');
-
-  const gustAngle=(-6 + Math.random()*12).toFixed(2);
-  const windX=(preset.driftX + Math.random()*38).toFixed(1);
-  const windY=(preset.driftY - Math.random()*18).toFixed(1);
-  const back=createDustTexture(width,height,Math.min(0.78,preset.grain*0.72),kind.length*913+31,Math.floor(preset.motes*.62));
-  const fine=createDustTexture(width,height,preset.grain,kind.length*1601+47,Math.floor(preset.motes*.38));
-  back.classList.add('dust-layer','dust-layer-back');
-  fine.classList.add('dust-layer','dust-layer-fine');
-  layer.style.setProperty('--gust-angle',`${gustAngle}deg`);
-  layer.style.setProperty('--wind-x',`${windX}vw`);
-  layer.style.setProperty('--wind-y',`${windY}vh`);
-  layer.style.setProperty('--gust-delay',`${preset.gustDelay}s`);
-  layer.style.setProperty('--gust-duration',`${preset.gustDuration}s`);
-  layer.style.setProperty('--haze-alpha',`${preset.haze}`);
-  layer.innerHTML='<div class="dust-field"></div><div class="dust-wash"></div>';
-  layer.insertBefore(back,layer.firstChild);
-  layer.insertBefore(fine,layer.firstChild);
-  document.body.classList.add('motion-target');
-  document.body.appendChild(layer);
-  window.requestAnimationFrame(()=>layer.classList.add('run'));
-}
-
 function renderQuestion(){
-  clearAmbientMotion();
   const q = questionForCursor();
   if(!q){ renderFinalResult(); return; }
   const plan = planForPhase();
@@ -343,7 +247,6 @@ function renderQuestion(){
 function renderWelcome(){
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
-  scheduleAmbientMotion('landing');
 }
 
 function resourceLink(id){
@@ -474,7 +377,6 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  scheduleAmbientMotion('provisional');
   app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
 }
@@ -514,7 +416,6 @@ function renderFinalResult(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  scheduleAmbientMotion('final');
   app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Department Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
   app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
@@ -522,4 +423,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.11', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

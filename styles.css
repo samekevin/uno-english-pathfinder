@@ -16,47 +16,9 @@
 .footer-link:hover{opacity:.75}
 .graduate-options .pathway-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}.graduate-options .pathway-link{width:max-content;max-width:100%}
 
-/* Ambient Pathfinder motion: dense settling dust followed by a single gust. Static states only. */
-.shell{position:relative;z-index:2}
-.masthead{position:relative;z-index:3}
-.ambient-motion{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:8;opacity:1}
-.dust-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;will-change:transform,opacity;transform-origin:center center}
-.dust-layer-back{opacity:0;filter:blur(.3px)}
-.dust-layer-fine{opacity:0;filter:blur(.08px)}
-.dust-field{position:absolute;inset:-12%;opacity:0;background:
-  radial-gradient(circle at 16% 32%,rgba(118,87,53,.24),transparent 32%),
-  radial-gradient(circle at 48% 54%,rgba(118,87,53,.20),transparent 36%),
-  radial-gradient(circle at 82% 42%,rgba(118,87,53,.16),transparent 31%);
-  filter:blur(24px);transform:scale(1.06);will-change:opacity,transform}
-.dust-wash{position:absolute;inset:-20%;opacity:0;transform:rotate(var(--gust-angle)) translate3d(-18vw,8vh,0) scale(.92);background:
-  linear-gradient(90deg,transparent 0%,rgba(170,132,91,.05) 34%,rgba(170,132,91,.15) 50%,rgba(170,132,91,.05) 66%,transparent 100%);
-  filter:blur(26px);will-change:transform,opacity}
-.ambient-motion.run .dust-field{animation:dust-fill .85s ease-out .04s forwards}
-.ambient-motion.run .dust-layer-back{animation:dust-blow var(--gust-duration) cubic-bezier(.17,.68,.25,1) var(--gust-delay) forwards}
-.ambient-motion.run .dust-layer-fine{animation:dust-blow calc(var(--gust-duration) * .92) cubic-bezier(.12,.72,.22,1) calc(var(--gust-delay) + .11s) forwards}
-.ambient-motion.run .dust-wash{animation:gust-sweep 1.15s cubic-bezier(.2,.7,.2,1) calc(var(--gust-delay) - .08s) forwards}
-@keyframes dust-fill{
-  0%{opacity:0;transform:scale(1.06)}
-  55%{opacity:calc(var(--haze-alpha) * .92);transform:scale(1.01)}
-  100%{opacity:var(--haze-alpha);transform:scale(1)}
-}
-@keyframes dust-blow{
-  0%{opacity:.88;transform:rotate(0deg) translate3d(0,0,0) scale(1.02)}
-  16%{opacity:.9;transform:rotate(calc(var(--gust-angle) * .12)) translate3d(2vw,-1vh,0) scale(1.02)}
-  45%{opacity:.78;transform:rotate(calc(var(--gust-angle) * .42)) translate3d(calc(var(--wind-x) * .22),calc(var(--wind-y) * .22),0) scale(1.06)}
-  100%{opacity:0;transform:rotate(var(--gust-angle)) translate3d(var(--wind-x),var(--wind-y),0) scale(1.22)}
-}
-@keyframes gust-sweep{
-  0%{opacity:0;transform:rotate(var(--gust-angle)) translate3d(-28vw,8vh,0) scale(.88)}
-  28%{opacity:.9}
-  100%{opacity:0;transform:rotate(var(--gust-angle)) translate3d(150vw,-8vh,0) scale(1.2)}
-}
-@media (max-width:700px){
-  .ambient-motion{z-index:8}
-  .dust-field{inset:-18%;filter:blur(17px)}
-  .dust-wash{filter:blur(19px)}
-}
-@media (prefers-reduced-motion:reduce){
-  .ambient-motion{display:none!important}
-  body.motion-target{overflow:auto}
-}
+
+/* Consistent result-link typography across all routes. */
+.result .pathway-link,.result .resource-link{font-size:1rem;line-height:1.45;font-weight:600;font-family:inherit}
+.result .pathway-link{display:inline-flex;align-items:baseline;gap:.28em;color:#503719;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.result .pathway-link:hover,.result .pathway-link:focus-visible{color:#1e1b18}
+@media (max-width:700px){.result .pathway-link,.result .resource-link{font-size:1rem;line-height:1.42}}

@@ -29,14 +29,25 @@ export function getInitialProgress(spec, answers, currentQuestion){
 
   const currentAnswered = isCompleteAnswer(answers[currentQuestion.id]);
   const current = currentAnswered ? Math.max(1, completed) : completed + 1;
-  const total = current > target ? max : target;
-  const percent = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
+  if (current > target) {
+    const extraCurrent = Math.min(max - target, current - target);
+    const extraTotal = Math.max(1, max - target);
+    return {
+      showCounter:true,
+      showBar:true,
+      label:`Initial interests · follow-up ${extraCurrent} of ${extraTotal}`,
+      current:target,
+      total:target,
+      percent:100
+    };
+  }
+  const percent = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
   return {
     showCounter:true,
     showBar:true,
-    label:`Initial interests · ${current} of ${total}`,
+    label:`Initial interests · ${current} of ${target}`,
     current,
-    total,
+    total:target,
     percent
   };
 }

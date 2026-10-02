@@ -98,7 +98,7 @@ export function rankPathways(spec, route, profile) {
     return routePathways
       .map(id => {
         const pathway = spec.pathways[id];
-        if (!pathway) return null;
+        if (!pathway || pathway.suggestion_only) return null;
         let score;
         // Route-scope-only minor is a legitimate add-on home. It is not
         // supposed to win by invented intellectual scoring. Give it a neutral
@@ -237,7 +237,7 @@ function buildSecondaryMatches(spec, route, territories, rankedPathways, primary
     ug_major_open: new Set(['ug_literatures','ug_cnf','ug_language_studies','ug_secondary_english','ug_tesol']),
     ug_addon_open: new Set(['ug_english_minor','ug_tesol','ug_literatures','ug_cnf','ug_language_studies','ug_secondary_english']),
     graduate_open: new Set(['grad_ma','grad_cnf_cert','grad_lit_culture_cert','grad_tech_comm_cert','grad_tesol_cert','grad_dual_enrollment_cert']),
-    current_grad_open: new Set(['grad_cnf_cert','grad_lit_culture_cert','grad_tech_comm_cert','grad_tesol_cert','grad_dual_enrollment_cert']),
+    current_grad_open: new Set(['grad_cnf_cert','grad_lit_culture_cert','grad_tech_comm_cert','grad_tesol_cert','grad_dual_enrollment_cert','grad_english_minor']),
     open_exploration: new Set(Object.keys(spec.pathways || {}))
   };
   const allowed = routeAllowed[route] || new Set();
@@ -257,6 +257,11 @@ function buildSecondaryMatches(spec, route, territories, rankedPathways, primary
     seen.add(id);
     matches.push(id);
   }
+
+  // Flexible generalist add-on for students already in another UNO graduate program.
+  if (route === 'current_grad_open') add('grad_english_minor');
+  // In open exploration, surface it only when the emerging recommendations are graduate-level.
+  if (route === 'open_exploration' && (rankedPathways || []).slice(0,3).some(x => spec.pathways[x.id]?.level === 'graduate')) add('grad_english_minor');
 
   // Start from the visitor's strongest intellectual territories. This lets a
   // secondary match reflect a recurring interest even when it did not win the

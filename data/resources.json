@@ -126,7 +126,18 @@
       "current_grad_open",
       "open_exploration"
     ],
-    "copy": "UNO English’s Dual Enrollment program supports high-school English educators and the dual/concurrent enrollment ecosystem.",
+    "copy": "The Department of English Dual Enrollment program supports high-school English educators and the dual/concurrent enrollment ecosystem.",
     "verified_on": "2026-10-01"
+  },
+  "ug_tesol_overview": {
+    "type": "program_overview",
+    "title": "TESOL Certificate program overview",
+    "url": "https://www.unomaha.edu/academic-programs/certificates/ug-teaching-english-to-heritage-bilingual-learners-certificate.php",
+    "routes": [
+      "ug_major_open",
+      "ug_addon_open",
+      "open_exploration"
+    ],
+    "copy": "A current Department of English overview of the undergraduate TESOL Certificate."
   }
 }

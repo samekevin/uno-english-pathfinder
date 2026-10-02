@@ -48,7 +48,8 @@
       "grad_dual_enrollment_cert"
     ],
     "eligible_secondary": [
-      "grad_ma"
+      "grad_ma",
+      "grad_english_minor"
     ]
   },
   "open_exploration": {
