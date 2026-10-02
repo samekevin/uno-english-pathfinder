@@ -143,16 +143,20 @@ export function rankPathways(spec, route, profile) {
     if (dual) return [dual, ...ranked.filter(x => x.id !== 'grad_dual_enrollment_cert')];
   }
 
-  // Graduate visitors can land directly on the MA or on a focused certificate.
-  // The MA is a real destination even when a certificate is the sharper fit, so
-  // keep it available as a second graduate route rather than allowing it to
-  // disappear because its fingerprint is intentionally generalist.
+  // The Graduate study opener explicitly indicates that the visitor is looking
+  // beyond the bachelor's degree. Keep the MA in English as the standing graduate
+  // home for this route, then use the intellectual profile to surface focused
+  // certificates that genuinely fit. A specifically triggered Dual Enrollment
+  // context remains a sharper primary credential, but the MA stays visible.
   if (route === 'graduate_open') {
     const ranked = rank(primaryEligible);
-    const scored = ranked.filter(x => x.id !== 'grad_ma' && Number.isFinite(x.score) && x.score > 0);
     const ma = ranked.find(x => x.id === 'grad_ma') || { id:'grad_ma', pathway:spec.pathways.grad_ma, score:0 };
-    if (scored.length === 0) return [ma, ...ranked.filter(x => x.id !== 'grad_ma')];
-    return [scored[0], ...ranked.filter(x => x.id !== scored[0].id && x.id !== 'grad_ma'), ma];
+    const withoutMa = ranked.filter(x => x.id !== 'grad_ma');
+    if (contextSet.has('dual_enrollment_interest_or_eligibility')) {
+      const dual = withoutMa.find(x => x.id === 'grad_dual_enrollment_cert');
+      if (dual) return [dual, ma, ...withoutMa.filter(x => x.id !== 'grad_dual_enrollment_cert')];
+    }
+    return [ma, ...withoutMa];
   }
 
   // For UG add-on visitors, never turn an intellectual affinity into an

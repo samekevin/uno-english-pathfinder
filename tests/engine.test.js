@@ -31,7 +31,8 @@ assert.ok(r.territories.some(x=>x.id==='creative_nonfiction'));
 const gradTech = {OPEN:'OPEN_GRAD',Q04:'Q04_INSTRUCTIONS',Q05:'Q05_AUDIENCE',L06:'L06_AUDIENCE',R01:'R01_REWRITE',R02:'R02_REBUILD'};
 r=computeResult(spec,gradTech);
 assert.equal(r.route,'graduate_open');
-assert.equal(r.primaryPathway,'grad_tech_comm_cert');
+assert.equal(r.primaryPathway,'grad_ma');
+assert.ok(r.alsoExplore.includes('grad_tech_comm_cert'));
 
 const addon={OPEN:'OPEN_UG_ADDON',Q01:'Q01_ACCENT',Q02:'Q02_ACCENTS',L01:'L01_SOCIETY',L03:'L03_MIND',L04:'L04_CHANGE',L05:'L05_RECORDINGS'};
 r=computeResult(spec,addon);

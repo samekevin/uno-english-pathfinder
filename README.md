@@ -42,7 +42,7 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 
 ## v1.0.8 resource integration
 - Literature & Culture results can surface the Tell All the Truth Project.
-- English Minor results link to current catalog requirements and Dustin Pendley, English Department Coordinator.
+- English Minor results link to current catalog requirements and English Department Coordinator.
 - The footer includes a beta Feedback link to the Qualtrics tester survey.
 
 
@@ -64,7 +64,9 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Territory labels remain interpretive interests, separate from the curricular-home recommendation below.
 - No scoring, routing, pathway, or resource logic changed in this release.
 
-## v1.1.2 browser title polish
+## Beta v1.1
 
-- Browser/tab title updated to `Pathfinder Beta -- English`.
-- No scoring, routing, question, result, or resource logic changed.
+- Participant-facing release label is `Beta v1.1`.
+- Browser/tab title is `English | Pathfinder Beta`.
+- The Graduate study route treats the MA in English as the standing graduate destination; profile-supported graduate certificates appear as additional options.
+- English Minor guidance refers to the English Department Coordinator without naming an individual in the participant-facing result.

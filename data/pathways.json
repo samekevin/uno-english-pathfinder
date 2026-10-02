@@ -258,7 +258,7 @@
     "requires_commitment": "full_ma",
     "fingerprint": "broad_generalist_with_inquiry",
     "territories": "visitor_profile",
-    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/english-ma/#text",
+    "url": "https://www.unomaha.edu/academic-programs/graduate-degrees/english-ma.php",
     "resource_hooks": [
       "graduate_ta"
     ]

@@ -14,3 +14,4 @@
 .minor-note p{margin:.35rem 0 0}
 .footer-link{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
 .footer-link:hover{opacity:.75}
+.graduate-options .pathway-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}.graduate-options .pathway-link{width:max-content;max-width:100%}

@@ -41,3 +41,8 @@ The frozen intellectual scoring dimensions remain unchanged. Implementation logi
 
 ## Beta implementation extension v1.1.0
 The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scoring graduate context discriminator and a `context_signals` field so the existing `requires_context: dual_enrollment_interest_or_eligibility` rule is executable without changing intellectual scoring.
+
+## Beta v1.1 release polish
+- Graduate-open results keep the MA in English as the standing graduate destination; focused certificates remain visible when supported by the visitor profile/context.
+- Participant-facing minor guidance uses the title English Department Coordinator without naming an individual.
+- Public browser title is `English | Pathfinder Beta`; footer label is `Beta v1.1`.
