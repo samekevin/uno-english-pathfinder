@@ -63,3 +63,8 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Result territories now appear under a centered **Your top areas of interest** heading.
 - Territory labels remain interpretive interests, separate from the curricular-home recommendation below.
 - No scoring, routing, pathway, or resource logic changed in this release.
+
+## v1.1.2 browser title polish
+
+- Browser/tab title updated to `Pathfinder Beta -- English`.
+- No scoring, routing, question, result, or resource logic changed.
