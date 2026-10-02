@@ -48,3 +48,5 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 - Public browser title is `English | Pathfinder Beta`; footer label is `Beta v1.1`.
 
 - Beta v1.1 secondary-match layer: results may surface up to three route-aware related paths from the visitor's other top territories; professional/context-gated routes remain guarded.
+
+- Beta v1.1 copy refinement: approved prompt simplifications, English Minor department-page link, add-on double-major invitation, participant-facing “areas” terminology, and small signal recalibrations for revised language questions.

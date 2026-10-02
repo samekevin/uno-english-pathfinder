@@ -222,7 +222,7 @@
       "family": "broad",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "Someone unexpectedly gives you an afternoon with nothing due. Which rabbit hole could actually steal two hours from you?",
+      "prompt": "You get a free afternoon. Which rabbit hole could steal two hours?",
       "options": [
         {
           "id": "Q01_ACCENT",
@@ -329,11 +329,11 @@
         },
         {
           "id": "Q02_BILINGUAL_BRAIN",
-          "text": "🧠 How bilingual brains handle two languages",
+          "text": "👶 Are babies secretly language-learning supercomputers?",
           "signals": {
-            "MLT": 3,
             "LANG": 2,
-            "INQ": 2
+            "INQ": 2,
+            "MLT": 1
           },
           "meaningful_evidence": true,
           "result_salience": "high",
@@ -481,7 +481,7 @@
       "options": [
         {
           "id": "Q04_INSTRUCTIONS",
-          "text": "📝 Instructions that somehow make a simple task impossible. Please. Give them to me.",
+          "text": "📝 Instructions that make a simple task impossible.",
           "signals": {
             "PRO": 3,
             "RHE": 1
@@ -638,14 +638,13 @@
       "family": "language",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "Language gets weirdest - and most interesting - when...",
+      "prompt": "Language gets most interesting when...",
       "options": [
         {
           "id": "L01_MIND",
-          "text": "🧠 ...it meets the mind. How do we understand words so quickly? What happens with multiple languages?",
+          "text": "🧠 ...it meets the mind. How do we process sounds, sentences, jokes, and sarcasm?",
           "signals": {
             "LANG": 2,
-            "MLT": 2,
             "INQ": 3
           },
           "meaningful_evidence": true,
@@ -1041,7 +1040,7 @@
       "family": "rhetoric",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "Two messages contain the same basic information, but one persuades people and the other falls flat. What do you want to know?",
+      "prompt": "Two messages say the same thing. One persuades people; the other falls flat. What do you want to know?",
       "options": [
         {
           "id": "L06_AUDIENCE",
@@ -1117,7 +1116,7 @@
       "family": "literature",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "A professor puts an unfamiliar text in front of you. What is most likely to make you lean forward?",
+      "prompt": "You open a text you've never read. What makes you lean in?",
       "options": [
         {
           "id": "T01_FORM",
@@ -2018,7 +2017,7 @@
       "family": "teaching",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "Imagine you discover that you actually love teaching. Where can you picture yourself?",
+      "prompt": "Suppose you find that you enjoy teaching. Where can you picture yourself?",
       "options": [
         {
           "id": "P01_SECONDARY",
@@ -2254,7 +2253,7 @@
       "options": [
         {
           "id": "GD01_DUAL",
-          "text": "🏫 I teach high school English—or expect to—and want to teach dual/concurrent enrollment courses.",
+          "text": "🏫 I teach—or plan to teach—high school English, including dual enrollment.",
           "signals": {},
           "meaningful_evidence": false,
           "result_salience": "high",
@@ -2444,11 +2443,11 @@
         },
         {
           "id": "W02_MIND",
-          "text": "🧠 People debating how language works in the mind",
+          "text": "🧠 People debating why language changes across groups and generations",
           "signals": {
-            "LANG": 1,
-            "MLT": 1,
-            "INQ": 2
+            "LANG": 2,
+            "CUL": 1,
+            "INQ": 1
           },
           "meaningful_evidence": true,
           "result_salience": "medium",
@@ -2490,7 +2489,7 @@
       "family": "wildcard",
       "format": "standard",
       "select_mode": "single",
-      "prompt": "You can keep asking ONE kind of question for the rest of your academic life. Which sounds least exhausting?",
+      "prompt": "One question gets to follow you around forever. Which one?",
       "options": [
         {
           "id": "W03_REALLY",
@@ -2590,13 +2589,13 @@
       "family": "followup",
       "format": "follow_up",
       "select_mode": "single",
-      "prompt": "Okay, which mystery would you steal an answer to?",
+      "prompt": "Which mystery would you most want answered?",
       "options": [
         {
           "id": "FU_LANG_BILINGUAL",
-          "text": "🧠 How can two languages coexist in one mind?",
+          "text": "🧠 Why do some language patterns become automatic while others take work?",
           "signals": {
-            "MLT": 3,
+            "MLT": 2,
             "LANG": 2,
             "INQ": 2
           },
@@ -3640,7 +3639,7 @@
       ],
       "fingerprint": "route_scope_only",
       "territories": "visitor_profile",
-      "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/"
+      "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/minor.php"
     },
     "ug_tesol": {
       "name": "Undergraduate TESOL Certificate",

@@ -75,3 +75,13 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Browser/tab title is `English | Pathfinder Beta`.
 - The Graduate study route treats the MA in English as the standing graduate destination; profile-supported graduate certificates appear as additional options.
 - English Minor guidance refers to the English Department Coordinator without naming an individual in the participant-facing result.
+
+## Beta v1.1 copy refinement
+
+This maintenance pass keeps the current Beta v1.1 experience and matching architecture while tightening approved participant-facing language. It also diversifies several language-facing prompts so multilingualism is not overrepresented by repeated “two languages in one mind” framing.
+
+- English Minor results now link to the department's English Minor page; catalog requirements remain a separate live link.
+- Add-on visitors may be invited to explore an English double major while the primary result remains route-appropriate.
+- Participant-facing result copy uses **areas** rather than **territories**.
+- Approved prompt edits were synchronized in `questions.json` and `pathfinder.spec.json`.
+- Q02, L01, W02, and FU_LANG_A received modest signal recalibration to match their revised meanings; IDs and overall engine architecture remain unchanged.
