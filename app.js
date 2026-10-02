@@ -11,6 +11,7 @@ let quickPlan = [];
 let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
+let ambientMotionTimer = null;
 
 const routeLabels = {
   ug_major_open:'Undergraduate major',
@@ -204,30 +205,54 @@ function advanceCurrent(){
 }
 
 function clearAmbientMotion(){
+  if(ambientMotionTimer){
+    window.clearTimeout(ambientMotionTimer);
+    ambientMotionTimer = null;
+  }
   document.querySelectorAll('.ambient-motion').forEach(el=>el.remove());
   document.body.classList.remove('motion-target');
 }
 
-function playAmbientMotion(){
+function scheduleAmbientMotion(kind){
+  clearAmbientMotion();
+  ambientMotionTimer = window.setTimeout(()=>{
+    ambientMotionTimer = null;
+    playAmbientMotion(kind);
+  }, 500);
+}
+
+function playAmbientMotion(kind='landing'){
   clearAmbientMotion();
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  document.body.classList.add('motion-target');
+  const presets = {
+    landing:{count:110, gustMin:-11, gustMax:17, density:1.0, baseDelay:0},
+    provisional:{count:90, gustMin:-7, gustMax:14, density:.88, baseDelay:0.08},
+    final:{count:125, gustMin:-15, gustMax:10, density:1.05, baseDelay:.04}
+  };
+  const preset = presets[kind] || presets.landing;
   const layer=document.createElement('div');
-  layer.className='ambient-motion';
+  layer.className=`ambient-motion ambient-${kind}`;
   layer.setAttribute('aria-hidden','true');
-  layer.innerHTML=`
-    <span class="boot-print boot-1"></span>
-    <span class="boot-print boot-2"></span>
-    <span class="boot-print boot-3"></span>
-    <span class="boot-print boot-4"></span>
-    <span class="boot-print boot-5"></span>
-    <span class="boot-print boot-6"></span>
-    <span class="boot-print boot-7"></span>`;
+  const particles=[];
+  for(let i=0;i<preset.count;i++){
+    const size=(Math.random()*4.4+2.4)*preset.density;
+    const opacity=Math.random()*.18+.06;
+    const x=Math.random()*100;
+    const y=Math.random()*100;
+    const driftX=(Math.random()*80+45) * (Math.random()<.72 ? 1 : -1);
+    const driftY=(Math.random()*34-17);
+    const delay=(Math.random()*.34)+preset.baseDelay;
+    const duration=.95+Math.random()*.85;
+    const spin=(Math.random()*260-130);
+    const scale=(.8+Math.random()*.8).toFixed(2);
+    particles.push(`<span class="dust-particle" style="--x:${x.toFixed(2)}vw;--y:${y.toFixed(2)}vh;--size:${size.toFixed(1)}px;--alpha:${opacity.toFixed(3)};--dx:${driftX.toFixed(1)}vw;--dy:${driftY.toFixed(1)}vh;--delay:${delay.toFixed(2)}s;--duration:${duration.toFixed(2)}s;--spin:${spin.toFixed(0)}deg;--scale:${scale}"></span>`);
+  }
+  const gustAngle=(Math.random()*(preset.gustMax-preset.gustMin)+preset.gustMin).toFixed(1);
+  layer.innerHTML=`<div class="dust-haze"></div><div class="dust-gust" style="--gust-angle:${gustAngle}deg"></div>${particles.join('')}`;
+  document.body.classList.add('motion-target');
   document.body.appendChild(layer);
-  window.setTimeout(()=>{
-    layer.querySelectorAll('.boot-print').forEach(el=>el.classList.add('run'));
-  }, 80);
+  window.requestAnimationFrame(()=>layer.classList.add('run'));
 }
 
 function renderQuestion(){
@@ -274,7 +299,7 @@ function renderQuestion(){
 function renderWelcome(){
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
-  window.setTimeout(playAmbientMotion, 500);
+  scheduleAmbientMotion('landing');
 }
 
 function resourceLink(id){
@@ -405,7 +430,7 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  window.setTimeout(playAmbientMotion, 500);
+  scheduleAmbientMotion('provisional');
   app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
 }
@@ -445,7 +470,7 @@ function renderFinalResult(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  window.setTimeout(playAmbientMotion, 500);
+  scheduleAmbientMotion('final');
   app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Department Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
   app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }

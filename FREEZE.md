@@ -54,3 +54,7 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 - Participant-facing responsive result copy/layout may evolve without changing the frozen v1.3 scoring baseline.
 
 - Beta v1.1 participant-facing branding pass: map language was changed to path/guide where natural; scoring and route logic are unchanged.
+
+
+## UX-only beta motion refinement
+The participant-facing ambient effect is intentionally non-scoring: a brief dust field followed by a randomized gust on the landing, provisional-result, and final-result states. It does not run between questions and is disabled for reduced-motion settings.

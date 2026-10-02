@@ -16,48 +16,42 @@
 .footer-link:hover{opacity:.75}
 .graduate-options .pathway-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}.graduate-options .pathway-link{width:max-content;max-width:100%}
 
-/* Ambient Pathfinder motion: one-time walking footprint trail + settling dust on static states only. */
+/* Ambient Pathfinder motion: a brief dust cloud followed by a gust. Static states only. */
 .shell{position:relative;z-index:2}
 .masthead{position:relative;z-index:3}
-.ambient-motion{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:4}
-.boot-print{position:absolute;width:44px;height:80px;border-radius:53% 47% 46% 54%;opacity:0;background:rgba(126,94,58,.21);filter:blur(.1px);transform-origin:center 82%;clip-path:polygon(31% 0,67% 4%,79% 16%,82% 31%,77% 49%,70% 64%,77% 76%,87% 90%,82% 100%,60% 100%,49% 91%,43% 100%,18% 96%,11% 87%,14% 76%,23% 64%,26% 50%,20% 32%,21% 16%)}
-.boot-print::before{content:"";position:absolute;left:7px;right:7px;top:18px;height:4px;border-radius:999px;background:rgba(126,94,58,.17);box-shadow:0 11px 0 rgba(126,94,58,.15),0 22px 0 rgba(126,94,58,.12)}
-.boot-print::after{content:"";position:absolute;left:8px;right:9px;bottom:7px;height:7px;border-radius:4px;background:rgba(126,94,58,.15)}
-.boot-print.run{animation:step-in .9s ease-out var(--delay) forwards}
-.boot-1{left:9vw;top:80vh;--rot:-20deg;--delay:.00s}
-.boot-2{left:17vw;top:71vh;--rot:12deg;--delay:.33s}
-.boot-3{left:27vw;top:61vh;--rot:-18deg;--delay:.66s}
-.boot-4{left:36vw;top:52vh;--rot:10deg;--delay:.99s}
-.boot-5{left:47vw;top:42vh;--rot:-16deg;--delay:1.32s}
-.boot-6{left:58vw;top:32vh;--rot:9deg;--delay:1.65s}
-.boot-7{left:69vw;top:22vh;--rot:-15deg;--delay:1.98s}
-@keyframes step-in{
-  0%{opacity:0;transform:translate3d(0,14px,0) rotate(calc(var(--rot) + 5deg)) scale(.78)}
-  16%{opacity:.52;transform:translate3d(0,-4px,0) rotate(var(--rot)) scale(1.06)}
-  30%{opacity:.34;transform:translate3d(0,1px,0) rotate(var(--rot)) scale(1)}
-  72%{opacity:.30;transform:translate3d(0,0,0) rotate(var(--rot)) scale(1)}
-  100%{opacity:0;transform:translate3d(0,-2px,0) rotate(var(--rot)) scale(.98)}
+.ambient-motion{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1;opacity:1}
+.dust-haze{position:absolute;inset:-8%;opacity:0;background:
+  radial-gradient(circle at 18% 38%,rgba(150,118,82,.09),transparent 24%),
+  radial-gradient(circle at 48% 52%,rgba(150,118,82,.08),transparent 27%),
+  radial-gradient(circle at 78% 44%,rgba(150,118,82,.07),transparent 25%),
+  radial-gradient(circle at 58% 18%,rgba(126,94,58,.05),transparent 22%);
+  filter:blur(18px);transform:scale(1.04)}
+.ambient-motion.run .dust-haze{animation:dust-fill .72s ease-out .02s forwards}
+.dust-particle{position:absolute;left:var(--x);top:var(--y);width:var(--size);height:var(--size);border-radius:50%;background:rgba(126,94,58,1);opacity:0;transform:translate3d(0,0,0) scale(.72);filter:blur(.12px)}
+.ambient-motion.run .dust-particle{animation:dust-gust var(--duration) cubic-bezier(.22,.61,.35,1) var(--delay) forwards}
+.dust-gust{position:absolute;left:-14vw;top:-8vh;width:52vw;height:116vh;opacity:0;transform:rotate(var(--gust-angle)) translate3d(-20vw,0,0);background:linear-gradient(90deg,transparent 0%,rgba(150,118,82,.045) 28%,rgba(150,118,82,.11) 48%,transparent 72%);filter:blur(16px)}
+.ambient-motion.run .dust-gust{animation:gust-sweep 1.05s cubic-bezier(.24,.63,.28,1) .9s forwards}
+@keyframes dust-fill{
+  0%{opacity:0;transform:scale(1.04)}
+  55%{opacity:1}
+  100%{opacity:.92;transform:scale(1)}
 }
-body.motion-target .masthead::after{content:"";position:absolute;left:50%;top:55%;width:min(34rem,72vw);height:8rem;transform:translate(-50%,-50%) scale(.72);opacity:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 32% 52%,rgba(150,118,82,.16),transparent 40%),radial-gradient(circle at 64% 44%,rgba(150,118,82,.12),transparent 42%),radial-gradient(circle at 50% 56%,rgba(150,118,82,.08),transparent 55%);filter:blur(10px)}
-body.motion-target .masthead::after{animation:dust-settle 1.15s ease-out 2.55s forwards}
-@keyframes dust-settle{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.72)}
-  22%{opacity:.42}
-  55%{opacity:.24;transform:translate(-47%,-50%) scale(1.04)}
-  100%{opacity:0;transform:translate(-43%,-48%) scale(1.16)}
+@keyframes dust-gust{
+  0%{opacity:0;transform:translate3d(0,0,0) scale(.72) rotate(0deg)}
+  16%{opacity:var(--alpha);transform:translate3d(0,0,0) scale(var(--scale)) rotate(0deg)}
+  32%{opacity:calc(var(--alpha) * .98);transform:translate3d(calc(var(--dx) * .12),calc(var(--dy) * .12),0) scale(var(--scale)) rotate(calc(var(--spin) * .18))}
+  100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) scale(.45) rotate(var(--spin))}
+}
+@keyframes gust-sweep{
+  0%{opacity:0;transform:rotate(var(--gust-angle)) translate3d(-20vw,0,0) scale(.88)}
+  25%{opacity:.5}
+  100%{opacity:0;transform:rotate(var(--gust-angle)) translate3d(160vw,0,0) scale(1.18)}
 }
 @media (max-width:700px){
-  .boot-print{width:35px;height:64px}
-  .boot-1{left:6vw;top:82vh}
-  .boot-2{left:17vw;top:72vh}
-  .boot-3{left:29vw;top:62vh}
-  .boot-4{left:41vw;top:52vh}
-  .boot-5{left:53vw;top:42vh}
-  .boot-6{left:65vw;top:32vh}
-  .boot-7{left:77vw;top:22vh}
-  body.motion-target .masthead::after{width:min(24rem,78vw);height:6rem;top:48%}
+  .dust-haze{filter:blur(13px)}
+  .dust-gust{width:72vw;filter:blur(12px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .ambient-motion,.ambient-motion *{display:none!important}
-  body.motion-target .masthead::after{display:none!important}
+  .ambient-motion{display:none!important}
+  body.motion-target{overflow:auto}
 }

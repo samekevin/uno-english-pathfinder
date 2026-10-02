@@ -1,8 +1,11 @@
-# Pathfinder Beta motion notes
+# Ambient Motion Notes
 
-Participant-facing motion is intentionally limited to static states:
-- Landing page: seven larger boot prints appear one-by-one as alternating left/right steps along a bottom-left to top-right walking trail, followed by settling dust behind the Pathfinder title.
-- Provisional/final result pages: the same sequence once per static state.
-- Active question screens: no motion overlay.
-- `prefers-reduced-motion: reduce`: motion is disabled.
-- No title flicker is used.
+Participant-facing static states use a brief dust-cloud / gust sequence rather than footprint sprites.
+
+- Landing state: about 0.5s after load, a faint dust field fills the background, followed by a randomly angled gust that clears it.
+- Provisional result: same sequence with slightly lighter density.
+- Final result: same sequence with slightly fuller density.
+- No motion between questions.
+- No title flicker.
+- `prefers-reduced-motion: reduce` disables the effect entirely.
+- `clearAmbientMotion()` cancels any pending timer so a delayed landing animation cannot appear over a question screen.
