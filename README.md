@@ -57,3 +57,9 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Added a graduate-only contextual discriminator so the English Dual Enrollment Certificate is reachable only when the visitor explicitly indicates the dual/concurrent-enrollment teaching context.
 - The certificate remains a separate credential from the visitor's intellectual territory.
 - Added the current UNO Dual Enrollment English page as a result resource and the current Academic Programs certificate page as the primary credential link.
+
+## v1.1.1 result hierarchy polish
+
+- Result territories now appear under a centered **Your top areas of interest** heading.
+- Territory labels remain interpretive interests, separate from the curricular-home recommendation below.
+- No scoring, routing, pathway, or resource logic changed in this release.
