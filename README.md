@@ -108,3 +108,7 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 - Updated current program links for Language Studies, Literatures in English, undergraduate TESOL, Advanced Writing, and Technical Communication.
 - Reintroduced the English Graduate Minor as a suggestion-only option for current graduate students and appropriate open-exploration results; it can never be the primary scored match.
 - Initial Interests adaptive extensions are labeled as follow-ups rather than jumping from `6 of 6` to `7 of 8`.
+
+
+### Current question interaction
+Single- and multi-select answer choices fade in once when a question first appears. The entrance begins after 1.3 seconds and uses a 0.28-second stagger with overlapping fades. Selecting or deselecting a multi-select option updates the state in place and does not replay the animation. Reduced-motion preferences disable the animation.

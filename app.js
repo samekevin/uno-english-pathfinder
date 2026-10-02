@@ -219,7 +219,7 @@ function renderQuestion(){
     <div class="progress">${eyebrow}</div>
     <div class="question">${escapeHtml(q.prompt)}</div>
     ${isMulti ? '<div class="helper">Choose up to two.</div>' : ''}
-    <div class="option-grid question-card">${q.options.map(o=>optionButton(q,o)).join('')}</div>
+    <div class="option-grid">${q.options.map(o=>optionButton(q,o)).join('')}</div>
     <div class="selection-status" aria-live="polite">${isMulti && complete ? `${Array.isArray(selected)?selected.length:1} selected` : ''}</div>
     <div class="actions">
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
@@ -232,7 +232,20 @@ function renderQuestion(){
     if(isMulti){
       const c=Array.isArray(answers[q.id])?answers[q.id]:[];
       answers[q.id]=c.includes(id)?c.filter(x=>x!==id):c.length<2?[...c,id]:[...c.slice(1),id];
-      renderQuestion();
+      const selectedIds=answers[q.id];
+      app.querySelectorAll('.option').forEach(option=>{
+        const isSelected=selectedIds.includes(option.dataset.option);
+        option.classList.toggle('selected',isSelected);
+        option.setAttribute('aria-pressed',String(isSelected));
+        const existing=option.querySelector('.checkmark');
+        if(isSelected && !existing){
+          const mark=document.createElement('span'); mark.className='checkmark'; mark.setAttribute('aria-hidden','true'); mark.textContent='✓'; option.appendChild(mark);
+        } else if(!isSelected && existing){ existing.remove(); }
+      });
+      const status=app.querySelector('.selection-status');
+      if(status) status.textContent=`${selectedIds.length} selected`;
+      const nextBtn=app.querySelector('#next');
+      if(nextBtn) nextBtn.disabled=selectedIds.length===0;
       return;
     }
     answers[q.id]=id;
@@ -423,4 +436,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.17', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
