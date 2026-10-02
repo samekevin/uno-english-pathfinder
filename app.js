@@ -22,6 +22,8 @@ function resetViewport(){
     document.body.scrollTop = 0;
   });
 }
+function setQuizFocus(active){ document.body.classList.toggle('quiz-active', active); }
+
 
 const routeLabels = {
   ug_major_open:'Undergraduate major',
@@ -216,6 +218,7 @@ function advanceCurrent(){
 }
 
 function renderQuestion(){
+  setQuizFocus(true);
   resetViewport();
   const q = questionForCursor();
   if(!q){ renderFinalResult(); return; }
@@ -238,6 +241,7 @@ function renderQuestion(){
     </div>
     ${progressHtml}`;
   resetViewport();
+  window.requestAnimationFrame(()=>app.focus({preventScroll:true}));
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -271,6 +275,7 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
+  setQuizFocus(false);
   resetViewport();
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
@@ -367,6 +372,7 @@ function secondaryOptionsMarkup(result){
 }
 
 function renderProvisional(){
+  setQuizFocus(false);
   resetViewport();
   const result=provisionalResult;
   const profile=result.profile;
@@ -420,6 +426,7 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
+  setQuizFocus(false);
   resetViewport();
   const result=computeResult(spec,answers);
   const outcome=classifyBonus(provisionalResult,result);
