@@ -223,6 +223,59 @@ export function profileShape(profile, territoryRanking) {
   return 'EXPLORATORY';
 }
 
+
+function buildSecondaryMatches(spec, route, territories, rankedPathways, primaryPathway, profile) {
+  const matches = [];
+  const seen = new Set([primaryPathway].filter(Boolean));
+  const intents = profile.intentSet || new Set(profile.intents || []);
+  const contexts = profile.contextSet || new Set(profile.contexts || []);
+  const territoryIds = (territories || []).filter(t => t.score > 0).map(t => t.id);
+  const hasTesolSignal = territoryIds.includes('language_learning_multilingualism') ||
+    (profile.scores.MLT || 0) >= 1.5 || intents.has('tesol_teaching_intent') || intents.has('tesol_teaching_interest');
+
+  const routeAllowed = {
+    ug_major_open: new Set(['ug_literatures','ug_cnf','ug_language_studies','ug_secondary_english','ug_tesol']),
+    ug_addon_open: new Set(['ug_english_minor','ug_tesol','ug_literatures','ug_cnf','ug_language_studies','ug_secondary_english']),
+    graduate_open: new Set(['grad_ma','grad_cnf_cert','grad_lit_culture_cert','grad_tech_comm_cert','grad_tesol_cert','grad_dual_enrollment_cert']),
+    current_grad_open: new Set(['grad_cnf_cert','grad_lit_culture_cert','grad_tech_comm_cert','grad_tesol_cert','grad_dual_enrollment_cert']),
+    open_exploration: new Set(Object.keys(spec.pathways || {}))
+  };
+  const allowed = routeAllowed[route] || new Set();
+
+  function canShow(id) {
+    if (!id || seen.has(id) || !allowed.has(id) || !spec.pathways[id]) return false;
+    if (id === 'ug_english_minor' && route === 'ug_major_open') return false;
+    if (id === 'ug_secondary_english' && !intents.has('secondary_education_intent')) return false;
+    if (id === 'ug_tesol' && !hasTesolSignal) return false;
+    if (id === 'grad_dual_enrollment_cert' && !contexts.has('dual_enrollment_interest_or_eligibility')) return false;
+    if (id === 'grad_tesol_cert' && !hasTesolSignal) return false;
+    return true;
+  }
+
+  function add(id) {
+    if (!canShow(id)) return;
+    seen.add(id);
+    matches.push(id);
+  }
+
+  // Start from the visitor's strongest intellectual territories. This lets a
+  // secondary match reflect a recurring interest even when it did not win the
+  // credential ranking. Route/intent guards still control what may be shown.
+  const level = ['graduate_open','current_grad_open'].includes(route) ? 'graduate' : 'undergraduate';
+  for (const territoryId of territoryIds) {
+    for (const id of spec.territory_home?.[territoryId]?.[level] || []) add(id);
+    if (matches.length >= 3) break;
+  }
+
+  // Then use the scored pathway ranking to fill any remaining slots.
+  for (const item of rankedPathways || []) {
+    add(item.id);
+    if (matches.length >= 3) break;
+  }
+
+  return matches.slice(0, 3);
+}
+
 export function computeResult(spec, answers) {
   const profile = scoreAnswers(spec, answers);
   const route = getRoute(spec, answers);
@@ -247,22 +300,20 @@ export function computeResult(spec, answers) {
   const addOnRoute = route === 'ug_addon_open';
   const addOnResources = addOnRoute ? ['english_catalog'] : [];
   for (const rid of addOnResources) resourceIds.add(rid);
-  const tesolSignal = (profile.scores.MLT || 0) >= 2.5 || (profile.intentSet || new Set()).has('tesol_teaching_interest');
-  let alsoExplore = topPathways.slice(1, 3).map(x => x.id);
-  if (addOnRoute) {
-    alsoExplore = tesolSignal && topPathways.some(x => x.id === 'ug_tesol') && topPathways[0]?.id !== 'ug_tesol' ? ['ug_tesol'] : ['ug_tesol'];
-  } else if (route === 'graduate_open' && topPathways[0]?.id !== 'grad_ma' && spec.pathways.grad_ma) {
-    // Keep the MA visible as a legitimate graduate route when a focused
-    // certificate is the sharper first fit.
-    alsoExplore = ['grad_ma', ...alsoExplore.filter(id => id !== 'grad_ma')].slice(0,2);
-  }
+
+  const primaryPathway = topPathways[0]?.id || null;
+  const secondaryMatches = buildSecondaryMatches(spec, route, topTerritories, pathways, primaryPathway, profile);
+  // Preserve the older field for compatibility with any downstream code while
+  // making the broader secondary-match layer explicit.
+  const alsoExplore = [...secondaryMatches];
 
   return {
     route,
     profile,
     territories: topTerritories,
     pathways: topPathways,
-    primaryPathway: topPathways[0]?.id || null,
+    primaryPathway,
+    secondaryMatches,
     alsoExplore,
     resources: [...resourceIds],
     confidence,

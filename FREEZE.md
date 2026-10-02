@@ -46,3 +46,5 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 - Graduate-open results keep the MA in English as the standing graduate destination; focused certificates remain visible when supported by the visitor profile/context.
 - Participant-facing minor guidance uses the title English Department Coordinator without naming an individual.
 - Public browser title is `English | Pathfinder Beta`; footer label is `Beta v1.1`.
+
+- Beta v1.1 secondary-match layer: results may surface up to three route-aware related paths from the visitor's other top territories; professional/context-gated routes remain guarded.

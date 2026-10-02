@@ -12,5 +12,7 @@ assert.ok(!app.includes('Prototype debug output'));
 assert.ok(!app.includes('Dustin Pendley, English Department Coordinator'));
 assert.ok(app.includes('English Department Coordinator'));
 assert.ok(app.includes('Other graduate options that fit'));
+assert.ok(app.includes('Other paths that fit your interests'));
+assert.ok(app.includes('Related areas to explore'));
 assert.ok(!app.includes('since this is still a test version'));
 console.log('PASS: participant-facing UI copy and release checks');

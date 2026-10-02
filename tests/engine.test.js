@@ -56,7 +56,15 @@ const addonWriting={OPEN:'OPEN_UG_ADDON',Q01:'Q01_STORY',Q02:['Q02_HISTORY'],Q03
 r=computeResult(spec,addonWriting);
 assert.equal(r.route,'ug_addon_open');
 assert.equal(r.primaryPathway,'ug_english_minor');
-assert.ok(r.alsoExplore.includes('ug_tesol'));
+assert.ok(r.secondaryMatches.includes('ug_cnf'));
+assert.ok(!r.secondaryMatches.includes('ug_tesol'));
+
+// A language-led major profile can keep Language Studies primary while also
+// surfacing TESOL and Creative Nonfiction when those recurring territories are present.
+r=computeResult(spec,accent);
+assert.equal(r.primaryPathway,'ug_language_studies');
+assert.ok(r.secondaryMatches.includes('ug_tesol'));
+assert.ok(r.secondaryMatches.includes('ug_cnf'));
 
 // Explicit secondary-English intent is a professional-route decision. A strong
 // literature content profile should remain visible as territory, but must not
