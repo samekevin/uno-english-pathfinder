@@ -212,7 +212,7 @@ function renderQuestion(){
   const progress = phase==='quick' ? getInitialProgress(spec, answers, q) : getBonusProgress(cursor, bonusPlan.length);
   const eyebrow = progress.label;
   const progressHtml = progress.showBar ? `<div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="${progress.total}" aria-valuenow="${progress.current}" aria-label="${escapeHtml(progress.label)}"><div class="progress-fill" style="width:${progress.percent}%"></div></div>` : '';
-  const nextLabel = phase==='bonus' && cursor===bonusPlan.length-1 ? 'Finish my map' : 'Continue';
+  const nextLabel = phase==='bonus' && cursor===bonusPlan.length-1 ? 'Finish my path' : 'Continue';
   const isMulti = q.select_mode==='up_to_two';
   app.innerHTML=`
     <div class="progress">${eyebrow}</div>
@@ -244,7 +244,7 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
-  app.innerHTML=`<div class="progress">A curiosity map, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before giving you a map.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
+  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
 }
 
@@ -272,7 +272,7 @@ function pathwayDisplay(id, result){
 function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
-  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">our English Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current catalog requirements</a>.</p></div>`;
+  const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current English minor requirements</a>.</p></div>`;
   const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, pursuing a double major in English may also be worth exploring.</p>`;
   if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+doubleMajor+minorInfo;
   return doubleMajor+minorInfo;
@@ -345,7 +345,7 @@ function renderProvisional(){
       quickPlan=[...new Set([...quickPlan,next.id])];
       cursor=quickPlan.length-1;
       phase='quick';
-      app.innerHTML=`<div class="result provisional"><div class="progress">Still exploring</div><div class="map-kicker">We are not going to pretend we know you from too little evidence.</div><h2>${escapeHtml(spec.copy.profile_shape?.EXPLORATORY || 'You’re making us work for it.')}</h2><p class="lede">We need a little more signal from a few different corners of English before we show a provisional map.</p><div class="challenge"><strong>One more question before the first read.</strong><p>This is a targeted follow-up, not a result.</p><button class="btn primary" id="continueQuick">Keep exploring</button></div></div>`;
+      app.innerHTML=`<div class="result provisional"><div class="progress">Still exploring</div><div class="map-kicker">We are not going to pretend we know you from too little evidence.</div><h2>${escapeHtml(spec.copy.profile_shape?.EXPLORATORY || 'You’re making us work for it.')}</h2><p class="lede">We need a little more signal from a few different corners of English before we show a provisional path.</p><div class="challenge"><strong>One more question before the first read.</strong><p>This is a targeted follow-up, not a result.</p><button class="btn primary" id="continueQuick">Keep exploring</button></div></div>`;
       app.querySelector('#continueQuick').addEventListener('click',renderQuestion);
       return;
     }
@@ -370,13 +370,13 @@ function renderProvisional(){
     teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
   };
   const profileCopy = result.profileShape === 'BROAD'
-    ? 'Rather than force a single winner, this map highlights the areas that kept recurring.'
+    ? 'Rather than force a single winner, this path highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
       ? 'We have some real signals, but they are still moving around. A few sharper questions will help us see what keeps recurring.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional map · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or overturn the provisional map.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final map'}</button></div></div>`;
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button></div></div>`;
   app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
 }
 
@@ -409,17 +409,17 @@ function renderFinalResult(){
     teaching_pedagogy: 'You kept returning to the moment when understanding clicks for someone else - and to the question of how learning works.'
   };
   const profileCopy = result.profileShape === 'BROAD'
-    ? 'Rather than force a single winner, this map highlights the areas that kept recurring.'
+    ? 'Rather than force a single winner, this path highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
-      ? 'Your answers crossed several connected areas of English, so this map is best read as a set of starting points. Not seeing yourself here? Start over and make a different set of choices.'
+      ? 'Your answers crossed several connected areas of English, so these are best read as starting points. Not seeing yourself here? Start over and make a different set of choices.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  app.innerHTML=`<div class="result"><div class="progress">Your map · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Department Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
+  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular home</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Department Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
   app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
 
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.8', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.9', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

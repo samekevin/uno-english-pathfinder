@@ -92,3 +92,11 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 - Undergraduate add-on guidance keeps the English Minor primary and mentions a possible English double major without adding a second department-contact prompt.
 - The English Minor handoff reads “Contact our English Department Coordinator” and retains the live catalog requirements link.
 - Result typography and spacing now scale down on phones; this is one responsive app, not a separate mobile version.
+
+## Beta v1.1 branding/copy refinement
+
+- Participant-facing result language now uses **path** rather than **map** where the Pathfinder metaphor reads naturally.
+- Welcome copy uses **A curiosity guide, not a personality test** and **There probably isn’t one right way into the English program.**
+- Bonus copy uses **Same path, clearer read.** and explains that answers can confirm, sharpen, or change the visitor’s path.
+- English Minor/double-major handoff now directs visitors to **the Department Coordinator** or the current English minor requirements.
+- Internal data terms such as territory remain unchanged where they are implementation concepts rather than participant-facing copy.

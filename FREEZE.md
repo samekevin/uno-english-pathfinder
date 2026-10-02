@@ -52,3 +52,5 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 - Beta v1.1 copy refinement: approved prompt simplifications, English Minor department-page link, add-on double-major invitation, participant-facing “areas” terminology, and small signal recalibrations for revised language questions.
 
 - Participant-facing responsive result copy/layout may evolve without changing the frozen v1.3 scoring baseline.
+
+- Beta v1.1 participant-facing branding pass: map language was changed to path/guide where natural; scoring and route logic are unchanged.
