@@ -31,3 +31,6 @@ When a scoring rule, ID, question, answer vector, pathway mapping, or result beh
 ## Application status
 
 The v1.3 specification remains the frozen conceptual/scoring baseline. The repository now also contains the maintained participant-facing web application; UX copy and presentation may evolve without changing the frozen scoring model.
+
+## Beta resource-layer update (v1.0.8)
+Participant-facing resource hooks now include Tell All the Truth Project, current English Minor catalog/contact handoff, and beta feedback. Scoring remains based on frozen v1.3.

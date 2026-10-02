@@ -3585,7 +3585,7 @@
       ],
       "fingerprint": "route_scope_only",
       "territories": "visitor_profile",
-      "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/academics/minor.php"
+      "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/"
     },
     "ug_tesol": {
       "name": "Undergraduate TESOL Certificate",
@@ -4090,7 +4090,7 @@
     },
     "english_catalog": {
       "type": "catalog",
-      "title": "English courses and catalog",
+      "title": "Explore English courses",
       "url": "https://catalog.unomaha.edu/undergraduate/coursesaz/engl/",
       "priority": 60,
       "verified_on": "2026-10-01"
@@ -4160,6 +4160,34 @@
       "type": "human_handoff",
       "title": "Contact the Department of English",
       "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/about-us/contact-us/index.php",
+      "priority": 100,
+      "verified_on": "2026-10-01"
+    },
+    "tell_all_truth": {
+      "type": "experience",
+      "title": "Tell All the Truth Project",
+      "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/community-engagement/tell-all-the-truth-project.php",
+      "priority": 85,
+      "territories": [
+        "literature_culture"
+      ],
+      "copy": "Explore public humanities, literary imagination, experiential learning, and community collaboration in Omaha.",
+      "verified_on": "2026-10-01"
+    },
+    "english_minor_catalog": {
+      "type": "catalog",
+      "title": "English Minor catalog information",
+      "url": "https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/",
+      "priority": 95,
+      "routes": [
+        "ug_addon_open"
+      ],
+      "verified_on": "2026-10-01"
+    },
+    "beta_feedback": {
+      "type": "feedback",
+      "title": "Feedback",
+      "url": "https://unomaha.az1.qualtrics.com/jfe/form/SV_8wznln6UUxvwiY6",
       "priority": 100,
       "verified_on": "2026-10-01"
     }

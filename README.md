@@ -39,3 +39,8 @@ GitHub Pages deploys the static application from the `main` branch. Commits to `
 ## Implementation principle
 
 Pathfinder discovers intellectual territory first and maps that territory to an appropriate curricular home second. Route/credential context should not distort the underlying intellectual profile.
+
+## v1.0.8 resource integration
+- Literature & Culture results can surface the Tell All the Truth Project.
+- English Minor results link to current catalog requirements and Dustin Pendley, English Department Coordinator.
+- The footer includes a beta Feedback link to the Qualtrics tester survey.
