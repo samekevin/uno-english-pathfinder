@@ -273,14 +273,19 @@ function pathwayDisplay(id, result){
   if (!pathway) return '';
   const label = pathway.name || 'Explore this path';
   const route = result.route;
-  if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
-  if (id === 'ug_secondary_english') {
-    return `${pathwayLink(id, label)}<p class="quiet">This is a special double-major route for students pursuing the BS in Secondary Education with the Secondary English 7-12 endorsement. The English undergraduate programs page explains how the English concentration fits that route.</p>`;
-  }
+  const primaryBlurbs = {
+    ug_language_studies: 'For people who notice what language is doing—and the systems that make it work.',
+    ug_literatures: 'For readers interested in what texts mean—and the worlds that made them.',
+    ug_cnf: 'For people who find a true story and immediately start wondering how to tell it—and tell it well.',
+    ug_secondary_english: 'For people who keep finding things worth reading, writing, discussing—and teaching.',
+    ug_english_minor: 'Make English part of your world—and see the human experience from a few more angles.'
+  };
+  const link = (route === 'ug_addon_open' && id === 'ug_english_minor') ? pathwayLink(id, 'English Minor') : pathwayLink(id, label);
+  if (primaryBlurbs[id]) return `${link}<p class="primary-home-blurb">${escapeHtml(primaryBlurbs[id])}</p>`;
   if (id === 'grad_dual_enrollment_cert') {
-    return `${pathwayLink(id, label)}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
+    return `${link}<p class="quiet">An 18-hour graduate certificate designed for high-school English educators who want to teach dual/concurrent enrollment courses; UNO lists it as an online program.</p>`;
   }
-  return pathwayLink(id, label);
+  return link;
 }
 
 function addOnGuidance(result){
@@ -436,4 +441,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.22', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
