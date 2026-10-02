@@ -219,12 +219,24 @@ function renderQuestion(){
     <div class="progress">${eyebrow}</div>
     <div class="question">${escapeHtml(q.prompt)}</div>
     ${isMulti ? '<div class="helper">Choose up to two.</div>' : ''}
-    <div class="option-grid">${q.options.map(o=>optionButton(q,o)).join('')}</div>
+    <div class="option-grid">${q.options.map((o,i)=>optionButton(q,o).replace('<button ', `<button style="--option-index:${i}" `)).join('')}</div>
     <div class="selection-status" aria-live="polite">${isMulti && complete ? `${Array.isArray(selected)?selected.length:1} selected` : ''}</div>
     <div class="actions">
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
     </div>
     ${progressHtml}`;
+
+  // Trigger the option animation once per question render. The animation is
+  // applied after the DOM exists so mobile browsers get a fresh animation lifecycle.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const options = app.querySelectorAll('.option');
+    requestAnimationFrame(() => {
+      options.forEach((option, index) => {
+        option.classList.add('option-enter');
+        option.style.animationDelay = `${1.3 + index * 0.28}s`;
+      });
+    });
+  }
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -436,4 +448,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.16', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.19', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
