@@ -221,35 +221,79 @@ function scheduleAmbientMotion(kind){
   }, 500);
 }
 
+function createDustTexture(width, height, density, seedSalt, moteCount){
+  const canvas = document.createElement('canvas');
+  canvas.className='dust-canvas';
+  canvas.width=width;
+  canvas.height=height;
+  const ctx=canvas.getContext('2d', {alpha:true});
+  if(!ctx) return canvas;
+
+  const image=ctx.createImageData(width,height);
+  const data=image.data;
+  let state=(seedSalt>>>0) || 1;
+  const rand=()=>{
+    state=(state*1664525+1013904223)>>>0;
+    return state/4294967296;
+  };
+
+  for(let i=0;i<data.length;i+=4){
+    if(rand() < density){
+      const a=24 + Math.floor(rand()*72);
+      data[i]=118;
+      data[i+1]=87;
+      data[i+2]=53;
+      data[i+3]=a;
+    }
+  }
+  ctx.putImageData(image,0,0);
+
+  for(let i=0;i<moteCount;i++){
+    const x=rand()*width;
+    const y=rand()*height;
+    const r=.45 + rand()*1.75;
+    const a=.08 + rand()*.20;
+    ctx.fillStyle=`rgba(118,87,53,${a.toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fill();
+  }
+  return canvas;
+}
+
 function playAmbientMotion(kind='landing'){
   clearAmbientMotion();
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const presets = {
-    landing:{count:110, gustMin:-11, gustMax:17, density:1.0, baseDelay:0},
-    provisional:{count:90, gustMin:-7, gustMax:14, density:.88, baseDelay:0.08},
-    final:{count:125, gustMin:-15, gustMax:10, density:1.05, baseDelay:.04}
+    landing:{grain:.88, motes:17000, haze:1.0, gustDelay:1.92, gustDuration:1.68, driftX:150, driftY:-18},
+    provisional:{grain:.82, motes:14000, haze:.96, gustDelay:1.88, gustDuration:1.58, driftX:138, driftY:-14},
+    final:{grain:.92, motes:20000, haze:1.0, gustDelay:1.95, gustDuration:1.76, driftX:158, driftY:-22}
   };
   const preset = presets[kind] || presets.landing;
+  const dpr=Math.min(window.devicePixelRatio || 1, 1.15);
+  const width=Math.max(1, Math.floor(window.innerWidth*dpr));
+  const height=Math.max(1, Math.floor(window.innerHeight*dpr));
   const layer=document.createElement('div');
   layer.className=`ambient-motion ambient-${kind}`;
   layer.setAttribute('aria-hidden','true');
-  const particles=[];
-  for(let i=0;i<preset.count;i++){
-    const size=(Math.random()*4.4+2.4)*preset.density;
-    const opacity=Math.random()*.18+.06;
-    const x=Math.random()*100;
-    const y=Math.random()*100;
-    const driftX=(Math.random()*80+45) * (Math.random()<.72 ? 1 : -1);
-    const driftY=(Math.random()*34-17);
-    const delay=(Math.random()*.34)+preset.baseDelay;
-    const duration=.95+Math.random()*.85;
-    const spin=(Math.random()*260-130);
-    const scale=(.8+Math.random()*.8).toFixed(2);
-    particles.push(`<span class="dust-particle" style="--x:${x.toFixed(2)}vw;--y:${y.toFixed(2)}vh;--size:${size.toFixed(1)}px;--alpha:${opacity.toFixed(3)};--dx:${driftX.toFixed(1)}vw;--dy:${driftY.toFixed(1)}vh;--delay:${delay.toFixed(2)}s;--duration:${duration.toFixed(2)}s;--spin:${spin.toFixed(0)}deg;--scale:${scale}"></span>`);
-  }
-  const gustAngle=(Math.random()*(preset.gustMax-preset.gustMin)+preset.gustMin).toFixed(1);
-  layer.innerHTML=`<div class="dust-haze"></div><div class="dust-gust" style="--gust-angle:${gustAngle}deg"></div>${particles.join('')}`;
+
+  const gustAngle=(-6 + Math.random()*12).toFixed(2);
+  const windX=(preset.driftX + Math.random()*38).toFixed(1);
+  const windY=(preset.driftY - Math.random()*18).toFixed(1);
+  const back=createDustTexture(width,height,Math.min(0.78,preset.grain*0.72),kind.length*913+31,Math.floor(preset.motes*.62));
+  const fine=createDustTexture(width,height,preset.grain,kind.length*1601+47,Math.floor(preset.motes*.38));
+  back.classList.add('dust-layer','dust-layer-back');
+  fine.classList.add('dust-layer','dust-layer-fine');
+  layer.style.setProperty('--gust-angle',`${gustAngle}deg`);
+  layer.style.setProperty('--wind-x',`${windX}vw`);
+  layer.style.setProperty('--wind-y',`${windY}vh`);
+  layer.style.setProperty('--gust-delay',`${preset.gustDelay}s`);
+  layer.style.setProperty('--gust-duration',`${preset.gustDuration}s`);
+  layer.style.setProperty('--haze-alpha',`${preset.haze}`);
+  layer.innerHTML='<div class="dust-field"></div><div class="dust-wash"></div>';
+  layer.insertBefore(back,layer.firstChild);
+  layer.insertBefore(fine,layer.firstChild);
   document.body.classList.add('motion-target');
   document.body.appendChild(layer);
   window.requestAnimationFrame(()=>layer.classList.add('run'));

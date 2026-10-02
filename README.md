@@ -103,4 +103,4 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 
 ## Ambient motion
 
-The beta includes a one-time seven-step boot-print trail and settling dust on the landing and result states. It does not run between questions and is disabled for visitors who prefer reduced motion.
+The beta uses a dense dust field and a one-time randomized gust on landing and result states. The effect does not run between questions and is disabled for reduced-motion settings.

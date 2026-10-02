@@ -57,4 +57,4 @@ The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scor
 
 
 ## UX-only beta motion refinement
-The participant-facing ambient effect is intentionally non-scoring: a brief dust field followed by a randomized gust on the landing, provisional-result, and final-result states. It does not run between questions and is disabled for reduced-motion settings.
+The participant-facing ambient effect is intentionally non-scoring: a million-grain dust field followed by a randomized gust on the landing, provisional-result, and final-result states. It does not run between questions and is disabled for reduced-motion settings.
