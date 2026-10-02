@@ -8,7 +8,7 @@ The application is built from the frozen Pathfinder v1.3 conceptual/scoring spec
 
 - `index.html`, `app.js`, `styles.css` — participant-facing web application
 - `data/` — canonical machine-readable Pathfinder specification
-- `src/` — scoring/result engine
+- `src/` — scoring/result engine and adaptive question planner
 - `tests/` — engine regression cases and specification validation
 - `schemas/` — JSON schema
 - `reference/` — human-readable Question Bank
@@ -44,3 +44,11 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - Literature & Culture results can surface the Tell All the Truth Project.
 - English Minor results link to current catalog requirements and Dustin Pendley, English Department Coordinator.
 - The footer includes a beta Feedback link to the Qualtrics tester survey.
+
+
+## v1.0.9 Secondary Education reachability
+- UG-major visitors now reliably encounter the teaching-context discriminator during Initial Interests.
+- Only the explicit middle/high-school English classroom choice sets `secondary_education_intent`.
+- With adequate evidence, that intent elevates Secondary English Teaching as the professional route while preserving the visitor's strongest content territory separately.
+- Secondary English Teaching links to the UNO English undergraduate-programs page, which explains the BS Secondary Education / Secondary English 7-12 double-major route.
+- Added adaptive-planner regression coverage so this pathway cannot silently become unreachable again.

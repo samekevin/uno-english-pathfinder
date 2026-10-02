@@ -117,6 +117,17 @@ export function rankPathways(spec, route, profile) {
       .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
   }
 
+  // Secondary English Teaching is a professional route, not merely another
+  // intellectual fingerprint. Once a UG-major visitor explicitly chooses the
+  // middle/high-school English teaching context and we have adequate evidence,
+  // keep that professional route primary while the territory ranking separately
+  // describes the student's strongest content pull (literature, language, CNF, etc.).
+  if (route === 'ug_major_open' && intentSet.has('secondary_education_intent') && profile.meaningfulAnswers >= Number(spec.config.quick_path.min_meaningful_answers || 4)) {
+    const ranked = rank(primaryEligible);
+    const secondary = ranked.find(x => x.id === 'ug_secondary_english');
+    if (secondary) return [secondary, ...ranked.filter(x => x.id !== 'ug_secondary_english'), ...rank(secondaryEligible)];
+  }
+
   // Graduate visitors can land directly on the MA or on a focused certificate.
   // The MA is a real destination even when a certificate is the sharper fit, so
   // keep it available as a second graduate route rather than allowing it to

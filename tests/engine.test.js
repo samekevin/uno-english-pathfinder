@@ -56,3 +56,20 @@ r=computeResult(spec,addonWriting);
 assert.equal(r.route,'ug_addon_open');
 assert.equal(r.primaryPathway,'ug_english_minor');
 assert.ok(r.alsoExplore.includes('ug_tesol'));
+
+// Explicit secondary-English intent is a professional-route decision. A strong
+// literature content profile should remain visible as territory, but must not
+// displace Secondary English Teaching once evidence is adequate.
+const secondaryLit={
+  OPEN:'OPEN_UG_MAJOR',
+  Q01:'Q01_BOOK',
+  Q02:['Q02_HISTORY'],
+  T01:'T01_FORM',
+  P01:'P01_SECONDARY',
+  W02:'W02_BOOKS',
+  FU_LIT_A:'FU_LIT_HISTORY'
+};
+r=computeResult(spec,secondaryLit);
+assert.equal(r.primaryPathway,'ug_secondary_english');
+assert.ok(r.territories.some(x=>x.id==='literature_culture'));
+assert.ok(r.profile.intents.includes('secondary_education_intent'));

@@ -16,7 +16,7 @@ The v1.3 specification is frozen for implementation testing. Changes after this 
 - Dimension count: 10
 - Subprofile count: 8
 - Pathway count: 12
-- Resource count: 9
+- Resource count at original v1.3 freeze: 9 (current beta resource layer: 12)
 - Master/component parity: PASS for all 11 source sections
 - JSON Schema validation: PASS
 
@@ -34,3 +34,7 @@ The v1.3 specification remains the frozen conceptual/scoring baseline. The repos
 
 ## Beta resource-layer update (v1.0.8)
 Participant-facing resource hooks now include Tell All the Truth Project, current English Minor catalog/contact handoff, and beta feedback. Scoring remains based on frozen v1.3.
+
+
+## Beta planner update (v1.0.9)
+The frozen intellectual scoring dimensions remain unchanged. Implementation logic now guarantees a reachable Secondary Education intent discriminator for the UG-major route and honors explicit secondary-English professional intent once evidence is adequate. Adaptive-planner regression tests cover this behavior.

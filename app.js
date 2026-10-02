@@ -1,4 +1,5 @@
 import { computeResult, scoreAnswers } from './src/engine.js';
+import { buildNextQuickQuestion as planNextQuickQuestion } from './src/planner.js';
 
 const app = document.querySelector('#app');
 let spec;
@@ -73,100 +74,7 @@ function buildQuickPlan(){
   return plan;
 }
 
-function chooseDomainQuestion(excluded = new Set(), preferredFamilies = []){
-  const available = spec.questions.filter(q => !excluded.has(q.id) && !['route','broad','wildcard','followup','personalization'].includes(q.family));
-  for (const family of preferredFamilies){
-    const q = available.find(x => x.family === family);
-    if(q) return q;
-  }
-  return available[0] || null;
-}
-
-function chooseWildcardQuestion(excluded = new Set()){
-  // W02 is the true Initial interests wildcard: it is scored and intentionally not a
-  // follow-up. W01 is reserved for its explicit W01_FU pairing.
-  return spec.questions.find(q => q.id === 'W02' && !excluded.has(q.id))
-      || spec.questions.find(q => q.family === 'wildcard' && !excluded.has(q.id));
-}
-
-function chooseAdaptiveFollowup(excluded = new Set()){
-  const ranked = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
-  const map = {language:'FU_LANG_A', literature:'FU_LIT_A', cnf:'FU_CNF_A', professional:'FU_PRO_A', teaching:'FU_TEACH_A'};
-  for(const family of ranked){
-    const id = map[family];
-    if(id && !excluded.has(id) && getQuestion(id)) return getQuestion(id);
-  }
-  // Tie-breaker for editing/rhetoric or unresolved profiles.
-  return spec.questions.find(q => q.id === 'W03' && !excluded.has(q.id))
-      || spec.questions.find(q => q.family === 'followup' && !excluded.has(q.id))
-      || null;
-}
-
-function buildNextQuickQuestion(){
-  const used = answeredIds();
-  const scored = Object.keys(answers).filter(id => id !== 'OPEN' && (getQuestion(id)?.score_budget ?? 0) > 0).length;
-  const meaningful = scoreAnswers(spec, answers).meaningfulAnswers;
-  const families = new Set(scoreAnswers(spec, answers).domainFamilies.filter(f => f !== 'route'));
-
-  // Broad sampler slots.
-  if(scored < 2){
-    const q = spec.questions.find(q => q.family === 'broad' && !used.has(q.id));
-    if(q) return q;
-  }
-
-  // Two domain discriminators, chosen after seeing the first two broad answers.
-  if(scored < 4){
-    const ranked = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
-    const represented = new Set(ranked.slice(0, 2));
-    const preferred = [...represented];
-    for(const fallback of ['language','literature','cnf','professional','teaching','editing','rhetoric']){
-      if(!preferred.includes(fallback)) preferred.push(fallback);
-    }
-    // First domain question follows the strongest emerging family; second gets
-    // a different plausible family when possible so we avoid feedback loops.
-    if(scored === 2){
-      const q = chooseDomainQuestion(used, preferred);
-      if(q) return q;
-    }
-    if(scored === 3){
-      const ranked2 = currentRankedFamilies().filter(x => x.score > 0).map(x => x.family);
-      const firstDomain = [...used].map(id=>getQuestion(id)?.family).filter(Boolean);
-      const avoidFamily = firstDomain.find(f => !['broad','route'].includes(f));
-      const competing = ranked2.filter(f=>f!==avoidFamily);
-      const prefs = [...competing, ...preferred.filter(f=>f!==avoidFamily)];
-      const q = chooseDomainQuestion(used, prefs);
-      if(q) return q;
-    }
-  }
-
-  // Required Initial interests wildcard.
-  if(scored === 4){
-    const q = chooseWildcardQuestion(used);
-    if(q) return q;
-  }
-
-  // Required adaptive follow-up / tie-breaker.
-  if(scored === 5){
-    const q = chooseAdaptiveFollowup(used);
-    if(q) return q;
-  }
-
-  // Target is six. Continue to 8 only when evidence is still unresolved.
-  const profile = scoreAnswers(spec, answers);
-  if(scored >= 6 && scored < 8){
-    const result = computeResult(spec, answers);
-    const enough = profile.meaningfulAnswers >= Number(spec.config.quick_path.min_meaningful_answers || 4)
-      && families.size >= Number(spec.config.quick_path.min_domain_families || 3);
-    const unresolved = !enough || ['INSUFFICIENT','AMBIGUOUS'].includes(result.confidence) || result.profileShape === 'EXPLORATORY';
-    if(unresolved){
-      const excluded = used;
-      const ranked = currentRankedFamilies().filter(x=>x.score>0).map(x=>x.family);
-      const q = chooseDomainQuestion(excluded, [...ranked, 'editing','rhetoric','language','literature','cnf','professional','teaching']);
-      if(q) return q;
-    }
-  }
-  return null;
-}
+function buildNextQuickQuestion(){ return planNextQuickQuestion(spec, answers); }
 
 function rebuildQuickPlan(){
   const ids=[];
@@ -352,6 +260,9 @@ function pathwayDisplay(id, result){
   const label = pathway.name || 'Explore this path';
   const route = result.route;
   if (route === 'ug_addon_open' && id === 'ug_english_minor') return pathwayLink(id, 'English Minor');
+  if (id === 'ug_secondary_english') {
+    return `${pathwayLink(id, label)}<p class="quiet">This is a special double-major route for students pursuing the BS in Secondary Education with the Secondary English 7-12 endorsement. The English undergraduate programs page explains how the English concentration fits that route.</p>`;
+  }
   return pathwayLink(id, label);
 }
 
@@ -473,4 +384,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.0.8', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.0.9', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
