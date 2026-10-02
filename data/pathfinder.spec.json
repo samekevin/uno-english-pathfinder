@@ -28,7 +28,8 @@
       "schemas/pathfinder.schema.json",
       "README.md",
       "docs/qsf-portability.md"
-    ]
+    ],
+    "implementation_note": "Synchronized with Pathfinder beta web release v1.1.0; conceptual/scoring baseline remains frozen at v1.3 with a non-scoring graduate context discriminator for the Dual Enrollment certificate."
   },
   "config": {
     "spec_version": "1.3.0-machine",
@@ -2244,6 +2245,60 @@
       "purpose": "Research-facing pedagogy and applied/psycho/sociolinguistic interfaces."
     },
     {
+      "id": "GD01",
+      "title": "One practical question",
+      "family": "context",
+      "format": "follow-up",
+      "select_mode": "single",
+      "prompt": "One practical question: which of these sounds closest to what you’re exploring?",
+      "options": [
+        {
+          "id": "GD01_DUAL",
+          "text": "🏫 I teach high school English—or expect to—and want to teach dual/concurrent enrollment courses.",
+          "signals": {},
+          "meaningful_evidence": false,
+          "result_salience": "high",
+          "personalization_only": false,
+          "zero_point_fun": false,
+          "context_signals": [
+            "dual_enrollment_interest_or_eligibility"
+          ]
+        },
+        {
+          "id": "GD01_SECONDARY_GENERAL",
+          "text": "📚 I teach high school English, but I’m looking more broadly at graduate English study.",
+          "signals": {},
+          "meaningful_evidence": false,
+          "result_salience": "medium",
+          "personalization_only": false,
+          "zero_point_fun": false
+        },
+        {
+          "id": "GD01_OTHER_TEACHING",
+          "text": "🧑‍🏫 I’m interested in teaching, but not specifically in dual/concurrent enrollment.",
+          "signals": {},
+          "meaningful_evidence": false,
+          "result_salience": "medium",
+          "personalization_only": false,
+          "zero_point_fun": false
+        },
+        {
+          "id": "GD01_GRAD_STUDY",
+          "text": "🎓 I’m mainly here to explore graduate English study beyond the teaching question.",
+          "signals": {},
+          "meaningful_evidence": false,
+          "result_salience": "low",
+          "personalization_only": false,
+          "zero_point_fun": false
+        }
+      ],
+      "level": [
+        "graduate"
+      ],
+      "score_budget": 0,
+      "purpose": "Establish the specific professional context needed before surfacing the English Dual Enrollment Certificate; do not score intellectual interests."
+    },
+    {
       "id": "W01",
       "title": "Choose an artifact",
       "family": "wildcard",
@@ -3862,11 +3917,65 @@
       "requires_context": "dual_enrollment_interest_or_eligibility",
       "fingerprint": "teaching_plus_content_profile",
       "territories": [
-        "teaching_pedagogy"
+        "teaching_pedagogy",
+        "language_learning_multilingualism",
+        "language_linguistics"
       ],
-      "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/english-dual-enrollment-certificate/",
+      "url": "https://www.unomaha.edu/academic-programs/certificates/english-dual-enrollment-certificate.php",
       "resource_hooks": [
+        "dual_enrollment_english",
         "graduate_ta"
+      ],
+      "anchors": [
+        {
+          "any": [
+            "TCH"
+          ]
+        }
+      ],
+      "clusters": [
+        [
+          "TCH",
+          "LIT"
+        ],
+        [
+          "TCH",
+          "LANG"
+        ],
+        [
+          "TCH",
+          "MLT"
+        ],
+        [
+          "TCH",
+          "INQ"
+        ],
+        [
+          "TCH",
+          "RHE"
+        ],
+        [
+          "TCH",
+          "PRO"
+        ],
+        [
+          "TCH",
+          "CRA"
+        ],
+        [
+          "TCH",
+          "EDP"
+        ]
+      ],
+      "boosters": [
+        "INQ",
+        "LIT",
+        "LANG",
+        "MLT",
+        "RHE",
+        "PRO",
+        "CRA",
+        "EDP"
       ]
     }
   },
@@ -4189,6 +4298,19 @@
       "title": "Feedback",
       "url": "https://unomaha.az1.qualtrics.com/jfe/form/SV_8wznln6UUxvwiY6",
       "priority": 100,
+      "verified_on": "2026-10-01"
+    },
+    "dual_enrollment_english": {
+      "type": "program_experience",
+      "title": "Dual Enrollment English",
+      "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/community-engagement/dual-enrollment-english.php",
+      "priority": 90,
+      "routes": [
+        "graduate_open",
+        "current_grad_open",
+        "open_exploration"
+      ],
+      "copy": "UNO English’s Dual Enrollment program supports high-school English educators and the dual/concurrent enrollment ecosystem.",
       "verified_on": "2026-10-01"
     }
   },

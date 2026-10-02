@@ -115,5 +115,18 @@
     "url": "https://unomaha.az1.qualtrics.com/jfe/form/SV_8wznln6UUxvwiY6",
     "priority": 100,
     "verified_on": "2026-10-01"
+  },
+  "dual_enrollment_english": {
+    "type": "program_experience",
+    "title": "Dual Enrollment English",
+    "url": "https://www.unomaha.edu/college-of-arts-and-sciences/english/community-engagement/dual-enrollment-english.php",
+    "priority": 90,
+    "routes": [
+      "graduate_open",
+      "current_grad_open",
+      "open_exploration"
+    ],
+    "copy": "UNO English’s Dual Enrollment program supports high-school English educators and the dual/concurrent enrollment ecosystem.",
+    "verified_on": "2026-10-01"
   }
 }

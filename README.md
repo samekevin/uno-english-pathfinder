@@ -52,3 +52,8 @@ Pathfinder discovers intellectual territory first and maps that territory to an 
 - With adequate evidence, that intent elevates Secondary English Teaching as the professional route while preserving the visitor's strongest content territory separately.
 - Secondary English Teaching links to the UNO English undergraduate-programs page, which explains the BS Secondary Education / Secondary English 7-12 double-major route.
 - Added adaptive-planner regression coverage so this pathway cannot silently become unreachable again.
+
+## v1.1.0 Dual Enrollment context
+- Added a graduate-only contextual discriminator so the English Dual Enrollment Certificate is reachable only when the visitor explicitly indicates the dual/concurrent-enrollment teaching context.
+- The certificate remains a separate credential from the visitor's intellectual territory.
+- Added the current UNO Dual Enrollment English page as a result resource and the current Academic Programs certificate page as the primary credential link.

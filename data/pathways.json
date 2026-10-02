@@ -469,11 +469,65 @@
     "requires_context": "dual_enrollment_interest_or_eligibility",
     "fingerprint": "teaching_plus_content_profile",
     "territories": [
-      "teaching_pedagogy"
+      "teaching_pedagogy",
+      "language_learning_multilingualism",
+      "language_linguistics"
     ],
-    "url": "https://catalog.unomaha.edu/graduate/degree-programs-certificates-minors/english/english-dual-enrollment-certificate/",
+    "url": "https://www.unomaha.edu/academic-programs/certificates/english-dual-enrollment-certificate.php",
     "resource_hooks": [
+      "dual_enrollment_english",
       "graduate_ta"
+    ],
+    "anchors": [
+      {
+        "any": [
+          "TCH"
+        ]
+      }
+    ],
+    "clusters": [
+      [
+        "TCH",
+        "LIT"
+      ],
+      [
+        "TCH",
+        "LANG"
+      ],
+      [
+        "TCH",
+        "MLT"
+      ],
+      [
+        "TCH",
+        "INQ"
+      ],
+      [
+        "TCH",
+        "RHE"
+      ],
+      [
+        "TCH",
+        "PRO"
+      ],
+      [
+        "TCH",
+        "CRA"
+      ],
+      [
+        "TCH",
+        "EDP"
+      ]
+    ],
+    "boosters": [
+      "INQ",
+      "LIT",
+      "LANG",
+      "MLT",
+      "RHE",
+      "PRO",
+      "CRA",
+      "EDP"
     ]
   }
 }

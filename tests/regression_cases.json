@@ -119,6 +119,21 @@
     }
   },
   {
+    "id": "graduate_dual_enrollment",
+    "route": "graduate_open",
+    "context": [
+      "dual_enrollment_interest_or_eligibility"
+    ],
+    "expect": {
+      "primary_pathway_any": [
+        "grad_dual_enrollment_cert"
+      ],
+      "resource_any": [
+        "dual_enrollment_english"
+      ]
+    }
+  },
+  {
     "id": "comedy_goblin",
     "route": "open_exploration",
     "expect": {

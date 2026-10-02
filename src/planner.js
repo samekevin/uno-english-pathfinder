@@ -96,7 +96,16 @@ export function buildNextQuickQuestion(spec, answers){
     }
   }
 
-  if(scored === 4) return chooseWildcardQuestion(spec, used);
+  if(scored === 4){
+    const route=getRouteSignal(spec, answers);
+    const graduateRoute = ['graduate_open','current_grad_open'].includes(route);
+    const profileNow = scoreAnswers(spec, answers);
+    if(graduateRoute && !used.has('GD01') && ((profileNow.scores.TCH || 0) > 0 || profileNow.intents.includes('secondary_education_intent'))) {
+      const contextQ=getQuestion(spec,'GD01');
+      if(contextQ) return contextQ;
+    }
+    return chooseWildcardQuestion(spec, used);
+  }
   if(scored === 5) return chooseAdaptiveFollowup(spec, answers, used);
 
   if(scored >= 6 && scored < 8){

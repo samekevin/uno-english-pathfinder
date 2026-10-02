@@ -73,3 +73,24 @@ r=computeResult(spec,secondaryLit);
 assert.equal(r.primaryPathway,'ug_secondary_english');
 assert.ok(r.territories.some(x=>x.id==='literature_culture'));
 assert.ok(r.profile.intents.includes('secondary_education_intent'));
+
+
+// Explicit Dual Enrollment context should surface the dedicated graduate certificate,
+// while the same teaching/content profile without that context should not fabricate it.
+const dualContext={
+  OPEN:'OPEN_GRAD',
+  Q01:'Q01_BOOK',
+  Q02:['Q02_HISTORY'],
+  T01:'T01_FORM',
+  P01:'P01_SECONDARY',
+  GD01:'GD01_DUAL',
+  W02:'W02_BOOKS'
+};
+r=computeResult(spec,dualContext);
+assert.equal(r.primaryPathway,'grad_dual_enrollment_cert');
+assert.ok(r.profile.contexts.includes('dual_enrollment_interest_or_eligibility'));
+assert.ok(r.resources.includes('dual_enrollment_english'));
+
+const noDualContext={...dualContext, GD01:'GD01_SECONDARY_GENERAL'};
+r=computeResult(spec,noDualContext);
+assert.notEqual(r.primaryPathway,'grad_dual_enrollment_cert');

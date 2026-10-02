@@ -19,6 +19,7 @@ export function scoreAnswers(spec, answers) {
   const scores = {};
   const personalizationTags = [];
   const intents = new Set();
+  const contexts = new Set();
   const families = new Set();
   let meaningfulAnswers = 0;
   let scoredInteractions = 0;
@@ -42,10 +43,11 @@ export function scoreAnswers(spec, answers) {
     for (const option of selected) {
       for (const tag of option.personalization_tags || []) personalizationTags.push(tag);
       for (const intent of option.intent_signals || []) intents.add(intent);
+      for (const context of option.context_signals || []) contexts.add(context);
     }
   }
 
-  return { scores, personalizationTags, intents: [...intents], intentSet: intents, domainFamilies: [...families], meaningfulAnswers, scoredInteractions };
+  return { scores, personalizationTags, intents: [...intents], intentSet: intents, contexts: [...contexts], contextSet: contexts, domainFamilies: [...families], meaningfulAnswers, scoredInteractions };
 }
 
 function getRoute(spec, answers) {
@@ -67,7 +69,6 @@ function anchorPass(anchor, scores, intents) {
 function pathwayScore(pathway, scores, intents) {
   if (pathway.fingerprint) return 0;
   if (pathway.requires_intent && !intents.has(pathway.requires_intent)) return -Infinity;
-  if (pathway.requires_context) return 0;
   if (pathway.anchors && !pathway.anchors.some(a => anchorPass(a, scores, intents))) return -Infinity;
   let score = 0;
   for (const cluster of pathway.clusters || []) {
@@ -84,6 +85,7 @@ export function rankPathways(spec, route, profile) {
   const topTerritory = territoryRanking.find(x => x.score > 0)?.id;
   const routeConfig = spec.routes?.[route] || {};
   const intentSet = profile.intentSet || new Set(profile.intents || []);
+  const contextSet = profile.contextSet || new Set(profile.contexts || []);
   const primaryEligible = routeConfig.eligible_primary === 'determine_after_profile'
     ? Object.keys(spec.pathways)
     : [...(routeConfig.eligible_primary || [])];
@@ -102,7 +104,10 @@ export function rankPathways(spec, route, profile) {
         // supposed to win by invented intellectual scoring. Give it a neutral
         // base score and let territory mapping decide where it fits.
         if (pathway.fingerprint === 'route_scope_only') score = 0;
-        else score = pathwayScore(pathway, profile.scores, profile.intents);
+        else {
+          if (pathway.requires_context && !contextSet.has(pathway.requires_context)) return null;
+          score = pathwayScore(pathway, profile.scores, profile.intents);
+        }
         if (!Number.isFinite(score)) return null;
         if (topTerritory && Array.isArray(pathway.territories) && pathway.territories.includes(topTerritory)) {
           const level = route.startsWith('grad') || route === 'current_grad_open' ? 'graduate' : 'undergraduate';
@@ -126,6 +131,16 @@ export function rankPathways(spec, route, profile) {
     const ranked = rank(primaryEligible);
     const secondary = ranked.find(x => x.id === 'ug_secondary_english');
     if (secondary) return [secondary, ...ranked.filter(x => x.id !== 'ug_secondary_english'), ...rank(secondaryEligible)];
+  }
+
+  // Explicit Dual Enrollment context is a credential-scope decision for graduate routes.
+  // Keep the visitor's intellectual territory separate, but elevate this focused certificate
+  // when the visitor has directly indicated that this is the teaching context they are exploring.
+  if (['graduate_open','current_grad_open'].includes(route) && contextSet.has('dual_enrollment_interest_or_eligibility') && profile.meaningfulAnswers >= Number(spec.config.quick_path.min_meaningful_answers || 4)) {
+    const eligible = routeConfig.eligible_primary || [];
+    const ranked = rank(eligible);
+    const dual = ranked.find(x => x.id === 'grad_dual_enrollment_cert');
+    if (dual) return [dual, ...ranked.filter(x => x.id !== 'grad_dual_enrollment_cert')];
   }
 
   // Graduate visitors can land directly on the MA or on a focused certificate.
@@ -171,7 +186,7 @@ export function rankTerritories(spec, scores) {
 export function confidenceState(spec, profile, territoryRanking) {
   const values = territoryRanking.filter(x => x.score > 0).map(x => x.score);
   const total = values.reduce((a, b) => a + b, 0);
-  const domainFamilies = new Set((profile.domainFamilies || []).filter(f => f !== 'route'));
+  const domainFamilies = new Set((profile.domainFamilies || []).filter(f => !['route','context','personalization','followup'].includes(f))); 
   if (profile.meaningfulAnswers < spec.config.quick_path.min_meaningful_answers ||
       profile.scoredInteractions < spec.config.quick_path.min_scored_interactions ||
       domainFamilies.size < spec.config.quick_path.min_domain_families) {
@@ -210,7 +225,7 @@ export function computeResult(spec, answers) {
   const territories = rankTerritories(spec, profile.scores);
   const confidence = confidenceState(spec, profile, territories);
   const shape = profileShape(profile, territories);
-  const pathways = rankPathways(spec, route, { ...profile, intents: profile.intentSet || new Set(profile.intents) });
+  const pathways = rankPathways(spec, route, { ...profile, intents: profile.intentSet || new Set(profile.intents), contextSet: profile.contextSet || new Set(profile.contexts || []) });
 
   const topTerritories = territories.filter(x => x.score > 0).slice(0, 3);
   const topPathways = pathways.slice(0, 4);

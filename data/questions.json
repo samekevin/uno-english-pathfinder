@@ -2093,6 +2093,60 @@
     "purpose": "Research-facing pedagogy and applied/psycho/sociolinguistic interfaces."
   },
   {
+    "id": "GD01",
+    "title": "One practical question",
+    "family": "context",
+    "format": "follow-up",
+    "select_mode": "single",
+    "prompt": "One practical question: which of these sounds closest to what you’re exploring?",
+    "options": [
+      {
+        "id": "GD01_DUAL",
+        "text": "🏫 I teach high school English—or expect to—and want to teach dual/concurrent enrollment courses.",
+        "signals": {},
+        "meaningful_evidence": false,
+        "result_salience": "high",
+        "personalization_only": false,
+        "zero_point_fun": false,
+        "context_signals": [
+          "dual_enrollment_interest_or_eligibility"
+        ]
+      },
+      {
+        "id": "GD01_SECONDARY_GENERAL",
+        "text": "📚 I teach high school English, but I’m looking more broadly at graduate English study.",
+        "signals": {},
+        "meaningful_evidence": false,
+        "result_salience": "medium",
+        "personalization_only": false,
+        "zero_point_fun": false
+      },
+      {
+        "id": "GD01_OTHER_TEACHING",
+        "text": "🧑‍🏫 I’m interested in teaching, but not specifically in dual/concurrent enrollment.",
+        "signals": {},
+        "meaningful_evidence": false,
+        "result_salience": "medium",
+        "personalization_only": false,
+        "zero_point_fun": false
+      },
+      {
+        "id": "GD01_GRAD_STUDY",
+        "text": "🎓 I’m mainly here to explore graduate English study beyond the teaching question.",
+        "signals": {},
+        "meaningful_evidence": false,
+        "result_salience": "low",
+        "personalization_only": false,
+        "zero_point_fun": false
+      }
+    ],
+    "level": [
+      "graduate"
+    ],
+    "score_budget": 0,
+    "purpose": "Establish the specific professional context needed before surfacing the English Dual Enrollment Certificate; do not score intellectual interests."
+  },
+  {
     "id": "W01",
     "title": "Choose an artifact",
     "family": "wildcard",

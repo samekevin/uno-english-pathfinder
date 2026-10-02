@@ -28,3 +28,6 @@ These may require Embedded Data math and/or custom JavaScript. Before generating
 ## Drift prevention
 
 Any QSF exporter should read this package's stable IDs and vectors. Do not hand-maintain an independent scoring copy when avoidable.
+
+## Beta implementation extension: graduate context
+The v1.3 conceptual/scoring baseline is unchanged. The beta implementation adds a non-scoring `context_signals` field on answer options so graduate credential gates can be represented without folding practical credential eligibility into intellectual-interest scoring. The current example is `dual_enrollment_interest_or_eligibility`, required by the English Dual Enrollment Certificate. A future QSF implementation should map this context signal to embedded data/branch logic rather than to a scoring category.

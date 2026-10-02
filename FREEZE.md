@@ -38,3 +38,6 @@ Participant-facing resource hooks now include Tell All the Truth Project, curren
 
 ## Beta planner update (v1.0.9)
 The frozen intellectual scoring dimensions remain unchanged. Implementation logic now guarantees a reachable Secondary Education intent discriminator for the UG-major route and honors explicit secondary-English professional intent once evidence is adequate. Adaptive-planner regression tests cover this behavior.
+
+## Beta implementation extension v1.1.0
+The v1.3 conceptual/scoring baseline remains frozen. This beta adds one non-scoring graduate context discriminator and a `context_signals` field so the existing `requires_context: dual_enrollment_interest_or_eligibility` rule is executable without changing intellectual scoring.

@@ -37,3 +37,18 @@ addon[addonDomain.id] = addonDomain.options.find(o => o.meaningful_evidence)?.id
 assert.notEqual(buildNextQuickQuestion(spec, addon)?.id, 'P01');
 
 console.log('PASS: adaptive planner reachability tests');
+
+
+// Graduate teaching profiles get a real context discriminator for Dual Enrollment.
+// Four scored answers are enough to make the teaching signal visible; GD01 is
+// non-scoring and should be asked before the wildcard/result stage.
+const gradTeaching = {
+  OPEN:'OPEN_GRAD',
+  Q01:'Q01_BOOK',
+  Q02:['Q02_HISTORY'],
+  T01:'T01_FORM',
+  P01:'P01_SECONDARY'
+};
+let gq = buildNextQuickQuestion(spec, gradTeaching);
+assert.equal(gq.id,'GD01');
+assert.equal(gq.score_budget,0);

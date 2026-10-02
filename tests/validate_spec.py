@@ -5,7 +5,7 @@ data=root/"data"
 load=lambda n: json.loads((data/n).read_text(encoding="utf-8"))
 D=load("dimensions.json"); Q=load("questions.json"); S=load("subprofiles.json"); P=load("pathways.json"); R=load("resources.json")
 errs=[]
-qids=set(); oids=set()
+qids=set(); oids=set(); context_signals=set(); intent_signals=set()
 for q in Q:
     if q["id"] in qids: errs.append(f"duplicate question id {q['id']}")
     qids.add(q["id"])
@@ -14,6 +14,8 @@ for q in Q:
         oids.add(o["id"])
         for d in o.get("signals",{}):
             if d not in D: errs.append(f"unknown dimension {d} in {o['id']}")
+        context_signals.update(o.get("context_signals",[]) or [])
+        intent_signals.update(o.get("intent_signals",[]) or [])
 for sid,s in S.items():
     for cluster in s.get("clusters",[]):
         for d in cluster:
@@ -23,6 +25,8 @@ for sid,s in S.items():
 for pid,p in P.items():
     for rid in p.get("resource_hooks",[]):
         if rid not in R: errs.append(f"unknown resource {rid} in pathway {pid}")
+    req=p.get("requires_context")
+    if req and req not in context_signals: errs.append(f"orphaned context requirement {req} in pathway {pid}")
 if errs:
     print("FAIL")
     print("\n".join(errs))
