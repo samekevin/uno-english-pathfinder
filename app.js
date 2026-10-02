@@ -12,6 +12,17 @@ let bonusPlan = [];
 let provisionalResult = null;
 let advanceLock = false;
 
+function resetViewport(){
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
+}
+
 const routeLabels = {
   ug_major_open:'Undergraduate major',
   ug_addon_open:'Undergraduate add-on',
@@ -205,6 +216,7 @@ function advanceCurrent(){
 }
 
 function renderQuestion(){
+  resetViewport();
   const q = questionForCursor();
   if(!q){ renderFinalResult(); return; }
   const plan = planForPhase();
@@ -225,6 +237,7 @@ function renderQuestion(){
       ${isMulti ? `<button class="btn primary" id="next" ${complete?'':'disabled'}>${nextLabel}</button>` : ''}
     </div>
     ${progressHtml}`;
+  resetViewport();
 
   app.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
     if(advanceLock) return;
@@ -258,6 +271,7 @@ function renderQuestion(){
 }
 
 function renderWelcome(){
+  resetViewport();
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
 }
@@ -353,6 +367,7 @@ function secondaryOptionsMarkup(result){
 }
 
 function renderProvisional(){
+  resetViewport();
   const result=provisionalResult;
   const profile=result.profile;
   const domainCount=new Set((profile.domainFamilies||[]).filter(f=>f!=='route')).size;
@@ -405,6 +420,7 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
+  resetViewport();
   const result=computeResult(spec,answers);
   const outcome=classifyBonus(provisionalResult,result);
   const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
