@@ -24,7 +24,7 @@ for (const stale of ['playAmbientMotion','scheduleAmbientMotion','dust-canvas','
   assert.ok(!styles.includes(stale), `stale motion token in styles.css: ${stale}`);
 }
 
-assert.ok(app.includes('pursuing a double major in English may also be worth exploring.'));
+assert.ok(!app.includes('pursuing a double major in English may also be worth exploring.')); // route-explanation paragraph intentionally removed
 assert.ok(app.includes('Rather than force a single winner, this path highlights the areas that kept recurring.'));
 assert.ok(app.includes('Provisional path ·'));
 assert.ok(app.includes('Your path ·'));

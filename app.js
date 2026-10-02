@@ -292,9 +292,8 @@ function addOnGuidance(result){
   if (result.route !== 'ug_addon_open') return '';
   const tesolMatch = result.primaryPathway === 'ug_tesol';
   const minorInfo = `<div class="minor-note"><strong>Thinking about the English Minor or a double major?</strong><p>Contact <a href="mailto:dpendley@unomaha.edu?subject=English%20Minor%20question">the Department Coordinator</a> or <a href="https://catalog.unomaha.edu/undergraduate/college-arts-sciences/english/english-minor/" target="_blank" rel="noopener noreferrer">see the current English minor requirements</a>.</p></div>`;
-  const doubleMajor = `<p class="quiet">Because you came in looking to add English, we're keeping your primary match focused on add-on options. If these areas keep pulling you in, pursuing a double major in English may also be worth exploring.</p>`;
-  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+doubleMajor+minorInfo;
-  return doubleMajor+minorInfo;
+  if (tesolMatch) return '<p class="quiet">This language-learning path may pair naturally with your existing major. Explore the TESOL Certificate details before deciding how you want to build it into your work.</p>'+minorInfo;
+  return minorInfo;
 }
 
 function pathwayLink(id, fallbackLabel='Explore this path'){
