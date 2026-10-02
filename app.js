@@ -221,7 +221,9 @@ function playAmbientMotion(){
     <span class="boot-print boot-2"></span>
     <span class="boot-print boot-3"></span>
     <span class="boot-print boot-4"></span>
-    <span class="boot-print boot-5"></span>`;
+    <span class="boot-print boot-5"></span>
+    <span class="boot-print boot-6"></span>
+    <span class="boot-print boot-7"></span>`;
   document.body.appendChild(layer);
   window.setTimeout(()=>{
     layer.querySelectorAll('.boot-print').forEach(el=>el.classList.add('run'));

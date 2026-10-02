@@ -103,4 +103,4 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 
 ## Ambient motion
 
-The beta includes a one-time boot-print sweep and settling dust on the landing and result states. It does not run between questions and is disabled for visitors who prefer reduced motion.
+The beta includes a one-time seven-step boot-print trail and settling dust on the landing and result states. It does not run between questions and is disabled for visitors who prefer reduced motion.

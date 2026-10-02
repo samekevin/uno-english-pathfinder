@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 const index = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const app = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+const styles = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 
 assert.ok(index.includes('<title>English | Pathfinder Beta</title>'));
 assert.ok(index.includes('UNO English Pathfinder · Beta v1.1'));
@@ -19,6 +20,11 @@ assert.ok(!app.includes('since this is still a test version'));
 
 assert.ok(app.includes('playAmbientMotion'));
 assert.ok(app.includes('prefers-reduced-motion'));
+assert.ok(app.includes('boot-7'));
+assert.ok(styles.includes('step-in'));
+assert.ok(styles.includes('boot-7'));
+assert.ok(styles.includes('dust-settle'));
+assert.ok(styles.includes('animation:step-in .9s ease-out var(--delay) forwards'));
 assert.ok(index.includes('Beta v1.1'));
 assert.ok(!app.includes('flicker'));
 assert.ok(!index.includes('flicker'));
@@ -31,6 +37,6 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.11'));
-assert.ok(index.includes('app.js?v=1.1.11'));
+assert.ok(index.includes('styles.css?v=1.1.12'));
+assert.ok(index.includes('app.js?v=1.1.12'));
 console.log('PASS: participant-facing UI copy and release checks');
