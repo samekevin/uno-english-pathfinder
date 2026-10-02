@@ -309,20 +309,30 @@ function relatedPathwayDisplay(id, result){
   return pathwayDisplay(id,result);
 }
 
+function compactSecondaryLink(id, result){
+  const pathway = spec.pathways[id];
+  if(!pathway) return '';
+  const shortLabels = result.route === 'ug_addon_open' ? {
+    ug_literatures: 'Literatures in English',
+    ug_cnf: 'Creative Nonfiction',
+    ug_language_studies: 'Language Studies',
+    ug_secondary_english: 'Secondary English Teaching'
+  } : {};
+  const label = shortLabels[id] || pathway.name || 'Explore this path';
+  const url = pathwayLinks[id] || pathway.url;
+  return url
+    ? `<a class="resource-link" href="${url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(label)}</span><span aria-hidden="true">↗</span></a>`
+    : `<span>${escapeHtml(label)}</span>`;
+}
+
 function secondaryOptionsMarkup(result){
   const ids = getAlsoIds(result);
-  const options = ids.map(id=>relatedPathwayDisplay(id,result)).filter(Boolean);
+  const options = ids.map(id=>compactSecondaryLink(id,result)).filter(Boolean);
   if(!options.length) return '';
   let heading = 'Other paths that fit your interests';
-  let note = 'Your answers also connect with these areas.';
-  if(result.route === 'ug_addon_open'){
-    heading = 'Related areas to explore';
-    note = 'These match parts of your interests; they are places to browse, not a suggestion to change your major.';
-  } else if(['graduate_open','current_grad_open'].includes(result.route)){
-    heading = 'Other graduate options that fit';
-    note = 'These options connect with the same interests from a different angle.';
-  }
-  return `<div class="result-block secondary-options"><h3>${heading}</h3><p class="quiet">${note}</p><div class="pathway-list">${options.join('')}</div></div>`;
+  if(result.route === 'ug_addon_open') heading = 'Related areas to explore';
+  else if(['graduate_open','current_grad_open'].includes(result.route)) heading = 'Other graduate options that fit';
+  return `<div class="result-block secondary-options"><h3>${heading}</h3><div class="resource-list">${options.join('')}</div></div>`;
 }
 
 function renderProvisional(){
@@ -413,4 +423,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.5', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.6', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
