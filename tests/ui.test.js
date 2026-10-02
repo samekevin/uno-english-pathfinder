@@ -17,6 +17,12 @@ assert.ok(app.includes('Other paths that fit your interests'));
 assert.ok(app.includes('Related areas to explore'));
 assert.ok(!app.includes('since this is still a test version'));
 
+assert.ok(app.includes('playAmbientMotion'));
+assert.ok(app.includes('prefers-reduced-motion'));
+assert.ok(index.includes('Beta v1.1'));
+assert.ok(!app.includes('flicker'));
+assert.ok(!index.includes('flicker'));
+
 assert.ok(app.includes('pursuing a double major in English may also be worth exploring.'));
 assert.ok(!app.includes('Contact the Department of English</a> to see how it could fit your plan.'));
 assert.ok(app.includes('Rather than force a single winner, this path highlights the areas that kept recurring.'));
@@ -25,6 +31,6 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.9'));
-assert.ok(index.includes('app.js?v=1.1.9'));
+assert.ok(index.includes('styles.css?v=1.1.11'));
+assert.ok(index.includes('app.js?v=1.1.11'));
 console.log('PASS: participant-facing UI copy and release checks');

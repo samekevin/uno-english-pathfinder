@@ -100,3 +100,7 @@ This maintenance pass keeps the current Beta v1.1 experience and matching archit
 - Bonus copy uses **Same path, clearer read.** and explains that answers can confirm, sharpen, or change the visitor’s path.
 - English Minor/double-major handoff now directs visitors to **the Department Coordinator** or the current English minor requirements.
 - Internal data terms such as territory remain unchanged where they are implementation concepts rather than participant-facing copy.
+
+## Ambient motion
+
+The beta includes a one-time boot-print sweep and settling dust on the landing and result states. It does not run between questions and is disabled for visitors who prefer reduced motion.
