@@ -30,12 +30,10 @@ export function getInitialProgress(spec, answers, currentQuestion){
   const currentAnswered = isCompleteAnswer(answers[currentQuestion.id]);
   const current = currentAnswered ? Math.max(1, completed) : completed + 1;
   if (current > target) {
-    const extraCurrent = Math.min(max - target, current - target);
-    const extraTotal = Math.max(1, max - target);
     return {
       showCounter:true,
-      showBar:true,
-      label:`Initial interests · follow-up ${extraCurrent} of ${extraTotal}`,
+      showBar:false,
+      label:'Initial interests · follow-up',
       current:target,
       total:target,
       percent:100
