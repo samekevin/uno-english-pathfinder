@@ -24,4 +24,4 @@
 .result .pathway-link{display:inline-flex;align-items:baseline;gap:.28em;color:#503719;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .result .pathway-link:hover,.result .pathway-link:focus-visible{color:#1e1b18}
 @media (max-width:700px){.result .pathway-link,.result .resource-link{font-size:1rem;line-height:1.42}}
-.primary-home-blurb{margin:.45rem 0 0;color:var(--muted);font-size:1rem;line-height:1.45;font-style:italic}
+.primary-home-blurb{margin:.45rem 0 0;color:var(--muted);font-size:1rem;line-height:1.45;font-style:normal}

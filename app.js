@@ -274,8 +274,8 @@ function pathwayDisplay(id, result){
   const label = pathway.name || 'Explore this path';
   const route = result.route;
   const primaryBlurbs = {
-    ug_language_studies: 'For people who notice what language is doing—and the systems that make it work.',
-    ug_literatures: 'For readers interested in what texts mean—and the worlds that made them.',
+    ug_language_studies: 'For people who notice what language is doing—and want to know the systems that make it work.',
+    ug_literatures: 'For readers interested in what texts mean—and the worlds that shaped them and that they helped shape.',
     ug_cnf: 'For people who find a true story and immediately start wondering how to tell it—and tell it well.',
     ug_secondary_english: 'For people who keep finding things worth reading, writing, discussing—and teaching.',
     ug_english_minor: 'Make English part of your world—and see the human experience from a few more angles.'
