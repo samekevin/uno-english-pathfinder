@@ -1,0 +1,25 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const root=new URL("../",import.meta.url);
+const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
+const manifest=JSON.parse(fs.readFileSync(new URL("data/manifest.json",root),"utf8"));
+const app=fs.readFileSync(new URL("app.js",root),"utf8");
+const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
+const styles=fs.readFileSync(new URL("explore/styles.css",root),"utf8");
+const html=fs.readFileSync(new URL("index.html",root),"utf8");
+assert.equal(pkg.version,"1.2.17");
+assert.equal(manifest.version,"1.2.17");
+assert.equal(manifest.beta_version,"1.2.17");
+assert.ok(app.includes("onFindPath:()=>{ window.location.href='./?exploreReturn=1'; }"));
+assert.ok(!app.includes("onFindPath:startPathfinder"));
+assert.ok(explore.includes("node.id==='english'?'Your Home'"));
+assert.ok(explore.includes("if(!nodeId)e.preventDefault()"));
+assert.ok(explore.includes("function nodeAt"));
+assert.ok(explore.includes("g.addEventListener('click'"));
+assert.ok(styles.includes("stroke-width:1.15"));
+assert.ok(styles.includes("stroke-width:1.15"));
+assert.ok(explore.includes('hoverProgress'));
+assert.ok(explore.includes('hoverId'));
+
+assert.ok(html.includes("v1.2.17"));
+console.log("v1.2.17 interaction/navigation regression checks passed");

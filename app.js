@@ -16,6 +16,8 @@ let nightMode = sessionStorage.getItem('pathfinderNightMode') === 'true';
 let advanceLock = false;
 let resultTransitionTimer = null;
 let resultTransitionCleanupTimer = null;
+let exploreLauncher = null;
+let welcomeReturnTimer = null;
 const WELCOME_SLOGAN='There probably isn’t one right way into the English program. Let your curiosity guide you.';
 const RESULT_SLOGAN='Timeless skills. Enduringly human.';
 const BONUS_TRANSITION_DURATION_MESSAGE_MS=6000;
@@ -500,8 +502,37 @@ function renderQuestion(){
   if(next) next.addEventListener('click',advanceCurrent);
 }
 
-function renderWelcome(){
+function stopExplore(){
+  if(exploreLauncher){ exploreLauncher.destroy?.(); exploreLauncher=null; }
+}
+
+function clearWelcomeReturnTimer(){
+  if(welcomeReturnTimer !== null){
+    window.clearTimeout(welcomeReturnTimer);
+    welcomeReturnTimer=null;
+  }
+}
+
+function getExploreIdleMs(){
+  return (location.hostname==='localhost'||location.hostname==='127.0.0.1'||new URLSearchParams(location.search).has('exploreTest')) ? 5000 : 30000;
+}
+
+function landingUrlAfterExploreReturn(){
+  const url=new URL(window.location.href);
+  url.searchParams.delete('exploreReturn');
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function startPathfinder(){
+  clearWelcomeReturnTimer();
+  stopExplore();
+  answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion();
+}
+
+function renderWelcome({suppressExplore=false}={}){
   clearResultTransition();
+  stopExplore();
+  clearWelcomeReturnTimer();
   setResultChrome(false);
   setQuizFocus(false);
   applyNightMode();
@@ -509,7 +540,40 @@ function renderWelcome(){
   app.setAttribute('tabindex','-1');
   app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>`;
   app.querySelector('#nightModeToggle').addEventListener('click',toggleNightMode);
-  app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
+  app.querySelector('#start').addEventListener('click',startPathfinder);
+
+  const exploreReturn=new URLSearchParams(location.search).get('exploreReturn')==='1';
+  const exploreIdleMs=getExploreIdleMs();
+
+  // Returning from Explore gets a genuinely fresh landing cycle. The first landing
+  // state is intentionally interactive; after one idle interval it performs a
+  // one-time clean reload, then the ordinary landing initialization launches Explore.
+  if(exploreReturn){
+    welcomeReturnTimer=window.setTimeout(()=>{
+      welcomeReturnTimer=null;
+      if(phase!=='welcome') return;
+      location.replace(landingUrlAfterExploreReturn());
+    },exploreIdleMs);
+    return;
+  }
+
+  if(suppressExplore) return;
+  let cancelled=false;
+  exploreLauncher={destroy(){cancelled=true;}};
+  window.setTimeout(async()=>{
+    if(cancelled || phase!=='welcome') return;
+    try{
+      const mod=await import('./explore/app.js?v=1.2.17');
+      if(cancelled || phase!=='welcome') return;
+      const controller=mod.mountExploreOverlay({
+        onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },
+        getNightMode:()=>nightMode
+      });
+      exploreLauncher={destroy(){controller.destroy();cancelled=true;},controller};
+    }catch(err){
+      console.warn('Explore English could not load; Pathfinder continues normally.',err);
+    }
+  }, exploreIdleMs);
 }
 
 function resourceLink(id){
@@ -852,4 +916,8 @@ document.addEventListener('click',(event)=>{
 
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.7', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){
+  if(location.protocol==='file:' && window.__PATHFINDER_SPEC__){ return window.__PATHFINDER_SPEC__; }
+  try { const r=await fetch('./data/pathfinder.spec.json?v=1.2.7', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+  catch(err){ if(window.__PATHFINDER_SPEC__) return window.__PATHFINDER_SPEC__; throw err; }
+}

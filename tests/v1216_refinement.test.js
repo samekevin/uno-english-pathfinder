@@ -1,0 +1,17 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+const root=new URL("../",import.meta.url);
+const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
+const manifest=JSON.parse(fs.readFileSync(new URL("data/manifest.json",root),"utf8"));
+const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
+assert.equal(pkg.version,"1.2.17");
+assert.equal(manifest.version,"1.2.17");
+assert.equal(manifest.beta_version,"1.2.17");
+assert.ok(explore.includes("const hoverFieldOpacity=hoverId ? (hoverRelated?normalOpacity:.045) : normalOpacity;"));
+assert.ok(explore.includes("if(hoverId)return;"));
+assert.ok(explore.includes("if(destroyed||token!==autoplayToken||hoverId||Date.now()-lastActivity<AUTOPLAY_IDLE_MS)"));
+assert.ok(explore.includes("if(id){lastActivity=Date.now();cancelAutoplay();}"));
+assert.ok(explore.includes("edgeBase=hoverRelated?.48:(related?.10:.055);"));
+assert.ok(!explore.includes('class="explore-close"'));
+assert.ok(!explore.includes("key==='Escape'"));
+console.log('v1.2.17 hover neighborhood/autoplay checks passed');

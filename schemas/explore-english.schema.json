@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UNO English Explore English graph",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "generated_on",
+    "editing_contract",
+    "ui",
+    "source_catalog",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "generated_on": {
+      "type": "string"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "type",
+          "center_blurb",
+          "active"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "center_blurb": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "links": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "target",
+          "relation",
+          "confidence",
+          "weight"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "inferred",
+              "?"
+            ]
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "source_catalog": {
+      "type": "object"
+    },
+    "ui": {
+      "type": "object"
+    },
+    "editing_contract": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

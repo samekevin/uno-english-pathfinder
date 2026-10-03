@@ -4,9 +4,9 @@ const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const styles=fs.readFileSync(new URL('../styles.css',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const manifest=JSON.parse(fs.readFileSync(new URL('../data/manifest.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.7');
-assert.equal(manifest.version,'1.2.7');
-assert.equal(manifest.beta_version,'1.2.7');
+assert.equal(pkg.version,'1.2.17');
+assert.equal(manifest.version,'1.2.17');
+assert.equal(manifest.beta_version,'1.2.17');
 // Handoff holding document: preserve viewport responsiveness and use the canonical transition geometry.
 assert.ok(app.includes('name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"'));
 assert.ok(app.includes('font-size:clamp(1.75rem,5.1vw,3.8rem)'));
@@ -16,4 +16,4 @@ assert.ok(styles.includes('.computing-dots span{width:11px;height:11px;border-ra
 assert.ok(styles.includes('@keyframes computing-dot{0%,100%{opacity:.16}35%{opacity:1}70%{opacity:.28}}'));
 assert.ok(styles.includes('.computing-dots{position:static;left:auto;bottom:auto;transform:none;display:flex;gap:9px;align-items:center;justify-content:center;margin-top:clamp(42px,6vw,58px);min-height:11px}'));
 assert.ok(styles.includes('@media (max-width:700px){.computing-copy{width:calc(100vw - 24px);padding:22px 12px}.computing-dots{margin-top:40px}}'));
-console.log('v1.2.7 transition refinement tests passed');
+console.log('v1.2.17 transition refinement tests passed');

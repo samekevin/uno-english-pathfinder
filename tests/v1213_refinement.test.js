@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
+const explore=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
+assert.equal(pkg.version,'1.2.17');
+assert.match(app,/function renderWelcome\(\{suppressExplore=false\}=\{\}\)/);
+assert.match(app,/new URLSearchParams\(location\.search\)\.get\('exploreReturn'\)===.1./);
+assert.match(app,/location\.replace\(landingUrlAfterExploreReturn\(\)\)/);
+assert.match(app,/if\(suppressExplore\) return;/);
+assert.match(explore,/hoverFieldOpacity/);
+assert.match(explore,/hoverRelated\?normalOpacity:\.045/);
+assert.match(explore,/if\(hoverId\)return;/);
+console.log('v1.2.17 refinement checks passed');

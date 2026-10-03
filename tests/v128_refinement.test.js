@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const root=new URL("../",import.meta.url);
+const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
+const styles=fs.readFileSync(new URL("explore/styles.css",root),"utf8");
+assert.ok(explore.includes("AUTOPLAY_HOLD_MS"));
+assert.ok(explore.includes("hoverId=null"));
+assert.ok(explore.includes("burstStart"));
+assert.ok(styles.includes(".explore-node.is-hovered"));
+assert.ok(!styles.includes(".explore-hint{"));
+assert.ok(!explore.includes("Drag · move · zoom · follow a connection"));
+console.log("v1.2.8 Explore feature compatibility checks passed");
