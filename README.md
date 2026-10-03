@@ -203,7 +203,7 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Result computation transition durations are 3, 5, or 7 seconds.
 
 
-## Beta v1.2.6 refinement
+## Beta v1.2.7 refinement
 
 - Refined Bonus transition encouragement copy.
 - Made outbound holding-window theme match light/night mode to prevent a theme flash.

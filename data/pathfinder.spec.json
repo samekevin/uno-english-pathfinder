@@ -1,7 +1,7 @@
 {
   "manifest": {
     "name": "UNO English Pathfinder Machine-Readable Specification",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "source": "UNO English Pathfinder Question Bank v1.3",
     "generated_on": "2026-10-03",
     "principles": [
@@ -4596,5 +4596,5 @@
       }
     }
   ],
-  "version": "1.2.6"
+  "version": "1.2.7"
 }

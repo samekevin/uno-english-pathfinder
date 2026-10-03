@@ -831,16 +831,17 @@ document.addEventListener('click',(event)=>{
         const holdingBg=nightMode ? '#24201d' : '#f6f1e8';
         const holdingFg=nightMode ? '#f4eee6' : '#1e1b18';
         const holdingSub=nightMode ? '#d3c9bd' : '#514a42';
-        openedWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Department of English</title><style>
+        openedWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Department of English</title><style>
           :root{color-scheme:${nightMode?'dark':'light'};background:${holdingBg};color:${holdingFg}}
-          html,body{margin:0;min-height:100%;background:${holdingBg};color:${holdingFg}}
-          body{min-height:100vh;display:grid;place-items:center;overflow:hidden}
+          html,body{margin:0;min-height:100%;width:100%;background:${holdingBg};color:${holdingFg}}
+          body{min-height:100vh;min-height:100svh;display:grid;place-items:center;overflow:hidden}
           .handoff{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2em;text-align:center;
-            font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:clamp(1.55rem,4.2vw,3.2rem);
-            font-weight:400;line-height:1.02;padding:24px 20px;color:${holdingFg}}
-          @media (max-width:700px){.handoff{font-size:clamp(1.48rem,8vw,2.4rem);padding:22px 12px}}
+            width:min(760px,calc(100vw - 32px));max-width:19ch;padding:24px 16px;
+            font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:clamp(1.75rem,5.1vw,3.8rem);
+            font-weight:400;line-height:1.04;color:${holdingFg}}
+          @media (max-width:700px){.handoff{width:calc(100vw - 24px);max-width:19ch;padding:22px 12px;font-size:clamp(1.65rem,8.4vw,2.8rem);line-height:1.04}}
+          .handoff div{display:block}
           .handoff div:last-child{color:${holdingFg}}
-          @media (prefers-reduced-motion:reduce){.handoff{transition:none}}
         </style></head><body><div class="handoff"><div>There’s always room for one more.</div><div>Welcome home!</div></div></body></html>`);
         openedWindow.document.close();
       }
@@ -851,4 +852,4 @@ document.addEventListener('click',(event)=>{
 
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.6', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.7', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

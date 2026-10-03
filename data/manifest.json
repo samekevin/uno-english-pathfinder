@@ -1,6 +1,6 @@
 {
   "name": "UNO English Pathfinder Machine-Readable Specification",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "source": "UNO English Pathfinder Question Bank v1.3",
   "generated_on": "2026-10-01",
   "principles": [
@@ -28,6 +28,6 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder Beta v1.2.6: bonus-card copy refinement, theme-safe outbound handoff, compact percentage help control, and centered/lower computation dots.",
-  "beta_version": "1.2.6"
+  "implementation_note": "Synchronized with Pathfinder Beta v1.2.7: responsive outbound handoff typography and viewport, stable centered computation dots, and preserved v1.2 content/logic.",
+  "beta_version": "1.2.7"
 }

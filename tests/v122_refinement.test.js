@@ -4,7 +4,7 @@ const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const styles=fs.readFileSync(new URL('../styles.css',import.meta.url),'utf8');
 const copy=JSON.parse(fs.readFileSync(new URL('../data/copy.json',import.meta.url),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.6');
+assert.equal(pkg.version,'1.2.7');
 assert.equal(copy.EXPLORATORY_KEY,'A FEW PATHS ARE OPENING UP.');
 assert.ok(app.includes('spec.copy.profile_shape?.EXPLORATORY_KEY'));
 assert.ok(app.includes('You chose the room where something is about to be published.'));
@@ -22,4 +22,4 @@ assert.ok(app.includes('const navigateAt=Math.max(revealSecond, revealSecond+OUT
 assert.ok(app.includes('activateOutboundDestination(url,target,openedWindow);'));
 assert.ok(styles.includes('.computing-screen .computing-dots{position:static'));
 assert.ok(!styles.includes('.bonus-transition-dots{position:static'));
-console.log('v1.2.6 compatibility refinement tests passed');
+console.log('v1.2.x compatibility refinement tests passed');

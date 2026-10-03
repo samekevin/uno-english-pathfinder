@@ -138,7 +138,7 @@ Participant-facing generic resource labels are `Undergraduate Programs`, `Gradua
 - Result computation transition durations are 3, 5, or 7 seconds.
 
 
-## Beta v1.2.6 refinement
+## Beta v1.2.7 refinement
 
 - Refined Bonus transition encouragement copy.
 - Made outbound holding-window theme match light/night mode to prevent a theme flash.
