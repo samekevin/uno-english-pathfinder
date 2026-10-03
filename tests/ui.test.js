@@ -7,6 +7,7 @@ const specData = fs.readFileSync(new URL('../data/pathfinder.spec.json', import.
 const index = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const app = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 const styles = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
+const copyData = fs.readFileSync(new URL('../data/copy.json', import.meta.url), 'utf8');
 
 assert.ok(index.includes('<title>English | Pathfinder Beta</title>'));
 assert.ok(index.includes('Department of English · Pathfinder Beta v1.1'));
@@ -37,8 +38,8 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.36'));
-assert.ok(index.includes('app.js?v=1.1.36'));
+assert.ok(index.includes('styles.css?v=1.1.38'));
+assert.ok(index.includes('app.js?v=1.1.38'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 
 assert.ok(app.includes('class="link-arrow" aria-hidden="true">↗</span>'));
@@ -74,8 +75,8 @@ for (const blurb of [
 ]) assert.ok(app.includes(blurb), `missing primary-home blurb: ${blurb}`);
 assert.ok(styles.includes('.primary-home-blurb{margin:.45rem 0 0;color:#554d45;font-size:1rem;line-height:1.45;font-style:normal}'));
 assert.ok(styles.includes('@media (max-width:700px){.primary-home-blurb{font-size:.98rem;line-height:1.45;max-width:100%;overflow-wrap:anywhere}}'));
-assert.ok(index.includes('styles.css?v=1.1.36'));
-assert.ok(index.includes('app.js?v=1.1.36'));
+assert.ok(index.includes('styles.css?v=1.1.38'));
+assert.ok(index.includes('app.js?v=1.1.38'));
 
 for (const label of ['Undergraduate Programs','Graduate Programs','Course Catalog']) assert.ok(app.includes(label), `missing shortened resource label: ${label}`);
 for (const stale of ["english_undergraduate: 'English undergraduate programs'","english_graduate: 'English graduate programs'","english_catalog: 'English course catalog'"]) assert.ok(!app.includes(stale), `stale long resource label mapping: ${stale}`);
@@ -128,3 +129,33 @@ console.log('PASS: transition, result-header, and question-copy refinements');
 
 for (const label of ['Graduate Teaching Assistantships','Dual Enrollment','Academic Advising','Contact the Department','Email the Chair','English Minor requirements','Strongest curricular pathway','Related pathways to explore']) assert.ok(app.includes(label) || specData.includes(label), `missing streamlined label: ${label}`);
 assert.ok(app.includes('Places to explore the curiosity'));
+
+assert.ok(app.includes('function renderBonusTransition(nextRender)'));
+assert.ok(app.includes("renderBonusTransition(()=>{phase='bonus';cursor=0;renderQuestion();})"));
+assert.ok(app.includes('BONUS_TRANSITION_DURATION_MESSAGE_MS=7000'));
+assert.ok(app.includes('BONUS_TRANSITION_DURATION_FACT_MS=10000'));
+assert.ok(app.includes("spec.copy.bonus_transition"));
+assert.ok(app.includes("const message=pickRandom(bank.messages || [])"));
+assert.ok(app.includes("const fact=pickRandom(bank.facts || [])"));
+assert.ok(app.includes('data-card="message"'));
+assert.ok(app.includes('data-card="fact"'));
+assert.ok(app.includes('bonus-transition-overlay'));
+assert.ok(styles.includes('.bonus-transition-overlay'));
+assert.ok(styles.includes('.bonus-transition-card'));
+assert.ok(!app.includes('<div class="bonus-transition-department">Department of English</div>'));
+assert.ok(!styles.includes('.bonus-transition-department'));
+assert.ok(styles.includes('.bonus-transition-card{position:absolute;left:50%;top:50%;'));
+assert.ok(styles.includes('box-shadow:0 18px 46px rgba(51,38,24,.14),0 3px 10px rgba(51,38,24,.08)'));
+assert.ok(styles.includes('.bonus-transition-dots{position:absolute;left:50%;bottom:'));
+assert.ok(styles.includes('.bonus-transition-heading'));
+assert.ok(styles.includes('.bonus-transition-body'));
+assert.ok(styles.includes('.bonus-transition-source'));
+assert.ok(styles.includes('.bonus-transition-dots'));
+assert.ok(styles.includes('@keyframes bonus-transition-dot'));
+assert.ok(copyData.includes('"bonus_transition"'));
+assert.ok(copyData.includes('"The human part still matters."'));
+assert.ok(copyData.includes('"English stands out at UNO."'));
+assert.ok(copyData.includes('"When everyone has access to the same AI tools, what sets your work apart?"'));
+assert.ok(copyData.includes('"English doesn’t lead to just one kind of work."'));
+assert.ok(copyData.includes('HESA Graduate Outcomes data, reported by Prospects, 2024'));
+assert.ok(!app.includes('Read: Business Insider'));

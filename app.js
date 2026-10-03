@@ -15,6 +15,8 @@ let resultTransitionTimer = null;
 let resultTransitionCleanupTimer = null;
 const WELCOME_SLOGAN='There probably isn’t one right way into the English program. Let your curiosity guide you.';
 const RESULT_SLOGAN='Timeless skills. Enduringly human.';
+const BONUS_TRANSITION_DURATION_MESSAGE_MS=7000;
+const BONUS_TRANSITION_DURATION_FACT_MS=10000;
 
 function resetViewport(){
   window.scrollTo(0, 0);
@@ -84,6 +86,52 @@ function renderComputingTransition(nextRender){
       overlay.remove();
       document.body.classList.remove('computing-active');
     },fadeOutMs);
+  },revealAt);
+}
+
+function pickRandom(items){
+  return items[Math.floor(Math.random()*items.length)];
+}
+
+function renderBonusTransition(nextRender){
+  clearResultTransition();
+  setQuizFocus(false);
+  setResultChrome(false);
+  document.body.classList.add('computing-active');
+  app.classList.add('computing-app');
+  app.setAttribute('tabindex','-1');
+  const bank=spec.copy.bonus_transition;
+  const message=pickRandom(bank.messages || []);
+  const fact=pickRandom(bank.facts || []);
+  const totalDuration=BONUS_TRANSITION_DURATION_MESSAGE_MS+BONUS_TRANSITION_DURATION_FACT_MS;
+  const crossfadeMs=280;
+  const overlay=document.createElement('div');
+  overlay.id='bonus-transition-overlay';
+  overlay.className='bonus-transition-overlay';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.setAttribute('aria-label','Preparing your Pathfinder bonus round');
+  overlay.innerHTML=`<div class="bonus-transition-screen" data-duration-ms="${totalDuration}"><div class="bonus-transition-copy"><div class="bonus-transition-card is-active" data-card="message"><div class="bonus-transition-heading">${escapeHtml(message.heading)}</div><div class="bonus-transition-body">${escapeHtml(message.body)}</div></div><div class="bonus-transition-card" data-card="fact"><div class="bonus-transition-heading">${escapeHtml(fact.heading)}</div><div class="bonus-transition-body">${escapeHtml(fact.body)}</div><div class="bonus-transition-source">— ${escapeHtml(fact.source)}</div></div><div class="bonus-transition-dots" aria-hidden="true"><span></span><span></span><span></span></div></div></div>`;
+  document.body.appendChild(overlay);
+  window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
+  resetViewport();
+  window.setTimeout(()=>{
+    const messageCard=overlay.querySelector('[data-card="message"]');
+    const factCard=overlay.querySelector('[data-card="fact"]');
+    if(messageCard) messageCard.classList.remove('is-active');
+    if(factCard) factCard.classList.add('is-active');
+  },BONUS_TRANSITION_DURATION_MESSAGE_MS);
+  const revealAt=Math.max(0,totalDuration-crossfadeMs);
+  resultTransitionTimer=window.setTimeout(()=>{
+    resultTransitionTimer=null;
+    app.classList.remove('computing-app');
+    nextRender();
+    overlay.classList.add('is-fading-out');
+    resultTransitionCleanupTimer=window.setTimeout(()=>{
+      resultTransitionCleanupTimer=null;
+      overlay.remove();
+      document.body.classList.remove('computing-active');
+    },crossfadeMs);
   },revealAt);
 }
 
@@ -516,7 +564,7 @@ function renderProvisional(){
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
   app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
-  app.querySelector('#bonus').addEventListener('click',()=>{phase='bonus';cursor=0;renderQuestion();});
+  app.querySelector('#bonus').addEventListener('click',()=>{renderBonusTransition(()=>{phase='bonus';cursor=0;renderQuestion();});});
   app.querySelector('#restartProvisional').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
 }
 
@@ -565,4 +613,4 @@ function renderFinalResult(){
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.35', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.38', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

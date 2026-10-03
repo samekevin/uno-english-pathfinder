@@ -4370,6 +4370,52 @@
       "skip": "Keep exploring on your own.",
       "email_required": false,
       "result_gated": false
+    },
+    "bonus_transition": {
+      "messages": [
+        {
+          "heading": "This is where the paths get interesting.",
+          "body": "Let’s see what else your curiosity has been trying to tell us."
+        },
+        {
+          "heading": "You’re asking the kinds of questions English gives you room to keep asking.",
+          "body": "Let’s follow them a little further."
+        },
+        {
+          "heading": "Your interests are starting to connect.",
+          "body": "Let’s see what happens when we look a little closer."
+        },
+        {
+          "heading": "Good choice. Curiosity rarely stays in just one lane.",
+          "body": "Let’s see where yours crosses paths."
+        },
+        {
+          "heading": "There’s more in your answers worth exploring.",
+          "body": "Let’s sharpen the picture."
+        }
+      ],
+      "facts": [
+        {
+          "heading": "The human part still matters.",
+          "body": "As AI reshapes work, employers are paying renewed attention to communication, critical thinking, creativity, empathy, and other human strengths—and English and the humanities are part of that conversation.",
+          "source": "Business Insider, 2026"
+        },
+        {
+          "heading": "English stands out at UNO.",
+          "body": "In 2024, English was among UNO’s five most specialized fields by degree concentration compared with the national pattern.",
+          "source": "Data USA, 2024"
+        },
+        {
+          "heading": "When everyone has access to the same AI tools, what sets your work apart?",
+          "body": "Voice. Judgment. Context. Creativity. Understanding people. Communicating something worth remembering. Those are some of the human qualities bringing English and the humanities into new conversations about work in the AI era.",
+          "source": "Business Insider, 2026"
+        },
+        {
+          "heading": "English doesn’t lead to just one kind of work.",
+          "body": "English graduates in the UK move into education, marketing and PR, administration, arts and media, writing and translation, and many other fields. The common thread isn’t one job title. It’s what you can do with language, ideas, evidence, and people.",
+          "source": "HESA Graduate Outcomes data, reported by Prospects, 2024"
+        }
+      ]
     }
   },
   "tests": [

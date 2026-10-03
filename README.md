@@ -161,3 +161,19 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Result-page Department of English / Pathfinder masthead now reuses the landing-page typography exactly; result slogan is `Timeless skills. Enduringly human.`
 - Result computation interstitial now uses the warm result-page background and dark text/dots instead of the dark screen.
 - Randomized result interstitial durations are now 8, 10, or 12 seconds; existing 0.20-second department fade, staggered slogan reveals, sequential dot motion, and 0.28-second fade-out remain intact.
+
+
+## Beta v1.1.37 Bonus Round transition bank
+- Added a two-card Bonus Round transition: one randomized encouragement card (7 seconds) followed by one randomized fact card (10 seconds).
+- The bank contains five encouragement messages and four fact cards; each draw is independent, yielding up to 20 message/fact combinations.
+- Fact attributions are visible but inert: Business Insider (2026), Data USA (2024), and HESA Graduate Outcomes data as reported by Prospects (2024). No external source links are placed on the transition cards.
+- The restrained card typography is intentionally smaller and quieter than the result-computation transition.
+- Existing result transitions, mobile hardening, result-link behavior, Start Over behavior, and follow-up progress remain unchanged.
+
+
+## Beta v1.1.38 Bonus transition centering + adaptive progress correction
+- Bonus Round message/fact cards are centered to the viewport using a fixed overlay position, so different card heights no longer move the second card downward.
+- Increased the Bonus Round card shadow for clearer separation from the transition background.
+- Removed the `Department of English` label above Bonus Round cards.
+- Follow-up and additional-check progress are now tracked as separate sequences. A lone item in either sequence has no artificial `1 of 1` counter or progress bar; only multi-item sequences display a counter and proportional bar.
+- The progress bar for multi-item follow-up/additional-check sequences now reflects that sequence itself rather than remaining pinned to the completed Initial Interests target.

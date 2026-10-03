@@ -99,3 +99,16 @@ Participant-facing generic resource labels are `Undergraduate Programs`, `Gradua
 - Result-page Department of English / Pathfinder masthead now reuses the landing-page typography exactly; result slogan is `Timeless skills. Enduringly human.`
 - Result computation interstitial now uses the warm result-page background and dark text/dots instead of the dark screen.
 - Randomized result interstitial durations are now 8, 10, or 12 seconds; existing 0.20-second department fade, staggered slogan reveals, sequential dot motion, and 0.28-second fade-out remain intact.
+
+
+## Beta v1.1.37 Bonus Round transition bank
+- Bonus Round entry now shows one randomized encouragement card for 7 seconds, then one randomized fact card for 10 seconds, with the existing three-dot flicker throughout.
+- Bank: five encouragement messages + four facts, independently randomized.
+- Fact source labels are visible but non-navigational.
+- This is presentation/copy only; frozen scoring behavior is unchanged.
+
+
+## Beta v1.1.38 Bonus transition centering + adaptive progress correction
+- Bonus transition cards are centered to the viewport center and no longer shift vertically when their content height differs.
+- Bonus transition card shadow is strengthened and the duplicate Department of English label above the cards is removed.
+- Follow-up and additional-check progress sequences are tracked independently. Single-item sequences show no `1 of 1` counter/bar; multi-item sequences show a sequence-specific counter and proportional progress bar.
