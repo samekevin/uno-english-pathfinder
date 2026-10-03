@@ -1,6 +1,6 @@
 # Updated build instruction — Explore English ambient graph
 
-Use the existing UNO English Pathfinder Beta v1.2.7 app as the base. **Do not alter scoring, routes, result logic, question logic, or current copy unless required for the Explore English integration.** Add the Explore English experience as an independent landing-page/idle layer whose content comes entirely from `data/explore-english.graph.json`.
+Use the existing UNO English Pathfinder Beta v1.2.11 app as the base. **Do not alter scoring, routes, result logic, question logic, or current copy unless required for the Explore English integration.** Add the Explore English experience as an independent landing-page/idle layer whose content comes entirely from `data/explore-english.graph.json`.
 
 ## Architecture
 
@@ -79,3 +79,11 @@ Use the existing UNO English Pathfinder Beta v1.2.7 app as the base. **Do not al
 ### v1.2.11 architecture contract
 
 Pathfinder and Explore English are two runtime applications sharing the same project and editable content graph. Pathfinder must not statically import Explore. The landing page may lazy-load `explore/app.js` after the configured idle delay. `/explore/index.html` must run Explore independently. `Find my path` always returns to Pathfinder landing (`../`), never directly to the first survey question. Explore nodes are persistent SVG elements: do not replace SVG innerHTML on every animation frame. Background panning is optional and bounded; node taps/clicks always take precedence over pan gestures. `data/explore-english.graph.json` remains the editable source of truth.
+
+
+### v1.2.27 content hygiene contract
+- Treat front-facing categories/programs/opportunities as canonical concepts; do not create duplicate topic nodes solely to provide different relationship roles.
+- Before shipping, run `validate_graph.py` and reject normalized duplicate active labels unless `alias_of` or `intentional_duplicate` explicitly documents the distinction.
+- When merging concepts, rewire and preserve every meaningful edge; do not silently drop faculty, activity, opportunity, or resource relationships.
+- Center blurbs should target approximately ten words and explain what the centered node connects to or invites the visitor to explore.
+- Use `docs/SEMANTIC_AUDIT.md` as the editorial review queue for near-duplicates; do not automatically merge reasonable category distinctions.

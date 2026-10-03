@@ -538,9 +538,26 @@ function renderWelcome({suppressExplore=false}={}){
   applyNightMode();
   resetViewport();
   app.setAttribute('tabindex','-1');
-  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>`;
+  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><div class="welcome-path-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="btn explore-launch-btn" id="exploreLaunch" aria-label="Explore English"><span class="explore-launch-label">Explore English</span></button></div><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>`;
   app.querySelector('#nightModeToggle').addEventListener('click',toggleNightMode);
   app.querySelector('#start').addEventListener('click',startPathfinder);
+  const launchExplore=async()=>{
+    stopExplore();
+    let cancelled=false;
+    exploreLauncher={destroy(){cancelled=true;}};
+    try{
+      const mod=await import('./explore/app.js?v=1.2.29');
+      if(cancelled || phase!=='welcome') return;
+      const controller=mod.mountExploreOverlay({
+        onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },
+        getNightMode:()=>nightMode
+      });
+      exploreLauncher={destroy(){controller.destroy();cancelled=true;},controller};
+    }catch(err){
+      console.warn('Explore English could not load; Pathfinder continues normally.',err);
+    }
+  };
+  app.querySelector('#exploreLaunch').addEventListener('click',launchExplore);
 
   const exploreReturn=new URLSearchParams(location.search).get('exploreReturn')==='1';
   const exploreIdleMs=getExploreIdleMs();
@@ -560,19 +577,9 @@ function renderWelcome({suppressExplore=false}={}){
   if(suppressExplore) return;
   let cancelled=false;
   exploreLauncher={destroy(){cancelled=true;}};
-  window.setTimeout(async()=>{
+  window.setTimeout(()=>{
     if(cancelled || phase!=='welcome') return;
-    try{
-      const mod=await import('./explore/app.js?v=1.2.17');
-      if(cancelled || phase!=='welcome') return;
-      const controller=mod.mountExploreOverlay({
-        onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },
-        getNightMode:()=>nightMode
-      });
-      exploreLauncher={destroy(){controller.destroy();cancelled=true;},controller};
-    }catch(err){
-      console.warn('Explore English could not load; Pathfinder continues normally.',err);
-    }
+    launchExplore();
   }, exploreIdleMs);
 }
 

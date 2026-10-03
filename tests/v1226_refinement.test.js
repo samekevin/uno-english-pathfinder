@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const root=new URL("../",import.meta.url);
+const graph=JSON.parse(fs.readFileSync(new URL("data/explore-english.graph.json",root),"utf8"));
+const validator=fs.readFileSync(new URL("../validate_graph.py",import.meta.url),"utf8");
+const readme=fs.readFileSync(new URL("../README.md",import.meta.url),"utf8");
+const canonical=graph.nodes.filter(n=>n.label.toLowerCase()==="creative nonfiction");
+assert.equal(canonical.length,1);
+assert.ok(!graph.nodes.some(n=>n.label==="Creative nonfiction"));
+assert.equal(graph.nodes.filter(n=>n.label==="First-Year Writing").length,1);
+assert.ok(!graph.nodes.some(n=>n.label==="First-year writing"));
+assert.ok(validator.includes("normalized duplicate active labels"));
+assert.ok(validator.includes("alias_of") && validator.includes("intentional_duplicate"));
+assert.ok(readme.includes("214 nodes"));
+assert.ok(readme.includes("v1.2.27 data hygiene"));
+assert.ok(readme.includes("SEMANTIC_AUDIT.md"));
+console.log('v1.2.29 content hygiene checks passed');

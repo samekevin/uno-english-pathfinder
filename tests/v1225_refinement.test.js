@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const explore=fs.readFileSync(new URL("../explore/app.js",import.meta.url),"utf8");
+const manifest=JSON.parse(fs.readFileSync(new URL("../data/manifest.json",import.meta.url),"utf8"));
+const pkg=JSON.parse(fs.readFileSync(new URL("../package.json",import.meta.url),"utf8"));
+assert.equal(pkg.version,'1.2.29');
+assert.equal(manifest.version,'1.2.29');
+assert.equal(manifest.beta_version,'1.2.29');
+assert.ok(explore.includes("const VERSION = '1.2.29'"));
+assert.ok(explore.includes('Math.max(normalOpacity,.74)-normalOpacity'));
+assert.ok(explore.includes('hoverContextProgress'));
+assert.ok(explore.includes('// Hover is perceptual, not structural: the exact target foregrounds; its direct'));
+assert.ok(explore.includes("g.addEventListener('pointerenter'"));
+assert.ok(explore.includes("g.addEventListener('click'"));
+console.log('v1.2.29 hover self-foreground refinement tests passed');

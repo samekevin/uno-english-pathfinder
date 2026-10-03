@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+const manifest=JSON.parse(fs.readFileSync('data/manifest.json','utf8'));
+const graph=JSON.parse(fs.readFileSync('data/explore-english.graph.json','utf8'));
+const audit=fs.readFileSync('docs/SEMANTIC_AUDIT.md','utf8');
+assert.equal(pkg.version,'1.2.29');
+assert.equal(manifest.version,'1.2.29');
+assert.equal(manifest.beta_version,'1.2.29');
+assert.ok(!graph.nodes.some(n=>n.id==='topic_writing_center_pedagogy'));
+assert.equal(graph.nodes.find(n=>n.id==='topic_writing_pedagogy')?.label,'Writing pedagogy');
+assert.equal(graph.nodes.find(n=>n.id==='topic_editing_and_publishing')?.label,'Editing & Publishing');
+assert.ok(graph.edges.some(e=>e.source==='melanie_seitzer' && e.target==='topic_writing_pedagogy'));
+assert.ok(audit.includes('Unresolved candidates: **0**'));
+assert.ok(audit.includes('Reviewed - keep separate.'));
+console.log('v1.2.29 adjudicated semantic hygiene checks passed');

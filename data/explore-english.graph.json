@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/explore-english.schema.json",
   "name": "UNO English Pathfinder — Explore English Graph",
-  "version": "1.0.1-research",
+  "version": "1.0.2",
   "generated_on": "2026-10-03",
   "purpose": "Editable content graph for the ambient Explore English / screensaver-style Pathfinder landing experience.",
   "editing_contract": {
@@ -328,6 +328,36 @@
       "url": "https://events.unomaha.edu/event/bouteloua-litart-fest-1864",
       "status": "active",
       "verified_on": "2026-10-03"
+    },
+    "social_media_english_facebook": {
+      "label": "UNO English - Facebook",
+      "url": "https://www.facebook.com/unoenglishdept",
+      "status": "user_provided",
+      "verified_on": "2026-10-03"
+    },
+    "social_media_english_instagram": {
+      "label": "UNO English - Instagram",
+      "url": "https://www.instagram.com/unoenglishdept/?hl=en",
+      "status": "user_provided",
+      "verified_on": "2026-10-03"
+    },
+    "social_media_solas_facebook": {
+      "label": "SoLaS Lab - Facebook",
+      "url": "https://www.facebook.com/solas.uno",
+      "status": "user_provided",
+      "verified_on": "2026-10-03"
+    },
+    "social_media_solas_links": {
+      "label": "SoLaS Lab - Link Hub",
+      "url": "https://bit.ly/m/solas-uno",
+      "status": "user_provided",
+      "verified_on": "2026-10-03"
+    },
+    "social_media_writing_center_instagram": {
+      "label": "UNO Writing Center - Instagram",
+      "url": "https://www.instagram.com/unowritingcenter/reels/",
+      "status": "user_provided",
+      "verified_on": "2026-10-03"
     }
   },
   "nodes": [
@@ -505,7 +535,7 @@
       "id": "conc_cnf",
       "label": "Creative Nonfiction",
       "type": "concentration",
-      "center_blurb": "Turn lived experience, research, and observation into artful nonfiction.",
+      "center_blurb": "Creative nonfiction brings lived experience, inquiry, and artful storytelling together.",
       "active": true,
       "links": [
         {
@@ -517,6 +547,15 @@
       ],
       "display": {
         "priority": 80
+      },
+      "metadata": {
+        "canonical_roles": [
+          "concentration",
+          "topic"
+        ],
+        "merged_from": [
+          "topic_creative_nonfiction"
+        ]
       }
     },
     {
@@ -1138,7 +1177,7 @@
       "id": "first_year_writing",
       "label": "First-Year Writing",
       "type": "program_experience",
-      "center_blurb": "Explore composition, writing pedagogy, and how writers learn across contexts.",
+      "center_blurb": "Build writing skills through composition, practice, pedagogy, and reflection together.",
       "active": true,
       "links": [
         {
@@ -1149,7 +1188,14 @@
         }
       ],
       "metadata": {
-        "availability": "active"
+        "availability": "active",
+        "canonical_roles": [
+          "program_experience",
+          "topic"
+        ],
+        "merged_from": [
+          "topic_first_year_writing"
+        ]
       },
       "display": {
         "priority": 68
@@ -2599,19 +2645,6 @@
       }
     },
     {
-      "id": "topic_creative_nonfiction",
-      "label": "Creative nonfiction",
-      "type": "topic",
-      "center_blurb": "Explore creative nonfiction through faculty, courses, research, and related opportunities.",
-      "active": true,
-      "metadata": {
-        "faculty_count": 6
-      },
-      "display": {
-        "priority": 67
-      }
-    },
-    {
       "id": "topic_creative_writing_pedagogy",
       "label": "Creative writing pedagogy",
       "type": "topic",
@@ -2795,7 +2828,7 @@
     },
     {
       "id": "topic_editing_and_publishing",
-      "label": "Editing & publishing",
+      "label": "Editing & Publishing",
       "type": "topic",
       "center_blurb": "Explore editing & publishing through faculty, courses, research, and related opportunities.",
       "active": true,
@@ -2908,19 +2941,6 @@
       },
       "display": {
         "priority": 55
-      }
-    },
-    {
-      "id": "topic_first_year_writing",
-      "label": "First-year writing",
-      "type": "topic",
-      "center_blurb": "Explore first-year writing through faculty, courses, research, and related opportunities.",
-      "active": true,
-      "metadata": {
-        "faculty_count": 2
-      },
-      "display": {
-        "priority": 58
       }
     },
     {
@@ -3951,19 +3971,6 @@
       }
     },
     {
-      "id": "topic_writing_center_pedagogy",
-      "label": "Writing center pedagogy",
-      "type": "topic",
-      "center_blurb": "Explore writing center pedagogy through faculty, courses, research, and related opportunities.",
-      "active": true,
-      "metadata": {
-        "faculty_count": 1
-      },
-      "display": {
-        "priority": 55
-      }
-    },
-    {
       "id": "topic_writing_center_practice",
       "label": "Writing center practice",
       "type": "topic",
@@ -4070,6 +4077,139 @@
       },
       "display": {
         "priority": 79
+      }
+    },
+    {
+      "id": "social_media",
+      "label": "Social Media",
+      "type": "hub",
+      "center_blurb": "Follow English communities, projects, events, and everyday department life.",
+      "active": true,
+      "links": [],
+      "display": {
+        "priority": 66
+      },
+      "metadata": {
+        "category": "resource_community",
+        "roles": [
+          "department_resources",
+          "community",
+          "social_media"
+        ],
+        "source_status": "user_provided_links_below"
+      }
+    },
+    {
+      "id": "social_english_facebook",
+      "label": "UNO English - Facebook",
+      "type": "resource",
+      "center_blurb": "Follow department news, events, people, and English community updates.",
+      "active": true,
+      "links": [
+        {
+          "label": "Open Facebook",
+          "url": "https://www.facebook.com/unoenglishdept",
+          "status": "user_provided",
+          "verified_on": "2026-10-03"
+        }
+      ],
+      "display": {
+        "priority": 48
+      },
+      "metadata": {
+        "category": "social_media",
+        "platform": "Facebook"
+      }
+    },
+    {
+      "id": "social_english_instagram",
+      "label": "UNO English - Instagram",
+      "type": "resource",
+      "center_blurb": "See department moments, events, people, and English community stories.",
+      "active": true,
+      "links": [
+        {
+          "label": "Open Instagram",
+          "url": "https://www.instagram.com/unoenglishdept/?hl=en",
+          "status": "user_provided",
+          "verified_on": "2026-10-03"
+        }
+      ],
+      "display": {
+        "priority": 48
+      },
+      "metadata": {
+        "category": "social_media",
+        "platform": "Instagram"
+      }
+    },
+    {
+      "id": "social_solas_facebook",
+      "label": "SoLaS Lab - Facebook",
+      "type": "resource",
+      "center_blurb": "Follow SoLaS Lab updates, language research, and student opportunities.",
+      "active": true,
+      "links": [
+        {
+          "label": "Open Facebook",
+          "url": "https://www.facebook.com/solas.uno",
+          "status": "user_provided",
+          "verified_on": "2026-10-03"
+        }
+      ],
+      "display": {
+        "priority": 46
+      },
+      "metadata": {
+        "category": "social_media",
+        "platform": "Facebook",
+        "associated_entity": "solas_lab"
+      }
+    },
+    {
+      "id": "social_solas_links",
+      "label": "SoLaS Lab - Link Hub",
+      "type": "resource",
+      "center_blurb": "Find the SoLaS Lab’s current social and web destinations.",
+      "active": true,
+      "links": [
+        {
+          "label": "Open SoLaS Lab links",
+          "url": "https://bit.ly/m/solas-uno",
+          "status": "user_provided",
+          "verified_on": "2026-10-03"
+        }
+      ],
+      "display": {
+        "priority": 44
+      },
+      "metadata": {
+        "category": "social_media",
+        "platform": "link_hub",
+        "associated_entity": "solas_lab"
+      }
+    },
+    {
+      "id": "social_writing_center_instagram",
+      "label": "UNO Writing Center - Instagram",
+      "type": "resource",
+      "center_blurb": "See Writing Center people, programs, writing tips, and updates.",
+      "active": true,
+      "links": [
+        {
+          "label": "Open Instagram",
+          "url": "https://www.instagram.com/unowritingcenter/reels/",
+          "status": "user_provided",
+          "verified_on": "2026-10-03"
+        }
+      ],
+      "display": {
+        "priority": 44
+      },
+      "metadata": {
+        "category": "social_media",
+        "platform": "Instagram",
+        "associated_entity": "writing_center"
       }
     }
   ],
@@ -5938,49 +6078,49 @@
     },
     {
       "source": "writing_publishing",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "includes_topic",
       "confidence": "verified",
       "weight": 0.8
     },
     {
       "source": "tammie_kennedy",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "jody_keisner",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "sarah_mason",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "john_price",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "oliver_rogers",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "kyle_simonsen",
-      "target": "topic_creative_nonfiction",
+      "target": "conc_cnf",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
@@ -6344,21 +6484,21 @@
     },
     {
       "source": "teaching_hub",
-      "target": "topic_first_year_writing",
+      "target": "first_year_writing",
       "relation": "includes_topic",
       "confidence": "verified",
       "weight": 0.8
     },
     {
       "source": "sarah_osborn",
-      "target": "topic_first_year_writing",
+      "target": "first_year_writing",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
     },
     {
       "source": "kimberly_schwab",
-      "target": "topic_first_year_writing",
+      "target": "first_year_writing",
       "relation": "expertise",
       "confidence": "verified",
       "weight": 1.1
@@ -7520,14 +7660,14 @@
     },
     {
       "source": "teaching_hub",
-      "target": "topic_writing_center_pedagogy",
+      "target": "topic_writing_pedagogy",
       "relation": "includes_topic",
       "confidence": "verified",
       "weight": 0.8
     },
     {
       "source": "melanie_seitzer",
-      "target": "topic_writing_center_pedagogy",
+      "target": "topic_writing_pedagogy",
       "relation": "expertise",
       "confidence": "?",
       "weight": 1.1
@@ -7582,13 +7722,6 @@
       "weight": 1.1
     },
     {
-      "source": "teaching_hub",
-      "target": "topic_writing_pedagogy",
-      "relation": "includes_topic",
-      "confidence": "verified",
-      "weight": 0.8
-    },
-    {
       "source": "travis_adams",
       "target": "topic_writing_pedagogy",
       "relation": "expertise",
@@ -7624,21 +7757,21 @@
       "weight": 1.1
     },
     {
-      "source": "topic_creative_nonfiction",
+      "source": "conc_cnf",
       "target": "linden_review",
       "relation": "practiced_through",
       "confidence": "verified",
       "weight": 1.0
     },
     {
-      "source": "topic_creative_nonfiction",
+      "source": "conc_cnf",
       "target": "bouteloua",
       "relation": "celebrated_at",
       "confidence": "verified",
       "weight": 1.0
     },
     {
-      "source": "topic_creative_nonfiction",
+      "source": "conc_cnf",
       "target": "mckenna_awards",
       "relation": "supported_by",
       "confidence": "verified",
@@ -7874,6 +8007,76 @@
       "relation": "sponsors_panel_2026",
       "confidence": "verified",
       "weight": 1.0
+    },
+    {
+      "source": "english",
+      "target": "social_media",
+      "relation": "opens_to",
+      "confidence": "verified",
+      "weight": 1.0
+    },
+    {
+      "source": "community",
+      "target": "social_media",
+      "relation": "includes_resource",
+      "confidence": "verified",
+      "weight": 0.8
+    },
+    {
+      "source": "social_media",
+      "target": "social_english_facebook",
+      "relation": "includes",
+      "confidence": "verified",
+      "weight": 1.0
+    },
+    {
+      "source": "social_media",
+      "target": "social_english_instagram",
+      "relation": "includes",
+      "confidence": "verified",
+      "weight": 1.0
+    },
+    {
+      "source": "social_media",
+      "target": "social_solas_facebook",
+      "relation": "includes",
+      "confidence": "verified",
+      "weight": 1.0
+    },
+    {
+      "source": "social_media",
+      "target": "social_solas_links",
+      "relation": "includes",
+      "confidence": "verified",
+      "weight": 0.9
+    },
+    {
+      "source": "social_media",
+      "target": "social_writing_center_instagram",
+      "relation": "includes",
+      "confidence": "verified",
+      "weight": 1.0
+    },
+    {
+      "source": "social_solas_facebook",
+      "target": "solas_lab",
+      "relation": "points_to",
+      "confidence": "verified",
+      "weight": 0.9
+    },
+    {
+      "source": "social_solas_links",
+      "target": "solas_lab",
+      "relation": "points_to",
+      "confidence": "verified",
+      "weight": 0.9
+    },
+    {
+      "source": "social_writing_center_instagram",
+      "target": "writing_center",
+      "relation": "points_to",
+      "confidence": "verified",
+      "weight": 0.9
     }
   ],
   "source_conflicts": [
@@ -7935,5 +8138,15 @@
     "Opportunity availability changes faster than expertise/program structure. Keep availability metadata date-stamped and re-verify before production releases.",
     "As of 2026-10-03, SoLaS lists two current projects (English Spoken in Omaha; English and Cebuano Onomatopoeias), both with ongoing recruitment, and offers paid RAs when funding permits plus volunteer research internships.",
     "Bouteloua LitART Fest 2026 is scheduled for 2026-10-04 at Glacier Creek Preserve; Tammie Kennedy is a participating author and The Linden Review sponsors the Writing about Illness & Health panel."
-  ]
+  ],
+  "hygiene": {
+    "canonicalized_exact_duplicates": {
+      "topic_creative_nonfiction": "conc_cnf",
+      "topic_first_year_writing": "first_year_writing"
+    },
+    "duplicate_rule": "Active nodes may not share the same normalized human-facing label unless intentionally duplicated via alias_of or intentional_duplicate.",
+    "semantic_audit": "docs/SEMANTIC_AUDIT.md",
+    "review_focus": "Front-facing nodes use concise center_blurb copy of about ten words; topic-level near-duplicates are reviewed rather than blindly merged.",
+    "social_media_rule": "Social Media is a resource/community hub, not an expertise node; user-provided social links are labeled as such until independently verified."
+  }
 }

@@ -6,9 +6,9 @@ const copy=JSON.parse(fs.readFileSync(new URL('../data/copy.json',import.meta.ur
 const questions=JSON.parse(fs.readFileSync(new URL('../data/questions.json',import.meta.url),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const manifest=JSON.parse(fs.readFileSync(new URL('../data/manifest.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.17');
-assert.equal(manifest.version,'1.2.17');
-assert.equal(manifest.beta_version,'1.2.17');
+assert.equal(pkg.version,'1.2.29');
+assert.equal(manifest.version,'1.2.29');
+assert.equal(manifest.beta_version,'1.2.29');
 assert.ok(app.includes('exploratoryGuidance'));
 assert.ok(app.includes('Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you.'));
 assert.ok(app.includes('Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit.'));
@@ -50,4 +50,4 @@ const w02=questions.find(q=>q.id==='W02');
 const expected={W02_BOOKS:{LIT:2,INQ:1},W02_ACCENTS:{LANG:2,CUL:1},W02_STORIES:{CRA:2},W02_MIND:{LANG:2,CUL:1,INQ:1},W02_MENU:{PRO:2,RHE:1}};
 for (const [id,vec] of Object.entries(expected)) { const opt=w02.options.find(o=>o.id===id); assert.ok(opt,`missing ${id}`); assert.deepEqual(opt.signals,vec); }
 assert.ok(app.includes('resultHandoffSeen[kind]=true;'));
-console.log('v1.2.17 refinement tests passed');
+console.log('v1.2.29 refinement tests passed');

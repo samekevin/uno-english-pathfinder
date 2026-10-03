@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const root=new URL('../',import.meta.url);
+const pkg=JSON.parse(fs.readFileSync(new URL('package.json',root),'utf8'));
+const manifest=JSON.parse(fs.readFileSync(new URL('data/manifest.json',root),'utf8'));
+const css=fs.readFileSync(new URL('styles.css',root),'utf8');
+const exploreCss=fs.readFileSync(new URL('explore/styles.css',root),'utf8');
+const readme=fs.readFileSync(new URL('README.md',root),'utf8');
+assert.equal(pkg.version,'1.2.29');
+assert.equal(manifest.version,'1.2.29');
+assert.equal(manifest.beta_version,'1.2.29');
+assert.ok(css.includes('/* v1.2.29 — compact, matched landing actions */'));
+assert.ok(css.includes('height:40px'));
+assert.ok(css.includes('font-size:.78rem'));
+assert.ok(exploreCss.includes('/* v1.2.29 — keep the Explore exit quiet and subordinate to the constellation */'));
+assert.ok(exploreCss.includes('font-size:.76rem'));
+assert.ok(readme.includes('### v1.2.29'));
+console.log('v1.2.29 button-scale refinement checks passed');
