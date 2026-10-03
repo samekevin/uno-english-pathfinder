@@ -18,7 +18,8 @@ assert.ok(!app.includes('Show debug'));
 assert.ok(!app.includes('Prototype debug output'));
 assert.ok(app.includes('the Coordinator'));
 assert.ok(!app.includes('the Department Coordinator'));
-assert.ok(app.includes('Other graduate options that fit'));
+assert.ok(app.includes("grad_english_minor: 'Graduate Minor'"));
+assert.ok(app.includes('Other graduate pathways that fit'));
 assert.ok(app.includes('Other paths that fit your interests'));
 assert.ok(app.includes('Related pathways to explore'));
 assert.ok(!app.includes('Related areas to explore'));
@@ -38,8 +39,8 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.2.0'));
-assert.ok(index.includes('app.js?v=1.2.0'));
+assert.ok(index.includes('styles.css?v=1.2.1'));
+assert.ok(index.includes('app.js?v=1.2.1'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 
 assert.ok(app.includes('class="link-arrow" aria-hidden="true">↗</span>'));
@@ -75,8 +76,8 @@ for (const blurb of [
 ]) assert.ok(app.includes(blurb), `missing primary-home blurb: ${blurb}`);
 assert.ok(styles.includes('.primary-home-blurb{margin:.45rem 0 0;color:#554d45;font-size:1rem;line-height:1.45;font-style:normal}'));
 assert.ok(styles.includes('@media (max-width:700px){.primary-home-blurb{font-size:.98rem;line-height:1.45;max-width:100%;overflow-wrap:anywhere}}'));
-assert.ok(index.includes('styles.css?v=1.2.0'));
-assert.ok(index.includes('app.js?v=1.2.0'));
+assert.ok(index.includes('styles.css?v=1.2.1'));
+assert.ok(index.includes('app.js?v=1.2.1'));
 
 for (const label of ['Undergraduate Programs','Graduate Programs','Course Catalog']) assert.ok(app.includes(label), `missing shortened resource label: ${label}`);
 for (const stale of ["english_undergraduate: 'English undergraduate programs'","english_graduate: 'English graduate programs'","english_catalog: 'English course catalog'"]) assert.ok(!app.includes(stale), `stale long resource label mapping: ${stale}`);
@@ -199,7 +200,7 @@ assert.ok(app.includes('A text has caught your attention. Where does your curios
 assert.ok(app.includes('function per01CallbackMarkup()'));
 assert.ok(app.includes('function w02CallbackMarkup()'));
 assert.ok(app.includes('function resultCallbackMarkup()'));
-assert.ok(app.includes('You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out.'));
+assert.ok(app.includes('You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out. Mystery solved.'));
 assert.ok(app.includes('Socially? Impeccable instincts.'));
 assert.ok(app.includes('ONE MORE THING WE NOTICED'));
 assert.ok(app.includes('ABOUT YOUR DINNER TABLE CHOICE...'));
@@ -208,5 +209,5 @@ assert.ok(app.includes('Please don’t tell me you removed dessert.'));
 assert.ok(app.includes('did you bring a notebook?'));
 assert.ok(app.includes('${resultCallbackMarkup()}'));
 assert.ok(styles.includes('.personalization-note'));
-assert.ok(styles.includes('.computing-dots{position:absolute;left:50%;bottom:clamp(28px,6vh,54px)'));
+assert.ok(styles.includes('.computing-dots{position:static;left:auto;bottom:auto;transform:none;')); 
 assert.ok(styles.includes('animation:bonus-transition-dot 1.02s ease-in-out infinite'));

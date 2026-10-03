@@ -105,7 +105,7 @@ r=computeResult(spec,noDualContext);
 assert.notEqual(r.primaryPathway,'grad_dual_enrollment_cert');
 
 
-// Current graduate students can see the English Graduate Minor as a flexible
+// Current graduate students can see the Graduate Minor as a flexible
 // secondary option, but it is suggestion-only and must never become primary.
 const currentGradLanguage={...accent, OPEN:'OPEN_CURRENT_GRAD'};
 r=computeResult(spec,currentGradLanguage);

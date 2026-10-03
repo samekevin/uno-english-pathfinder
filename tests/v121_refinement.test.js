@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
+const q=JSON.parse(fs.readFileSync(path.join(root,"data/questions.json"),"utf8"));
+const copy=JSON.parse(fs.readFileSync(path.join(root,"data/copy.json"),"utf8"));
+const paths=JSON.parse(fs.readFileSync(path.join(root,"data/pathways.json"),"utf8"));
+const lit=q.find(x=>x.id==="FU_LIT_A"); assert.equal(lit.prompt,"A text has caught your attention. Where does your curiosity go next?");
+const per=q.find(x=>x.id==="PER01"); const expected={PER01_LIBRARY:"📚 Somewhere deep in the library",PER01_LAB:"🧩 Puzzle café with a mystery to solve",PER01_EDITORIAL:"📰 A room where something is about to be published",PER01_CLASSROOM:"💬 A small group having a surprisingly good discussion"}; for(const [id,text] of Object.entries(expected)) assert.equal(per.options.find(o=>o.id===id)?.text,text); for(const o of per.options) assert.deepEqual(o.signals,{});
+assert.equal(paths.grad_english_minor?.name,"Graduate Minor");
+assert.equal(copy.result_callbacks_v1_2.per01.universal.PER01_LAB,"You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out. Mystery solved.");
+assert.ok(copy.profile_shape.EXPLORATORY.startsWith("Your answers crossed several connected areas of English"));
+console.log("v1.2.1 refinement checks passed");

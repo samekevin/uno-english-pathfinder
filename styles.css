@@ -143,3 +143,10 @@ body.quiz-active .shell{padding-top:18px}
 .interest-popover strong{display:block;margin-bottom:.18rem;color:#2d2823}
 .interest-popover p{margin:0}
 @media (max-width:700px){.interest-info{width:1.5rem;height:1.5rem}.interest-pill{min-height:40px}.interest-popover{font-size:.88rem}}
+
+/* v1.2.1 unified transition dots: keep them visible in the centered content stack. */
+.computing-screen{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.computing-copy{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:min(760px,calc(100vw - 32px));padding:24px 16px}
+.computing-dots{position:static;left:auto;bottom:auto;transform:none;display:flex;gap:9px;align-items:center;justify-content:center;margin-top:clamp(24px,4vw,38px)}
+.bonus-transition-dots{position:absolute;left:50%;top:calc(50% + clamp(145px,20vh,190px));bottom:auto;transform:translate(-50%,-50%);display:flex;gap:9px;align-items:center;justify-content:center}
+@media (max-width:700px){.computing-copy{width:calc(100vw - 24px);padding:22px 12px}.computing-dots{margin-top:22px}.bonus-transition-dots{top:calc(50% + 150px)}}

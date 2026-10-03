@@ -29,7 +29,7 @@
       "README.md",
       "docs/qsf-portability.md"
     ],
-    "implementation_note": "Synchronized with Pathfinder Beta v1.1 maintenance build: no ambient motion, current program links, consistent result-link typography, suggestion-only English Graduate Minor, and adaptive follow-up progress labels. Conceptual/scoring baseline remains frozen at v1.3."
+    "implementation_note": "Synchronized with Pathfinder Beta v1.1 maintenance build: no ambient motion, current program links, consistent result-link typography, suggestion-only Graduate Minor, and adaptive follow-up progress labels. Conceptual/scoring baseline remains frozen at v1.3."
   },
   "config": {
     "spec_version": "1.3.0-machine",
@@ -3980,7 +3980,7 @@
       ]
     },
     "grad_english_minor": {
-      "name": "English Graduate Minor",
+      "name": "Graduate Minor",
       "level": "graduate",
       "type": "minor",
       "routes": [
@@ -4355,7 +4355,7 @@
     },
     "profile_shape": {
       "BROAD": "Your interests span several areas of English.",
-      "EXPLORATORY": "You're still exploring - and your answers actually look like it. Nothing is dominating yet, so we're not going to pretend one path is ‘the answer.’"
+      "EXPLORATORY": "Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you. Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit. And if this doesn’t quite feel like you, you can always start over and try another path."
     },
     "bonus": {
       "invite": "Think we've got you wrong? Challenge the result.",
@@ -4423,8 +4423,8 @@
         "universal": {
           "PER01_COFFEE": "The coffee shop with a notebook was a pretty good clue, too. Give you somewhere to sit, something to think about, and apparently you’ll take it from there.",
           "PER01_LIBRARY": "You chose somewhere deep in the library. An hour among the shelves with nowhere else to be? We can see the appeal.",
-          "PER01_LAB": "You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out.",
-          "PER01_EDITORIAL": "You chose the room where something is about to be published. There’s something exciting about seeing ideas take their final shape—and maybe helping them get there. I’d stick around, too.",
+          "PER01_LAB": "You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out. Mystery solved.",
+          "PER01_EDITORIAL": "You chose the room where something is about to be published. There’s something exciting about seeing ideas take their final shape—and maybe helping them get there.",
           "PER01_CLASSROOM": "You chose the small group having a surprisingly good discussion. Sometimes one good conversation really is enough to lose track of an hour. An hour well spent.",
           "PER01_OUTSIDE": "And somewhere outside with something to read still sounds pretty ideal to you. Honestly, hard to argue with that."
         }
@@ -4593,5 +4593,6 @@
         "offer_multiple_territories": true
       }
     }
-  ]
+  ],
+  "version": "1.2.1"
 }

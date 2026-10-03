@@ -38,7 +38,7 @@ assert.ok(app.includes('An hour well spent.'));
 
 // v1.2 callback and result-share presentation checks
 assert.ok(app.includes('ONE MORE THING WE NOTICED'));
-assert.ok(app.includes('I’d stick around, too.'));
+assert.ok(!app.includes('I’d stick around, too.'));
 assert.ok(app.includes('ABOUT YOUR DINNER TABLE CHOICE...')); 
 assert.ok(app.includes('Please don’t tell me you removed dessert.'));
 assert.ok(app.includes('ABOUT YOUR DINNER TABLE CHOICE...'));

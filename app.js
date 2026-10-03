@@ -580,7 +580,7 @@ function compactSecondaryLink(id, result){
     grad_tesol_cert: 'TESOL Graduate Certificate',
     grad_dual_enrollment_cert: 'Dual Enrollment Certificate',
     grad_ma: 'MA in English',
-    grad_english_minor: 'English Graduate Minor'
+    grad_english_minor: 'Graduate Minor'
   };
   const label = shortLabels[id] || graduateShortLabels[id] || pathway.name || 'Explore this path';
   const url = pathwayLinks[id] || pathway.url;
@@ -595,7 +595,7 @@ function secondaryOptionsMarkup(result){
   if(!options.length) return '';
   let heading = 'Other paths that fit your interests';
   if(result.route === 'ug_addon_open') heading = 'Related pathways to explore';
-  else if(['graduate_open','current_grad_open'].includes(result.route)) heading = 'Other graduate options that fit';
+  else if(['graduate_open','current_grad_open'].includes(result.route)) heading = 'Other graduate pathways that fit';
   return `<div class="result-block secondary-options"><h3>${heading}</h3><div class="resource-list">${options.join('')}</div></div>`;
 }
 
@@ -607,8 +607,8 @@ function per01CallbackMarkup(){
   const callbacks={
     PER01_COFFEE:'The coffee shop with a notebook was a pretty good clue, too. Give you somewhere to sit, something to think about, and apparently you’ll take it from there.',
     PER01_LIBRARY:'You chose somewhere deep in the library. An hour among the shelves with nowhere else to be? We can see the appeal.',
-    PER01_LAB:'You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out.',
-    PER01_EDITORIAL:'You chose the room where something is about to be published. There’s something exciting about seeing ideas take their final shape—and maybe helping them get there. I’d stick around, too.',
+    PER01_LAB:'You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out. Mystery solved.',
+    PER01_EDITORIAL:'You chose the room where something is about to be published. There’s something exciting about seeing ideas take their final shape—and maybe helping them get there.',
     PER01_CLASSROOM:'You chose the small group having a surprisingly good discussion. Sometimes one good conversation really is enough to lose track of an hour. An hour well spent.',
     PER01_OUTSIDE:'And somewhere outside with something to read still sounds pretty ideal to you. Honestly, hard to argue with that.'
   };
@@ -775,7 +775,7 @@ function renderFinalResult(){
   const profileCopy = result.profileShape === 'BROAD'
     ? 'Rather than force a single winner, this path highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
-      ? 'Your answers crossed several connected areas of English, so these are best read as starting points. Not seeing yourself here? Start over and make a different set of choices.'
+      ? 'Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you. Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit. And if this doesn’t quite feel like you, you can always start over and try another path.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
@@ -806,4 +806,4 @@ document.addEventListener('click',(event)=>{
 
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.0', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.1', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
