@@ -108,7 +108,31 @@ Participant-facing generic resource labels are `Undergraduate Programs`, `Gradua
 - This is presentation/copy only; frozen scoring behavior is unchanged.
 
 
-## Beta v1.1.38 Bonus transition centering + adaptive progress correction
+## Beta v1.1.43 Bonus transition centering + adaptive progress correction
 - Bonus transition cards are centered to the viewport center and no longer shift vertically when their content height differs.
 - Bonus transition card shadow is strengthened and the duplicate Department of English label above the cards is removed.
 - Follow-up and additional-check progress sequences are tracked independently. Single-item sequences show no `1 of 1` counter/bar; multi-item sequences show a sequence-specific counter and proportional progress bar.
+
+## Beta v1.1.45 outbound relay + computation timing
+- Result-page outbound links use a document-level click delegate so provisional and final result links share one handoff path. The original destination is not activated until after the welcome relay hold.
+- `Timeless skills. Enduringly human.` transition durations are 5, 7, or 9 seconds.
+
+
+## Beta v1.1.48 callback voice refinement
+- FU-LIT-A prompt now establishes its referent directly: `A text has caught your attention. Where does your curiosity go next?`; answer IDs and scoring vectors are unchanged.
+- PER01 participant-facing settings are refreshed while stable option IDs, empty score vectors, and personalization tags remain unchanged.
+- PER01 can contribute one context-aware microcopy callback to the provisional result only; it never changes scores, confidence, route, territory, or pathway ranking.
+- Result-computation dots now use the same placement, size, spacing, and animation as Bonus transition dots.
+
+
+### v1.1.48 callback voice refinement
+- PER-01 result callbacks use the heading “One more thing we noticed.”
+- W02 dinner-table callbacks use “About your dinner table choice...” and finalized playful copy.
+- Callback timing/consumption and all scoring vectors remain unchanged.
+
+
+## Beta v1.2.0 result refinement
+- Beta version graduates to v1.2. The frozen v1.3 scoring/scoring-baseline remains unchanged.
+- Result top-interest chips now show whole-number relative shares among the three displayed territories only; largest-remainder rounding keeps the visible total at exactly 100%.
+- PER-01 and W02 callbacks are participant-facing result flavor and do not affect scores, confidence, routing, or pathway ranking.
+- Result computation transition durations are 3, 5, or 7 seconds.

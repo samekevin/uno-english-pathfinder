@@ -10,9 +10,9 @@ const styles = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8'
 const copyData = fs.readFileSync(new URL('../data/copy.json', import.meta.url), 'utf8');
 
 assert.ok(index.includes('<title>English | Pathfinder Beta</title>'));
-assert.ok(index.includes('Department of English · Pathfinder Beta v1.1'));
+assert.ok(index.includes('Department of English · Pathfinder Beta v1.2'));
 assert.ok(index.includes('>Department of English</a>'));
-assert.ok(!index.includes('UNO English Pathfinder · Beta v1.1'));
+assert.ok(!index.includes('UNO English Pathfinder · Beta v1.2'));
 assert.ok(!index.includes('Selecting advances'));
 assert.ok(!app.includes('Show debug'));
 assert.ok(!app.includes('Prototype debug output'));
@@ -38,8 +38,8 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.1.38'));
-assert.ok(index.includes('app.js?v=1.1.38'));
+assert.ok(index.includes('styles.css?v=1.2.0'));
+assert.ok(index.includes('app.js?v=1.2.0'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 
 assert.ok(app.includes('class="link-arrow" aria-hidden="true">↗</span>'));
@@ -52,7 +52,7 @@ assert.ok(styles.includes('.result .resource-link span:first-child,.result .path
 
 assert.ok(app.includes('id="restartProvisional"'));
 assert.ok(app.includes('id="bonus"'));
-assert.ok(app.includes("answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();"));
+assert.ok(app.includes("answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;resultHandoffSeen={provisional:false,final:false};resultCallbackSeen={per01:false,w02:false};renderWelcome();"));
 assert.ok(app.includes("grad_lit_culture_cert: 'Literature & Culture Certificate'"));
 assert.ok(app.includes("grad_cnf_cert: 'Creative Nonfiction Certificate'"));
 assert.ok(!app.includes("node.style.opacity='0'"));
@@ -75,8 +75,8 @@ for (const blurb of [
 ]) assert.ok(app.includes(blurb), `missing primary-home blurb: ${blurb}`);
 assert.ok(styles.includes('.primary-home-blurb{margin:.45rem 0 0;color:#554d45;font-size:1rem;line-height:1.45;font-style:normal}'));
 assert.ok(styles.includes('@media (max-width:700px){.primary-home-blurb{font-size:.98rem;line-height:1.45;max-width:100%;overflow-wrap:anywhere}}'));
-assert.ok(index.includes('styles.css?v=1.1.38'));
-assert.ok(index.includes('app.js?v=1.1.38'));
+assert.ok(index.includes('styles.css?v=1.2.0'));
+assert.ok(index.includes('app.js?v=1.2.0'));
 
 for (const label of ['Undergraduate Programs','Graduate Programs','Course Catalog']) assert.ok(app.includes(label), `missing shortened resource label: ${label}`);
 for (const stale of ["english_undergraduate: 'English undergraduate programs'","english_graduate: 'English graduate programs'","english_catalog: 'English course catalog'"]) assert.ok(!app.includes(stale), `stale long resource label mapping: ${stale}`);
@@ -99,8 +99,16 @@ assert.ok(specData.includes('Why are some aspects of language automatic while ot
 assert.ok(!questionsData.includes('Why do some language patterns become automatic while others take work?'));
 assert.ok(!specData.includes('Why do some language patterns become automatic while others take work?'));
 assert.ok(app.includes('renderComputingTransition(renderProvisional)'));
-assert.ok(app.includes('renderComputingTransition(renderFinalResult)'));
-assert.ok(app.includes('const durations=[8000,10000,12000]'));
+assert.ok(app.includes('renderComputingTransition(()=>renderFinalBridge(renderFinalResult))'));
+assert.ok(app.includes('renderFinalBridge(nextRender)'));
+assert.ok(app.includes('You might be more at home in English than you think.'));
+assert.ok(app.includes('const FINAL_BRIDGE_HOLD_MS=4300'));
+assert.ok(!app.includes('const FINAL_BRIDGE_HOLD_MS=1300'));
+assert.ok(styles.includes('.final-bridge-overlay'));
+assert.ok(styles.includes('.final-bridge-copy'));
+assert.ok(app.includes('const durations=[3000,5000,7000]'));
+assert.ok(!app.includes('const durations=[7000,9000,11000]'));
+assert.ok(!app.includes('const durations=[8000,10000,12000]'));
 assert.ok(app.includes('Math.floor(Math.random()*durations.length)'));
 assert.ok(app.includes('Timeless skills.'));
 assert.ok(app.includes('Enduringly human.'));
@@ -132,8 +140,8 @@ assert.ok(app.includes('Places to explore the curiosity'));
 
 assert.ok(app.includes('function renderBonusTransition(nextRender)'));
 assert.ok(app.includes("renderBonusTransition(()=>{phase='bonus';cursor=0;renderQuestion();})"));
-assert.ok(app.includes('BONUS_TRANSITION_DURATION_MESSAGE_MS=7000'));
-assert.ok(app.includes('BONUS_TRANSITION_DURATION_FACT_MS=10000'));
+assert.ok(app.includes('BONUS_TRANSITION_DURATION_MESSAGE_MS=6000'));
+assert.ok(app.includes('BONUS_TRANSITION_DURATION_FACT_MS=9000'));
 assert.ok(app.includes("spec.copy.bonus_transition"));
 assert.ok(app.includes("const message=pickRandom(bank.messages || [])"));
 assert.ok(app.includes("const fact=pickRandom(bank.facts || [])"));
@@ -159,3 +167,46 @@ assert.ok(copyData.includes('"When everyone has access to the same AI tools, wha
 assert.ok(copyData.includes('"English doesn’t lead to just one kind of work."'));
 assert.ok(copyData.includes('HESA Graduate Outcomes data, reported by Prospects, 2024'));
 assert.ok(!app.includes('Read: Business Insider'));
+assert.ok(app.includes('function renderOutboundTransition(url, target)'));
+assert.ok(app.includes('There’s always room for one more.'));
+assert.ok(app.includes('Welcome home!'));
+assert.ok(app.includes('const OUTBOUND_STAGGER_MS=180'));
+assert.ok(app.includes('const OUTBOUND_HOLD_MS=3000'));
+assert.ok(app.includes('let resultHandoffSeen = { provisional:false, final:false };'));
+assert.ok(app.includes('function activateOutboundDestination(url, target)'));
+assert.ok(app.includes("document.addEventListener('click',(event)=>{"));
+assert.ok(app.includes("const opened=window.open(url,'_blank','noopener,noreferrer')"));
+assert.ok(!app.includes("window.open('about:blank','_blank')"));
+assert.ok(app.includes("if(!shouldRelay){\n    return;\n  }"));
+assert.ok(!app.includes('const OUTBOUND_HOLD_MS=800'));
+assert.ok(app.includes('const navigateAt=revealSecond+OUTBOUND_HOLD_MS'));
+assert.ok(!app.includes('const navigateAt=revealSecond+BRIDGE_FADE_MS+OUTBOUND_HOLD_MS'));
+assert.ok(styles.includes('.outbound-transition-overlay'));
+assert.ok(styles.includes('.outbound-transition-line.first'));
+assert.ok(styles.includes('.outbound-transition-line.second'));
+assert.ok(app.includes("const anchor=event.target.closest?.('.result a[href]')"));
+assert.ok(app.includes("const kind = phase==='provisional' ? 'provisional' : (phase==='final' ? 'final' : null);"));
+assert.ok(app.includes('const shouldRelay = kind !== null && resultHandoffSeen[kind] === false;'));
+assert.ok(app.includes('if(!shouldRelay){'));
+assert.ok(app.includes('resultHandoffSeen[kind]=true;'));
+assert.ok(app.includes("phase='final';"));
+assert.ok(app.includes("resetResultHandoff('provisional');"));
+assert.ok(app.includes("resetResultHandoff('final');"));
+
+
+// v1.1.48 callback refinement: PER-01 and W02 pay off in the next result, once, without changing scoring.
+assert.ok(app.includes('A text has caught your attention. Where does your curiosity go next?') === false, 'question copy lives in spec, not hard-coded app');
+assert.ok(app.includes('function per01CallbackMarkup()'));
+assert.ok(app.includes('function w02CallbackMarkup()'));
+assert.ok(app.includes('function resultCallbackMarkup()'));
+assert.ok(app.includes('You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out.'));
+assert.ok(app.includes('Socially? Impeccable instincts.'));
+assert.ok(app.includes('ONE MORE THING WE NOTICED'));
+assert.ok(app.includes('ABOUT YOUR DINNER TABLE CHOICE...'));
+assert.ok(app.includes('Very normal. Very demure.'));
+assert.ok(app.includes('Please don’t tell me you removed dessert.'));
+assert.ok(app.includes('did you bring a notebook?'));
+assert.ok(app.includes('${resultCallbackMarkup()}'));
+assert.ok(styles.includes('.personalization-note'));
+assert.ok(styles.includes('.computing-dots{position:absolute;left:50%;bottom:clamp(28px,6vh,54px)'));
+assert.ok(styles.includes('animation:bonus-transition-dot 1.02s ease-in-out infinite'));

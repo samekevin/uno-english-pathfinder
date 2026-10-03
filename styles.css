@@ -98,3 +98,48 @@ body.quiz-active .shell{padding-top:18px}
 @media (prefers-reduced-motion:reduce){.bonus-transition-overlay{transition:none}.bonus-transition-card{transition:none}.bonus-transition-dots span{animation:none;opacity:.65}}
 @media (max-width:700px){.bonus-transition-screen{padding:22px 12px}.bonus-transition-copy{height:100vh}.bonus-transition-card{width:min(660px,calc(100vw - 24px));min-height:220px;padding:24px 18px}.bonus-transition-heading{font-size:clamp(1.7rem,7.4vw,2.5rem);line-height:1.05}.bonus-transition-body{font-size:.98rem;line-height:1.5}.bonus-transition-dots{bottom:24px}}
 
+
+/* Final-result bridge: quiet affirmation before the final result reveal. */
+.final-bridge-overlay{position:fixed;inset:0;z-index:1000;background:#f6f1e8;color:#1e1b18;display:grid;place-items:center;opacity:0;transition:opacity .28s ease-out;pointer-events:auto}
+.final-bridge-overlay.is-visible{opacity:1}
+.final-bridge-overlay.is-fading-out{opacity:0;pointer-events:none}
+.final-bridge-screen{width:100%;min-height:100vh;display:grid;place-items:center;padding:24px 20px;text-align:center}
+.final-bridge-copy{font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:clamp(1.75rem,5.1vw,3.8rem);font-weight:400;line-height:1.04;max-width:21ch;opacity:0;transform:translateY(4px);animation:bridge-copy-in .28s ease-out .05s forwards}
+@keyframes bridge-copy-in{to{opacity:1;transform:translateY(0)}}
+/* Outbound result-link relay: warm, brief, and non-blocking. */
+.outbound-transition-overlay{position:fixed;inset:0;z-index:1000;background:#f6f1e8;color:#1e1b18;display:grid;place-items:center;opacity:0;transition:opacity .28s ease-out;pointer-events:auto}
+.outbound-transition-overlay.is-visible{opacity:1}
+.outbound-transition-overlay.is-fading-out{opacity:0;pointer-events:none}
+.outbound-transition-screen{width:100%;min-height:100vh;display:grid;place-items:center;padding:24px 20px;text-align:center}
+.outbound-transition-copy{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2em;font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:clamp(1.55rem,4.2vw,3.2rem);font-weight:400;line-height:1.02}
+.outbound-transition-line{opacity:0;transform:translateY(4px)}
+.outbound-transition-overlay.is-visible .outbound-transition-line.first{animation:bridge-copy-in .28s ease-out .05s forwards}
+.outbound-transition-overlay.is-visible .outbound-transition-line.second{animation:bridge-copy-in .28s ease-out .23s forwards}
+@media (prefers-reduced-motion:reduce){.final-bridge-overlay,.outbound-transition-overlay{transition:none}.final-bridge-copy,.outbound-transition-line{animation:none;opacity:1;transform:none}}
+@media (max-width:700px){.final-bridge-copy{font-size:clamp(1.65rem,8.4vw,2.8rem);max-width:19ch}.outbound-transition-copy{font-size:clamp(1.48rem,8vw,2.4rem)}}
+
+/* Provisional-result personalization: result flavor only; never part of scoring. */
+.personalization-note{margin:1rem 0 1.15rem;padding:.85rem 1rem;border-left:2px solid rgba(80,55,25,.22);background:rgba(255,253,249,.55);max-width:64ch}
+.personalization-note .personalization-kicker{font-size:.74rem;line-height:1.3;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:#756b61;margin-bottom:.3rem}
+.personalization-note p{margin:0;color:#514a42;font-size:1rem;line-height:1.5}
+
+/* One Pathfinder thinking signal: computation dots match the Bonus-card dots. */
+.computing-screen{position:relative}
+.computing-dots{position:absolute;left:50%;bottom:clamp(28px,6vh,54px);display:flex;gap:9px;align-items:center;justify-content:center;transform:translateX(-50%);margin-top:0;opacity:1}
+.computing-dots span{width:10px;height:10px;border-radius:50%;background:#1e1b18;opacity:.18;animation:bonus-transition-dot 1.02s ease-in-out infinite}
+.computing-dots span:nth-child(2){animation-delay:.16s}
+.computing-dots span:nth-child(3){animation-delay:.32s}
+@media (max-width:700px){.computing-dots{bottom:24px}.personalization-note{padding:.8rem .9rem}}
+
+/* v1.2 interactive top-three territory shares */
+.interest-heading-row{display:flex;align-items:center;justify-content:center;gap:.45rem}
+.interest-heading-row h3{margin:.1em 0 .55em}
+.interest-info{width:1.35rem;height:1.35rem;display:inline-grid;place-items:center;border:1px solid #b8aa99;border-radius:50%;background:transparent;color:#655b51;font:inherit;font-size:.78rem;line-height:1;cursor:pointer;padding:0}
+.interest-info:hover,.interest-info:focus-visible{background:#eee7dc;outline:2px solid #8f7453;outline-offset:2px}
+.interest-pill{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:0;cursor:pointer;font:inherit}
+.interest-share{font-variant-numeric:tabular-nums;color:#756b61;font-size:.9em}
+.interest-pill:hover,.interest-pill:focus-visible,.interest-pill[aria-expanded="true"]{outline:2px solid #8f7453;outline-offset:2px}
+.interest-popover{max-width:46ch;margin:.6rem auto 0;padding:.75rem .9rem;border:1px solid #dfd5c7;background:#fffdf9;box-shadow:0 8px 24px rgba(51,38,24,.1);font-size:.9rem;line-height:1.45;color:#514a42;text-align:left}
+.interest-popover strong{display:block;margin-bottom:.18rem;color:#2d2823}
+.interest-popover p{margin:0}
+@media (max-width:700px){.interest-info{width:1.5rem;height:1.5rem}.interest-pill{min-height:40px}.interest-popover{font-size:.88rem}}

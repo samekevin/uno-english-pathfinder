@@ -28,5 +28,6 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder Beta v1.1.33: current result-link/mobile hardening plus result interstitial, centered result masthead, and updated language-mystery copy."
+  "implementation_note": "Synchronized with Pathfinder Beta v1.2.0: mobile/result hardening, result callbacks, relative top-three territory shares, and adaptive-route regression coverage.",
+  "beta_version": "1.2.0"
 }

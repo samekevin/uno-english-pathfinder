@@ -10,13 +10,19 @@ let phase = 'welcome';
 let quickPlan = [];
 let bonusPlan = [];
 let provisionalResult = null;
+let resultHandoffSeen = { provisional:false, final:false };
+let resultCallbackSeen = { per01:false, w02:false };
 let advanceLock = false;
 let resultTransitionTimer = null;
 let resultTransitionCleanupTimer = null;
 const WELCOME_SLOGAN='There probably isn’t one right way into the English program. Let your curiosity guide you.';
 const RESULT_SLOGAN='Timeless skills. Enduringly human.';
-const BONUS_TRANSITION_DURATION_MESSAGE_MS=7000;
-const BONUS_TRANSITION_DURATION_FACT_MS=10000;
+const BONUS_TRANSITION_DURATION_MESSAGE_MS=6000;
+const BONUS_TRANSITION_DURATION_FACT_MS=9000;
+const FINAL_BRIDGE_HOLD_MS=4300;
+const BRIDGE_FADE_MS=280;
+const OUTBOUND_STAGGER_MS=180;
+const OUTBOUND_HOLD_MS=3000;
 
 function resetViewport(){
   window.scrollTo(0, 0);
@@ -61,7 +67,7 @@ function renderComputingTransition(nextRender){
   document.body.classList.add('computing-active');
   app.classList.add('computing-app');
   app.setAttribute('tabindex','-1');
-  const durations=[8000,10000,12000];
+  const durations=[3000,5000,7000];
   const duration=durations[Math.floor(Math.random()*durations.length)];
   const fadeOutMs=280;
   const overlay=document.createElement('div');
@@ -91,6 +97,81 @@ function renderComputingTransition(nextRender){
 
 function pickRandom(items){
   return items[Math.floor(Math.random()*items.length)];
+}
+
+function renderFinalBridge(nextRender){
+  clearResultTransition();
+  setQuizFocus(false);
+  setResultChrome(false);
+  document.body.classList.add('computing-active');
+  app.classList.add('computing-app');
+  app.setAttribute('tabindex','-1');
+  const overlay=document.createElement('div');
+  overlay.id='final-bridge-overlay';
+  overlay.className='final-bridge-overlay';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.setAttribute('aria-label','Preparing your final Pathfinder result');
+  overlay.innerHTML='<div class="final-bridge-screen"><div class="final-bridge-copy">You might be more at home in English than you think.</div></div>';
+  document.body.appendChild(overlay);
+  window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
+  resetViewport();
+  const total=BRIDGE_FADE_MS+FINAL_BRIDGE_HOLD_MS+BRIDGE_FADE_MS;
+  resultTransitionTimer=window.setTimeout(()=>{
+    resultTransitionTimer=null;
+    app.classList.remove('computing-app');
+    setResultChrome(true);
+    nextRender();
+    overlay.classList.add('is-fading-out');
+    resultTransitionCleanupTimer=window.setTimeout(()=>{
+      resultTransitionCleanupTimer=null;
+      overlay.remove();
+      document.body.classList.remove('computing-active');
+    },BRIDGE_FADE_MS);
+  }, total-BRIDGE_FADE_MS);
+}
+
+function activateOutboundDestination(url, target){
+  if(target==='_blank'){
+    const opened=window.open(url,'_blank','noopener,noreferrer');
+    if(opened){ return; }
+  }
+  window.location.href=url;
+}
+
+function resetResultHandoff(kind){
+  if(kind==='provisional' || kind==='final') resultHandoffSeen[kind]=false;
+}
+
+function renderOutboundTransition(url, target){
+  clearResultTransition();
+  setQuizFocus(false);
+  setResultChrome(false);
+  document.body.classList.add('computing-active');
+  app.classList.add('computing-app');
+  const overlay=document.createElement('div');
+  overlay.id='outbound-transition-overlay';
+  overlay.className='outbound-transition-overlay';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.setAttribute('aria-label','Opening the selected Department of English resource');
+  overlay.innerHTML='<div class="outbound-transition-screen"><div class="outbound-transition-copy"><div class="outbound-transition-line first">There’s always room for one more.</div><div class="outbound-transition-line second">Welcome home!</div></div></div>';
+  document.body.appendChild(overlay);
+  window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
+  resetViewport();
+  const revealSecond=BRIDGE_FADE_MS+OUTBOUND_STAGGER_MS;
+  const navigateAt=revealSecond+OUTBOUND_HOLD_MS;
+  resultTransitionTimer=window.setTimeout(()=>{
+    resultTransitionTimer=null;
+    overlay.classList.add('is-fading-out');
+    resultTransitionCleanupTimer=window.setTimeout(()=>{
+      resultTransitionCleanupTimer=null;
+      overlay.remove();
+      document.body.classList.remove('computing-active');
+      app.classList.remove('computing-app');
+      activateOutboundDestination(url,target);
+    },BRIDGE_FADE_MS);
+  },navigateAt);
 }
 
 function renderBonusTransition(nextRender){
@@ -331,7 +412,7 @@ function advanceCurrent(){
       renderQuestion();
       return;
     }
-    if(phase==='bonus' && cursor===bonusPlan.length-1){ renderComputingTransition(renderFinalResult); return; }
+    if(phase==='bonus' && cursor===bonusPlan.length-1){ renderComputingTransition(()=>renderFinalBridge(renderFinalResult)); return; }
     if(phase==='bonus'){ cursor++; renderQuestion(); }
   }, 220);
 }
@@ -518,6 +599,93 @@ function secondaryOptionsMarkup(result){
   return `<div class="result-block secondary-options"><h3>${heading}</h3><div class="resource-list">${options.join('')}</div></div>`;
 }
 
+function per01CallbackMarkup(){
+  if(resultCallbackSeen.per01) return '';
+  const selected=answers.PER01;
+  if(!selected) return '';
+  const optionId=Array.isArray(selected) ? selected[0] : selected;
+  const callbacks={
+    PER01_COFFEE:'The coffee shop with a notebook was a pretty good clue, too. Give you somewhere to sit, something to think about, and apparently you’ll take it from there.',
+    PER01_LIBRARY:'You chose somewhere deep in the library. An hour among the shelves with nowhere else to be? We can see the appeal.',
+    PER01_LAB:'You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out.',
+    PER01_EDITORIAL:'You chose the room where something is about to be published. There’s something exciting about seeing ideas take their final shape—and maybe helping them get there. I’d stick around, too.',
+    PER01_CLASSROOM:'You chose the small group having a surprisingly good discussion. Sometimes one good conversation really is enough to lose track of an hour. An hour well spent.',
+    PER01_OUTSIDE:'And somewhere outside with something to read still sounds pretty ideal to you. Honestly, hard to argue with that.'
+  };
+  const text=callbacks[optionId];
+  if(!text) return '';
+  resultCallbackSeen.per01=true;
+  return `<div class=\"personalization-note\"><div class=\"personalization-kicker\">ONE MORE THING WE NOTICED</div><p>${escapeHtml(text)}</p></div>`;
+}
+
+function w02CallbackMarkup(){
+  if(resultCallbackSeen.w02) return '';
+  const selected=answers.W02;
+  if(!selected) return '';
+  const optionId=Array.isArray(selected) ? selected[0] : selected;
+  const callbacks={
+    W02_BOOKS:'People arguing about what a famous book actually means. You came prepared to have opinions. Respect.',
+    W02_ACCENTS:'Accents, language stories, and people comparing how everybody talks. Apparently even dinner gets a linguistic subplot.',
+    W02_STORIES:'You found the people swapping unbelievable true stories, pulled up a chair—and, wait, did you bring a notebook?',
+    W02_MIND:'People debating why language changes across groups and generations. Light dinner conversation. Very normal. Very demure.',
+    W02_MENU:'Somehow, your table turned dinner into a menu-redesign project. Nobody asked you to fix dinner. And yet, here we are. Please don’t tell me you removed dessert.',
+    W02_GOSSIP:'You chose the gossip table. Academically useful? Debatable. Socially? Impeccable instincts.'
+  };
+  const text=callbacks[optionId];
+  if(!text) return '';
+  resultCallbackSeen.w02=true;
+  return `<div class=\"personalization-note memorable-choice\"><div class=\"personalization-kicker\">ABOUT YOUR DINNER TABLE CHOICE...</div><p>${escapeHtml(text)}</p></div>`;
+}
+
+function resultCallbackMarkup(){
+  const pieces=[];
+  const per=per01CallbackMarkup();
+  if(per) pieces.push(per);
+  const w02=w02CallbackMarkup();
+  if(w02) pieces.push(w02);
+  return pieces.join('');
+}
+
+function largestRemainderShares(items){
+  const total=items.reduce((sum,x)=>sum+Math.max(0,Number(x.score)||0),0);
+  if(!total) return items.map(x=>({...x,percent:0}));
+  const raw=items.map(x=>({...x,raw:(Math.max(0,Number(x.score)||0)/total)*100}));
+  const floors=raw.map(x=>Math.floor(x.raw));
+  const remainder=100-floors.reduce((a,b)=>a+b,0);
+  const order=raw.map((x,i)=>({i,frac:x.raw-floors[i]})).sort((a,b)=>b.frac-a.frac || a.i-b.i);
+  const percents=floors.slice();
+  for(let i=0;i<remainder;i++) percents[order[i].i]+=1;
+  return raw.map((x,i)=>({...x,percent:percents[i]}));
+}
+
+function interestSummaryMarkup(result){
+  const ranked=(result.territories||[]).filter(x=>Number(x.score)>0).slice(0,3);
+  const shares=largestRemainderShares(ranked);
+  if(!shares.length) return '';
+  const pills=shares.map(x=>{
+    const territory=spec.subprofiles[x.id] || {};
+    return `<button type=\"button\" class=\"pill interest-pill\" data-territory-id=\"${escapeHtml(x.id)}\" aria-expanded=\"false\"><span>${escapeHtml(territory.name||x.id)}</span><span class=\"interest-share\">${x.percent}%</span></button>`;
+  }).join('');
+  return `<div class=\"interest-summary\"><div class=\"interest-heading-row\"><h3>Your top areas of interest</h3><button type=\"button\" class=\"interest-info\" aria-expanded=\"false\" aria-label=\"About these percentages\">?</button></div><div class=\"pill-row\">${pills}</div><div class=\"interest-popover\" hidden></div></div>`;
+}
+
+function bindInterestInteractions(result){
+  const summary=app.querySelector('.interest-summary');
+  if(!summary) return;
+  const info=summary.querySelector('.interest-info');
+  const pop=summary.querySelector('.interest-popover');
+  const buttons=[...summary.querySelectorAll('.interest-pill')];
+  const ranked=(result.territories||[]).filter(x=>Number(x.score)>0).slice(0,3);
+  const shares=largestRemainderShares(ranked);
+  const byId=new Map(shares.map(x=>[x.id,x]));
+  function closeAll(){buttons.forEach(b=>b.setAttribute('aria-expanded','false'));if(info)info.setAttribute('aria-expanded','false');if(pop)pop.hidden=true;}
+  function showInfo(){if(!pop)return;if(info?.getAttribute('aria-expanded')==='true'){closeAll();return;}buttons.forEach(b=>b.setAttribute('aria-expanded','false'));info?.setAttribute('aria-expanded','true');pop.innerHTML='<strong>About these percentages</strong><p>Your share of the top three patterns we found.</p>';pop.hidden=false;}
+  function showTerritory(btn){if(!pop)return;const id=btn.dataset.territoryId;const item=byId.get(id);const territory=spec.subprofiles[id]||{};const open=btn.getAttribute('aria-expanded')==='true';closeAll();if(open)return;btn.setAttribute('aria-expanded','true');pop.innerHTML=`<strong>${escapeHtml(territory.name||id)} · ${item?.percent ?? 0}%</strong><p>${escapeHtml(territory.description||'')}</p>`;pop.hidden=false;}
+  info?.addEventListener('click',showInfo);
+  buttons.forEach(btn=>{btn.addEventListener('click',()=>showTerritory(btn));btn.addEventListener('mouseenter',()=>showTerritory(btn));btn.addEventListener('focus',()=>showTerritory(btn));});
+  summary.addEventListener('mouseleave',()=>{if(!summary.contains(document.activeElement))closeAll();});
+}
+
 function renderProvisional(){
   setResultChrome(true);
   setQuizFocus(false);
@@ -532,7 +700,8 @@ function renderProvisional(){
       quickPlan=[...new Set([...quickPlan,next.id])];
       cursor=quickPlan.length-1;
       phase='quick';
-      app.innerHTML=`<div class="result provisional"><div class="progress">Still exploring</div><div class="map-kicker">We are not going to pretend we know you from too little evidence.</div><h2>${escapeHtml(spec.copy.profile_shape?.EXPLORATORY || 'You’re making us work for it.')}</h2><p class="lede">We need a little more signal from a few different corners of English before we show a provisional path.</p><div class="challenge"><strong>One more question before the first read.</strong><p>This is a targeted follow-up, not a result.</p><button class="btn primary" id="continueQuick">Keep exploring</button></div></div>`;
+      resetResultHandoff('provisional');
+  app.innerHTML=`<div class="result provisional"><div class="progress">Still exploring</div><div class="map-kicker">We are not going to pretend we know you from too little evidence.</div><h2>${escapeHtml(spec.copy.profile_shape?.EXPLORATORY || 'You’re making us work for it.')}</h2><p class="lede">We need a little more signal from a few different corners of English before we show a provisional path.</p><div class="challenge"><strong>One more question before the first read.</strong><p>This is a targeted follow-up, not a result.</p><button class="btn primary" id="continueQuick">Keep exploring</button></div></div>`;
       app.querySelector('#continueQuick').addEventListener('click',renderQuestion);
       return;
     }
@@ -563,9 +732,11 @@ function renderProvisional(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   const route=getRouteLabel(result);
   bonusPlan=buildBonusPlan(result);
-  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
+  resetResultHandoff('provisional');
+  app.innerHTML=`<div class="result provisional"><div class="progress">Provisional path · ${route}</div><div class="map-kicker">This is a first read.</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p>${resultCallbackMarkup()}${interestSummaryMarkup(result)}<div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}</div><div class="challenge"><strong>${escapeHtml(spec.copy.bonus.invite)}</strong><p>These next questions are chosen to test the first pattern—not simply repeat it. Your answers can confirm, sharpen, or change your path.</p><div class="provisional-actions"><button class="btn primary" id="bonus" ${bonusPlan.length?'':'disabled'}>${bonusPlan.length?'Take the Bonus Round':'See my final path'}</button><button class="btn ghost" id="restartProvisional">Start Over</button></div></div></div>`;
+  bindInterestInteractions(result);
   app.querySelector('#bonus').addEventListener('click',()=>{renderBonusTransition(()=>{phase='bonus';cursor=0;renderQuestion();});});
-  app.querySelector('#restartProvisional').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
+  app.querySelector('#restartProvisional').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;resultHandoffSeen={provisional:false,final:false};resultCallbackSeen={per01:false,w02:false};renderWelcome();});
 }
 
 function classifyBonus(before, after){
@@ -575,10 +746,12 @@ function classifyBonus(before, after){
 }
 
 function renderFinalResult(){
+  phase='final';
   setResultChrome(true);
   setQuizFocus(false);
   resetViewport();
   const result=computeResult(spec,answers);
+  resetResultHandoff('final');
   const outcome=classifyBonus(provisionalResult,result);
   const territoryNames=result.territories.map(t=>spec.subprofiles[t.id]?.name).filter(Boolean);
   const primary=result.primaryPathway ? spec.pathways[result.primaryPathway] : null;
@@ -606,11 +779,31 @@ function renderFinalResult(){
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p><div class="interest-summary"><h3>Your top areas of interest</h3><div class="pill-row">${territoryNames.map(n=>`<span class="pill">${escapeHtml(n)}</span>`).join('')}</div></div><div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
-  app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;renderWelcome();});
+  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p>${resultCallbackMarkup()}${interestSummaryMarkup(result)}<div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
+  bindInterestInteractions(result);
+  app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;resultHandoffSeen={provisional:false,final:false};resultCallbackSeen={per01:false,w02:false};renderWelcome();});
 }
 
 function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 
+document.addEventListener('click',(event)=>{
+  const anchor=event.target.closest?.('.result a[href]');
+  if(!anchor) return;
+  if(anchor.dataset.transitioning==='true') return;
+  const href=anchor.getAttribute('href');
+  if(!href || href.startsWith('#')) return;
+  const kind = phase==='provisional' ? 'provisional' : (phase==='final' ? 'final' : null);
+  const shouldRelay = kind !== null && resultHandoffSeen[kind] === false;
+  if(!shouldRelay){
+    return;
+  }
+  event.preventDefault();
+  anchor.dataset.transitioning='true';
+  resultHandoffSeen[kind]=true;
+  const target=anchor.getAttribute('target') || '';
+  renderOutboundTransition(anchor.href, target);
+});
+
+
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.1.38', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.0', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

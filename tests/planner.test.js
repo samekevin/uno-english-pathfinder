@@ -52,3 +52,9 @@ const gradTeaching = {
 let gq = buildNextQuickQuestion(spec, gradTeaching);
 assert.equal(gq.id,'GD01');
 assert.equal(gq.score_budget,0);
+
+// v1.2 explicit follow-up/additional-check reachability regressions
+const litFollowupAnswers = {OPEN:'OPEN_UG_MAJOR',Q01:'Q01_BOOK_HISTORY',Q02:['Q02_HISTORY'],T01:'T01_WORLD',P01:'P01_NO_TEACH',W02:'W02_BOOKS'};
+assert.equal(buildNextQuickQuestion(spec, litFollowupAnswers)?.id, 'FU_LIT_A');
+const unresolved = {OPEN:'OPEN_UG_MAJOR',Q01:'Q01_SWITCHING',Q02:['Q02_PUBLISHED'],T01:'T01_WORLD',P01:'P01_MENTOR',W02:'W02_MENU',FU_PRO_A:'FU_PRO_STRUCTURE'};
+assert.equal(buildNextQuickQuestion(spec, unresolved)?.id, 'R01');

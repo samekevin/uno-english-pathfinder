@@ -2599,7 +2599,7 @@
     "family": "followup",
     "format": "follow_up",
     "select_mode": "single",
-    "prompt": "What pulls you further in?",
+    "prompt": "A text has caught your attention. Where does your curiosity go next?",
     "options": [
       {
         "id": "FU_LIT_HISTORY",
@@ -2946,7 +2946,7 @@
       },
       {
         "id": "PER01_LIBRARY",
-        "text": "📚 Library stacks",
+        "text": "📚 Somewhere deep in the library",
         "signals": {},
         "meaningful_evidence": false,
         "result_salience": "low",
@@ -2958,7 +2958,7 @@
       },
       {
         "id": "PER01_LAB",
-        "text": "🎙️ Language lab",
+        "text": "🧩 Puzzle café with a mystery to solve",
         "signals": {},
         "meaningful_evidence": false,
         "result_salience": "low",
@@ -2970,7 +2970,7 @@
       },
       {
         "id": "PER01_EDITORIAL",
-        "text": "📰 Editorial room",
+        "text": "📰 A room where something is about to be published",
         "signals": {},
         "meaningful_evidence": false,
         "result_salience": "low",
@@ -2982,7 +2982,7 @@
       },
       {
         "id": "PER01_CLASSROOM",
-        "text": "🏫 Classroom",
+        "text": "💬 A small group having a surprisingly good discussion",
         "signals": {},
         "meaningful_evidence": false,
         "result_salience": "low",

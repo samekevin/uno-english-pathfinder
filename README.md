@@ -171,9 +171,33 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Existing result transitions, mobile hardening, result-link behavior, Start Over behavior, and follow-up progress remain unchanged.
 
 
-## Beta v1.1.38 Bonus transition centering + adaptive progress correction
+## Beta v1.1.43 Bonus transition centering + adaptive progress correction
 - Bonus Round message/fact cards are centered to the viewport using a fixed overlay position, so different card heights no longer move the second card downward.
 - Increased the Bonus Round card shadow for clearer separation from the transition background.
 - Removed the `Department of English` label above Bonus Round cards.
 - Follow-up and additional-check progress are now tracked as separate sequences. A lone item in either sequence has no artificial `1 of 1` counter or progress bar; only multi-item sequences display a counter and proportional bar.
 - The progress bar for multi-item follow-up/additional-check sequences now reflects that sequence itself rather than remaining pinned to the completed Initial Interests target.
+
+## Beta v1.1.45 outbound relay + computation timing
+- Result-link welcome relay begins on the click itself; navigation is delayed until the 3-second welcome hold and fade-out finish, with the original target preserved where browser policy permits.
+- The result computation interstitial durations are now 5, 7, or 9 seconds.
+
+
+## Beta v1.1.48 callback voice refinement
+- FU-LIT-A prompt now establishes its referent directly: `A text has caught your attention. Where does your curiosity go next?`; answer IDs and scoring vectors are unchanged.
+- PER01 participant-facing settings are refreshed while stable option IDs, empty score vectors, and personalization tags remain unchanged.
+- PER01 can contribute one context-aware microcopy callback to the provisional result only; it never changes scores, confidence, route, territory, or pathway ranking.
+- Result-computation dots now use the same placement, size, spacing, and animation as Bonus transition dots.
+
+
+### v1.1.48 callback voice refinement
+- PER-01 result callbacks use the heading “One more thing we noticed.”
+- W02 dinner-table callbacks use “About your dinner table choice...” and finalized playful copy.
+- Callback timing/consumption and all scoring vectors remain unchanged.
+
+
+## Beta v1.2.0 result refinement
+- Beta version graduates to v1.2. The frozen v1.3 scoring/scoring-baseline remains unchanged.
+- Result top-interest chips now show whole-number relative shares among the three displayed territories only; largest-remainder rounding keeps the visible total at exactly 100%.
+- PER-01 and W02 callbacks are participant-facing result flavor and do not affect scores, confidence, routing, or pathway ranking.
+- Result computation transition durations are 3, 5, or 7 seconds.
