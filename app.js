@@ -12,6 +12,7 @@ let bonusPlan = [];
 let provisionalResult = null;
 let resultHandoffSeen = { provisional:false, final:false };
 let resultCallbackSeen = { per01:false, w02:false };
+let nightMode = sessionStorage.getItem('pathfinderNightMode') === 'true';
 let advanceLock = false;
 let resultTransitionTimer = null;
 let resultTransitionCleanupTimer = null;
@@ -23,6 +24,19 @@ const FINAL_BRIDGE_HOLD_MS=4300;
 const BRIDGE_FADE_MS=280;
 const OUTBOUND_STAGGER_MS=180;
 const OUTBOUND_HOLD_MS=3000;
+
+function applyNightMode(){
+  document.body.classList.toggle('night-mode', nightMode);
+  document.documentElement.classList.toggle('night-mode', nightMode);
+  try { sessionStorage.setItem('pathfinderNightMode', String(nightMode)); } catch {}
+}
+
+function toggleNightMode(){
+  nightMode=!nightMode;
+  applyNightMode();
+  const btn=document.querySelector('#nightModeToggle');
+  if(btn){ btn.setAttribute('aria-pressed', String(nightMode)); btn.querySelector('.night-mode-label').textContent=nightMode ? 'Night mode on' : 'Night mode'; }
+}
 
 function resetViewport(){
   window.scrollTo(0, 0);
@@ -131,7 +145,11 @@ function renderFinalBridge(nextRender){
   }, total-BRIDGE_FADE_MS);
 }
 
-function activateOutboundDestination(url, target){
+function activateOutboundDestination(url, target, openedWindow=null){
+  if(target==='_blank' && openedWindow && !openedWindow.closed){
+    try { openedWindow.location.href=url; } catch { window.location.href=url; }
+    return;
+  }
   if(target==='_blank'){
     const opened=window.open(url,'_blank','noopener,noreferrer');
     if(opened){ return; }
@@ -143,7 +161,7 @@ function resetResultHandoff(kind){
   if(kind==='provisional' || kind==='final') resultHandoffSeen[kind]=false;
 }
 
-function renderOutboundTransition(url, target){
+function renderOutboundTransition(url, target, openedWindow=null){
   clearResultTransition();
   setQuizFocus(false);
   setResultChrome(false);
@@ -160,17 +178,15 @@ function renderOutboundTransition(url, target){
   window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
   resetViewport();
   const revealSecond=BRIDGE_FADE_MS+OUTBOUND_STAGGER_MS;
-  const navigateAt=revealSecond+OUTBOUND_HOLD_MS;
+  const navigateAt=Math.max(revealSecond, revealSecond+OUTBOUND_HOLD_MS);
   resultTransitionTimer=window.setTimeout(()=>{
     resultTransitionTimer=null;
-    overlay.classList.add('is-fading-out');
-    resultTransitionCleanupTimer=window.setTimeout(()=>{
-      resultTransitionCleanupTimer=null;
+    activateOutboundDestination(url,target,openedWindow);
+    if(openedWindow || target!=='_blank'){
       overlay.remove();
       document.body.classList.remove('computing-active');
       app.classList.remove('computing-app');
-      activateOutboundDestination(url,target);
-    },BRIDGE_FADE_MS);
+    }
   },navigateAt);
 }
 
@@ -192,7 +208,7 @@ function renderBonusTransition(nextRender){
   overlay.setAttribute('role','status');
   overlay.setAttribute('aria-live','polite');
   overlay.setAttribute('aria-label','Preparing your Pathfinder bonus round');
-  overlay.innerHTML=`<div class="bonus-transition-screen" data-duration-ms="${totalDuration}"><div class="bonus-transition-copy"><div class="bonus-transition-card is-active" data-card="message"><div class="bonus-transition-heading">${escapeHtml(message.heading)}</div><div class="bonus-transition-body">${escapeHtml(message.body)}</div></div><div class="bonus-transition-card" data-card="fact"><div class="bonus-transition-heading">${escapeHtml(fact.heading)}</div><div class="bonus-transition-body">${escapeHtml(fact.body)}</div><div class="bonus-transition-source">— ${escapeHtml(fact.source)}</div></div><div class="bonus-transition-dots" aria-hidden="true"><span></span><span></span><span></span></div></div></div>`;
+  overlay.innerHTML=`<div class="bonus-transition-screen" data-duration-ms="${totalDuration}"><div class="bonus-transition-copy"><div class="bonus-transition-card is-active" data-card="message"><div class="bonus-transition-heading">${escapeHtml(message.heading)}</div><div class="bonus-transition-body">${escapeHtml(message.body)}</div></div><div class="bonus-transition-card" data-card="fact"><div class="bonus-transition-heading">${escapeHtml(fact.heading)}</div><div class="bonus-transition-body">${escapeHtml(fact.body)}</div><div class="bonus-transition-source">— ${escapeHtml(fact.source)}</div></div></div></div>`;
   document.body.appendChild(overlay);
   window.requestAnimationFrame(()=>overlay.classList.add('is-visible'));
   resetViewport();
@@ -488,9 +504,11 @@ function renderWelcome(){
   clearResultTransition();
   setResultChrome(false);
   setQuizFocus(false);
+  applyNightMode();
   resetViewport();
   app.setAttribute('tabindex','-1');
-  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button></div>`;
+  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>`;
+  app.querySelector('#nightModeToggle').addEventListener('click',toggleNightMode);
   app.querySelector('#start').addEventListener('click',()=>{ answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion(); });
 }
 
@@ -713,7 +731,7 @@ function renderProvisional(){
   const copy = result.profileShape === 'BROAD'
     ? (spec.copy.profile_shape?.BROAD || 'Your answers opened several distinct doors in English.')
     : result.profileShape === 'EXPLORATORY'
-      ? (spec.copy.profile_shape?.EXPLORATORY || 'We have some real signals, but they are still moving around.')
+      ? (spec.copy.profile_shape?.EXPLORATORY_KEY || 'A few paths are opening up.')
       : (result.confidence === 'CONFIDENT' ? (spec.copy.confidence?.CONFIDENT || 'We’re seeing a pretty clear pattern.') : (spec.copy.confidence?.[result.confidence] || 'This is a useful first read.'));
   const primaryTerritory = result.territories?.[0]?.id;
   const territoryCopy = {
@@ -760,7 +778,7 @@ function renderFinalResult(){
   const copy = result.profileShape === 'BROAD'
     ? (spec.copy.profile_shape?.BROAD || 'Your answers opened several distinct doors in English.')
     : result.profileShape === 'EXPLORATORY'
-      ? (spec.copy.profile_shape?.EXPLORATORY || 'We have some real signals, but they are still moving around.')
+      ? (spec.copy.profile_shape?.EXPLORATORY_KEY || 'A few paths are opening up.')
       : (result.confidence === 'CONFIDENT' ? (spec.copy.confidence?.CONFIDENT || 'We’re seeing a pretty clear pattern.') : (spec.copy.confidence?.[result.confidence] || 'This is a useful first read.'));
   const primaryTerritory = result.territories?.[0]?.id;
   const territoryCopy = {
@@ -775,11 +793,14 @@ function renderFinalResult(){
   const profileCopy = result.profileShape === 'BROAD'
     ? 'Rather than force a single winner, this path highlights the areas that kept recurring.'
     : result.profileShape === 'EXPLORATORY'
-      ? 'Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you. Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit. And if this doesn’t quite feel like you, you can always start over and try another path.'
+      ? 'Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you.'
       : (territoryCopy[primaryTerritory] || spec.copy.profile_shape[result.profileShape] || '');
+  const exploratoryGuidance = result.profileShape === 'EXPLORATORY'
+    ? '<p class="exploratory-guidance">Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit. And if this doesn’t quite feel like you, you can always start over and try another path.</p>'
+    : '';
   let resources=[...(result.resources || [])];
   if(primaryTerritory === 'literature_culture' && !resources.includes('tell_all_truth')) resources.push('tell_all_truth');
-  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p>${resultCallbackMarkup()}${interestSummaryMarkup(result)}<div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div><div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
+  app.innerHTML=`<div class="result"><div class="progress">Your path · ${getRouteLabel(result)}</div><div class="map-kicker">${escapeHtml(spec.copy.bonus[outcome] || outcome)}</div><h2>${escapeHtml(copy)}</h2><p class="lede">${escapeHtml(profileCopy)}</p>${resultCallbackMarkup()}${interestSummaryMarkup(result)}<div class="result-grid"><div class="result-block"><h3>Strongest curricular pathway</h3>${primary?pathwayDisplay(result.primaryPathway, result):'<p>Keep exploring before choosing a home.</p>'}</div>${secondaryOptionsMarkup(result)}${addOnGuidance(result)}<div class="result-block"><h3>Places to explore the curiosity</h3><div class="resource-list">${resources.length?resources.map(resourceLink).join(''):'<span>Use the academic home above as your next conversation.</span>'}</div></div></div>${exploratoryGuidance}<div class="community"><strong>${escapeHtml(spec.copy.community?.heading || 'Want to keep exploring?')}</strong><p>Have a question about where your interests might lead? <a href="mailto:tghosh@unomaha.edu?subject=English%20Pathfinder%20question">Email the Chair</a> and tell us what caught your attention. You can also explore English advising and department resources below.</p><div class="resource-list">${spec.resources.english_advising ? `<a class="resource-link" href="${spec.resources.english_advising.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_advising.title)}</span><span aria-hidden="true">↗</span></a>`:''}${spec.resources.english_contact ? `<a class="resource-link" href="${spec.resources.english_contact.url}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(spec.resources.english_contact.title)}</span><span aria-hidden="true">↗</span></a>`:''}</div></div><div class="welcome-actions"><button class="btn primary" id="restart">Start over</button></div></div>`;
   bindInterestInteractions(result);
   app.querySelector('#restart').addEventListener('click',()=>{answers={};cursor=0;phase='welcome';quickPlan=[];bonusPlan=[];provisionalResult=null;resultHandoffSeen={provisional:false,final:false};resultCallbackSeen={per01:false,w02:false};renderWelcome();});
 }
@@ -801,9 +822,33 @@ document.addEventListener('click',(event)=>{
   anchor.dataset.transitioning='true';
   resultHandoffSeen[kind]=true;
   const target=anchor.getAttribute('target') || '';
-  renderOutboundTransition(anchor.href, target);
+  let openedWindow=null;
+  if(target==='_blank'){
+    try {
+      openedWindow=window.open('', '_blank');
+      if(openedWindow){
+        openedWindow.document.open();
+        const holdingBg=nightMode ? '#24201d' : '#f6f1e8';
+        const holdingFg=nightMode ? '#f4eee6' : '#1e1b18';
+        const holdingSub=nightMode ? '#d3c9bd' : '#514a42';
+        openedWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Department of English</title><style>
+          :root{color-scheme:${nightMode?'dark':'light'};background:${holdingBg};color:${holdingFg}}
+          html,body{margin:0;min-height:100%;background:${holdingBg};color:${holdingFg}}
+          body{min-height:100vh;display:grid;place-items:center;overflow:hidden}
+          .handoff{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2em;text-align:center;
+            font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:clamp(1.55rem,4.2vw,3.2rem);
+            font-weight:400;line-height:1.02;padding:24px 20px;color:${holdingFg}}
+          @media (max-width:700px){.handoff{font-size:clamp(1.48rem,8vw,2.4rem);padding:22px 12px}}
+          .handoff div:last-child{color:${holdingFg}}
+          @media (prefers-reduced-motion:reduce){.handoff{transition:none}}
+        </style></head><body><div class="handoff"><div>There’s always room for one more.</div><div>Welcome home!</div></div></body></html>`);
+        openedWindow.document.close();
+      }
+    } catch {}
+  }
+  renderOutboundTransition(anchor.href, target, openedWindow);
 });
 
 
 loadSpec().then(data=>{ spec=data; renderWelcome(); }).catch(err=>{ app.innerHTML=`<p>Could not load the Pathfinder specification.</p><pre>${escapeHtml(String(err))}</pre>`; });
-async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.1', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function loadSpec(){ const r=await fetch('./data/pathfinder.spec.json?v=1.2.6', {cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

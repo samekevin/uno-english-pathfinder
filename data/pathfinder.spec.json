@@ -1,9 +1,9 @@
 {
   "manifest": {
     "name": "UNO English Pathfinder Machine-Readable Specification",
-    "version": "1.3.0-machine",
+    "version": "1.2.6",
     "source": "UNO English Pathfinder Question Bank v1.3",
-    "generated_on": "2026-10-01",
+    "generated_on": "2026-10-03",
     "principles": [
       "intellectual affinities first; credentials second",
       "territory is separate from curricular home",
@@ -29,7 +29,7 @@
       "README.md",
       "docs/qsf-portability.md"
     ],
-    "implementation_note": "Synchronized with Pathfinder Beta v1.1 maintenance build: no ambient motion, current program links, consistent result-link typography, suggestion-only Graduate Minor, and adaptive follow-up progress labels. Conceptual/scoring baseline remains frozen at v1.3."
+    "implementation_note": "Synchronized with Pathfinder Beta v1.2.2: final-result exploratory copy cleanup, adaptive callback copy, unified transition dots, and presentation-only Night mode."
   },
   "config": {
     "spec_version": "1.3.0-machine",
@@ -4378,8 +4378,8 @@
           "body": "Let’s see what else your curiosity has been trying to tell us."
         },
         {
-          "heading": "You’re asking the kinds of questions English gives you room to keep asking.",
-          "body": "Let’s follow them a little further."
+          "heading": "There’s clearly more here to explore.",
+          "body": "Let’s follow the questions a little further."
         },
         {
           "heading": "Your interests are starting to connect.",
@@ -4440,7 +4440,9 @@
           "W02_GOSSIP": "You chose the gossip table. Academically useful? Debatable. Socially? Impeccable instincts."
         }
       }
-    }
+    },
+    "EXPLORATORY": "",
+    "EXPLORATORY_KEY": "A FEW PATHS ARE OPENING UP."
   },
   "tests": [
     {
@@ -4594,5 +4596,5 @@
       }
     }
   ],
-  "version": "1.2.1"
+  "version": "1.2.6"
 }

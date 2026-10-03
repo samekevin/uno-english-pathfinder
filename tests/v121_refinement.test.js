@@ -11,4 +11,4 @@ const per=q.find(x=>x.id==="PER01"); const expected={PER01_LIBRARY:"📚 Somewhe
 assert.equal(paths.grad_english_minor?.name,"Graduate Minor");
 assert.equal(copy.result_callbacks_v1_2.per01.universal.PER01_LAB,"You chose the puzzle café with a mystery to solve. There are worse ways to lose an hour than having something interesting to figure out. Mystery solved.");
 assert.ok(copy.profile_shape.EXPLORATORY.startsWith("Your answers crossed several connected areas of English"));
-console.log("v1.2.1 refinement checks passed");
+console.log("v1.2.3 compatibility refinement checks passed");

@@ -196,8 +196,17 @@ This build includes mobile UI hardening for questionnaire focus, option fade lif
 - Callback timing/consumption and all scoring vectors remain unchanged.
 
 
-## Beta v1.2.0 result refinement
+## Beta v1.2.4 result refinement
 - Beta version graduates to v1.2. The frozen v1.3 scoring/scoring-baseline remains unchanged.
 - Result top-interest chips now show whole-number relative shares among the three displayed territories only; largest-remainder rounding keeps the visible total at exactly 100%.
 - PER-01 and W02 callbacks are participant-facing result flavor and do not affect scores, confidence, routing, or pathway ranking.
 - Result computation transition durations are 3, 5, or 7 seconds.
+
+
+## Beta v1.2.6 refinement
+
+- Refined Bonus transition encouragement copy.
+- Made outbound holding-window theme match light/night mode to prevent a theme flash.
+- Reduced the visible percentage help mark while retaining an accessible hit target.
+- Moved computation dots lower in the centered content stack; Bonus cards remain dot-free.
+- Preserved scoring, routing, confidence, and pathway logic.

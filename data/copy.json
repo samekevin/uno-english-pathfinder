@@ -37,8 +37,8 @@
         "body": "Let’s see what else your curiosity has been trying to tell us."
       },
       {
-        "heading": "You’re asking the kinds of questions English gives you room to keep asking.",
-        "body": "Let’s follow them a little further."
+        "heading": "There’s clearly more here to explore.",
+        "body": "Let’s follow the questions a little further."
       },
       {
         "heading": "Your interests are starting to connect.",
@@ -99,5 +99,7 @@
         "W02_GOSSIP": "You chose the gossip table. Academically useful? Debatable. Socially? Impeccable instincts."
       }
     }
-  }
+  },
+  "EXPLORATORY": "",
+  "EXPLORATORY_KEY": "A FEW PATHS ARE OPENING UP."
 }

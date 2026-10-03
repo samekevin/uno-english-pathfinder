@@ -1,10 +1,10 @@
 {
   "name": "uno-english-pathfinder",
-  "version": "1.2.1",
+  "version": "1.2.6",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/engine.test.js && node tests/planner.test.js && node tests/ui.test.js && node tests/progress.test.js && node tests/content.test.js && node tests/v121_refinement.test.js",
+    "test": "node tests/engine.test.js && node tests/planner.test.js && node tests/ui.test.js && node tests/progress.test.js && node tests/content.test.js && node tests/v121_refinement.test.js && node tests/v122_refinement.test.js && node tests/v123_refinement.test.js && node tests/v125_refinement.test.js && node tests/v126_refinement.test.js",
     "serve": "python3 -m http.server 4173"
   }
 }
