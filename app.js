@@ -37,7 +37,7 @@ function toggleNightMode(){
   nightMode=!nightMode;
   applyNightMode();
   const btn=document.querySelector('#nightModeToggle');
-  if(btn){ btn.setAttribute('aria-pressed', String(nightMode)); btn.querySelector('.night-mode-label').textContent=nightMode ? 'Night mode on' : 'Night mode'; }
+  if(btn){ btn.setAttribute('aria-pressed', String(nightMode)); btn.setAttribute('aria-label', nightMode ? 'Turn night mode off' : 'Turn night mode on'); btn.setAttribute('title', nightMode ? 'Turn night mode off' : 'Turn night mode on'); }
 }
 
 function resetViewport(){
@@ -536,8 +536,8 @@ function compactTouchEnvironment(){
 
 function exploreWelcomeNote(){
   return compactTouchEnvironment()
-    ? '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span>Explore English will use a touch-optimized view on this device. A larger screen gives you the fullest constellation experience.</span></div>'
-    : '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span>Explore people, ideas, programs, and opportunities across UNO English as a living constellation.</span></div>';
+    ? '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span><strong class="explore-brand-inline">EXPLORE!</strong> lets you follow UNO English as a living constellation of people, ideas, programs, and opportunities. On this device, <strong class="explore-brand-inline">EXPLORE!</strong> uses a touch-optimized view.</span></div>'
+    : '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span><strong class="explore-brand-inline">EXPLORE!</strong> lets you follow UNO English as a living constellation of people, ideas, programs, and opportunities.</span></div>';
 }
 
 function renderWelcome({suppressExplore=false}={}){
@@ -549,7 +549,7 @@ function renderWelcome({suppressExplore=false}={}){
   applyNightMode();
   resetViewport();
   app.setAttribute('tabindex','-1');
-  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><div class="welcome-path-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="btn explore-launch-btn" id="exploreLaunch" aria-label="Explore English"><span class="explore-launch-label">Explore English</span></button></div><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>${exploreWelcomeNote()}`;
+  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><div class="welcome-path-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="btn explore-launch-btn" id="exploreLaunch" aria-label="EXPLORE! English"><span class="explore-launch-label">EXPLORE! English</span></button></div></div>${exploreWelcomeNote()}<div class="welcome-night-control"><button type="button" class="night-mode-toggle night-mode-icon-only" id="nightModeToggle" aria-pressed="${nightMode}" aria-label="${nightMode?'Turn night mode off':'Turn night mode on'}" title="${nightMode?'Turn night mode off':'Turn night mode on'}"><span aria-hidden="true">◐</span></button></div>`;
   app.querySelector('#nightModeToggle').addEventListener('click',toggleNightMode);
   app.querySelector('#start').addEventListener('click',startPathfinder);
   const launchExplore=async()=>{
@@ -557,7 +557,7 @@ function renderWelcome({suppressExplore=false}={}){
     let cancelled=false;
     exploreLauncher={destroy(){cancelled=true;}};
     try{
-      const mod=await import('./explore/app.js?v=1.2.30');
+      const mod=await import('./explore/app.js?v=1.2.31');
       if(cancelled || phase!=='welcome') return;
       const controller=await mod.mountExploreOverlay({
         onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },

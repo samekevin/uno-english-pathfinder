@@ -5643,16 +5643,16 @@
       "weight": 1.0
     },
     {
-      "source": "john_turnbull",
+      "source": "kevin_samejon",
       "target": "ug_tesol",
-      "relation": "associated_with",
+      "relation": "directs_or_codirects",
       "confidence": "verified",
       "weight": 1.0
     },
     {
-      "source": "john_turnbull",
+      "source": "kevin_samejon",
       "target": "grad_tesol_cert",
-      "relation": "associated_with",
+      "relation": "directs_or_codirects",
       "confidence": "verified",
       "weight": 1.0
     },

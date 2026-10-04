@@ -1,4 +1,4 @@
-# UNO English Pathfinder Beta v1.2.30 — Explore English
+# UNO English Pathfinder Beta v1.2.31 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
@@ -94,7 +94,7 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.30 — Explore English**
+**UNO English Pathfinder Beta v1.2.31 — EXPLORE! English**
 
 214 nodes · 552 explicit edges · 27 active faculty · 0 dangling graph edges.
 
@@ -158,3 +158,12 @@ Explore English now uses a compact mobile motion profile: continuous drift is mo
 Explore English now detects compact touch environments automatically and introduces a touch-specific entry message: **Find your way through English.** Mobile visitors are told how to tap, drag, and pinch without having to choose a device mode, while a larger screen is still recommended for the fullest spatial experience.
 
 The renderer also fixes a mobile-motion bug that calculated secondary oscillation and then cleared it before drawing. Pan/zoom is now applied with SVG group transforms rather than a CSS transform on the entire SVG, reducing Safari compositing risk. Touch node activation is explicit on pointer-up rather than depending on a synthetic click, the Explore stylesheet is lazy-loaded into the Pathfinder overlay so standalone and embedded Explore use the same rendering rules, and a visible-page animation watchdog plus pageshow/orientation wake handling protects against stalled requestAnimationFrame loops. Desktop motion and reduced-motion behavior remain preserved.
+
+
+## v1.2.31 branding and content refinement
+
+- Preserves the v1.2.30 Explore renderer and mobile Safari hardening without motion changes.
+- Brands the experience as **EXPLORE!** in entry points and interface references, while ordinary prose keeps the verb “explore.”
+- Corrects Undergraduate and Graduate TESOL certificate faculty connections to Sarah Faltin Osborn and Kevin Samejon (removing John Turnbull from those certificate connections).
+- Replaces the Night mode text control on the welcome screen with the existing icon only, centered beneath the EXPLORE! invitation.
+- Makes the mobile interstitial explicit that a **desktop computer** is recommended for the fullest constellation experience.
