@@ -8,10 +8,10 @@ const exploreCss=fs.readFileSync(new URL("explore/styles.css",root),"utf8");
 const app=fs.readFileSync(new URL("app.js",root),"utf8");
 const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
 const manifest=JSON.parse(fs.readFileSync(new URL("data/manifest.json",root),"utf8"));
-assert.equal(pkg.version,"1.2.31");
-assert.equal(manifest.version,"1.2.31");
-assert.equal(manifest.beta_version,"1.2.31");
-assert.ok(explore.includes("const VERSION = '1.2.31'"));
+assert.equal(pkg.version,"1.2.32");
+assert.equal(manifest.version,"1.2.32");
+assert.equal(manifest.beta_version,"1.2.32");
+assert.ok(explore.includes("const VERSION = '1.2.32'"));
 
 const iphone=classifyExploreEnvironment({width:390,coarse:true,hoverNone:true,touchPoints:5,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',platform:'iPhone'});
 assert.equal(iphone.compactTouch,true);
@@ -36,11 +36,10 @@ assert.ok(explore.includes("const directTouchActivation=p.nodeId&&!p.moved&&p.po
 assert.ok(explore.includes("view.setPointerCapture?.(e.pointerId)"));
 assert.ok(explore.includes("now-lastRafPaint>360"));
 assert.ok(explore.includes("window.addEventListener('pageshow',wakeAnimation)"));
-assert.ok(explore.includes("Find your way through English."));
 assert.ok(explore.includes("overlay.dataset.mobileSafari"));
 assert.ok(app.includes("const controller=await mod.mountExploreOverlay"));
 assert.ok(app.includes("Find your way through English."));
 assert.ok(exploreCss.includes('-webkit-touch-callout:none'));
 assert.ok(exploreCss.includes('backdrop-filter:none'));
 assert.ok(exploreCss.includes('.explore-entry{'));
-console.log("v1.2.31 mobile Safari renderer and environment-detection checks passed");
+console.log("v1.2.32 mobile Safari renderer and environment-detection checks passed");

@@ -10,8 +10,8 @@ const AUTOPLAY_HOLD_MS = 15000;
 const AUTOPLAY_HOME_REST_MS = 3400;
 const AUTOPLAY_CYCLES = 4;
 const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.31';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.31';
+const VERSION = '1.2.32';
+const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.32';
 let graphPromise = null;
 let stylePromise = null;
 const STYLE_SELECTOR = 'link[data-explore-styles]';
@@ -107,10 +107,10 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     overlay.dataset.mobileSafari=environment.mobileSafari?'true':'false';
     const mobileEntry=environment.compactTouch?`<section class="explore-entry" role="dialog" aria-modal="true" aria-labelledby="explore-entry-title">
       <div class="explore-entry-kicker">EXPLORE! ENGLISH</div>
-      <h1 id="explore-entry-title">Find your way through English.</h1>
-      <p>You’re in the touch-optimized view. Tap a point to follow its connections, drag the field to look around, and pinch to zoom.</p>
+      <h1 id="explore-entry-title">Not on desktop?</h1>
+      <p><strong>EXPLORE! works here, too.</strong> Tap a point to follow its connections, drag to look around, and pinch to zoom.</p>
       <p class="explore-entry-note">For the fullest constellation experience, using a <strong>desktop computer</strong> is recommended.</p>
-      <div class="explore-entry-actions"><button type="button" class="explore-enter-btn">EXPLORE! on this phone</button><button type="button" class="explore-entry-path">Start Pathfinder instead</button></div>
+      <div class="explore-entry-actions"><button type="button" class="explore-enter-btn">EXPLORE! here</button><button type="button" class="explore-entry-path">Start Pathfinder instead</button></div>
     </section>`:'';
     overlay.innerHTML=`<div class="explore-stage">
       <div class="explore-viz" aria-label="Interactive English opportunity and faculty map" tabindex="0">
@@ -513,7 +513,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   function resetFocus({autoplay=false}={}){focusNode('english',{autoplay});}
   function updateCenter(node){
     if(!node||!centerCard)return;
-    const type=node.id==='english'?'Your Home':node.type==='faculty'?'Faculty':node.type==='hub'?'Explore':node.type==='topic'?'Expertise':node.type.replaceAll('_',' ');
+    const type=node.id==='english'?'Your Home':node.type==='faculty'?'Faculty':node.type==='hub'?'EXPLORE!':node.type==='topic'?'Expertise':node.type.replaceAll('_',' ');
     const links=(node.links||[]).filter(l=>l?.url&&l.status!=='inactive').slice(0,3);
     centerCard.innerHTML=`<div class="explore-center-type">${esc(type)}</div><h2>${esc(node.label)}</h2><p>${esc(node.center_blurb||'?')}</p>${links.length?`<div class="explore-center-links">${links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label||'Open source')} ↗</a>`).join('')}</div>`:''}`;
   }

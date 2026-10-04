@@ -6,9 +6,9 @@ const copy=JSON.parse(fs.readFileSync(new URL('../data/copy.json',import.meta.ur
 const questions=JSON.parse(fs.readFileSync(new URL('../data/questions.json',import.meta.url),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const manifest=JSON.parse(fs.readFileSync(new URL('../data/manifest.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.31');
-assert.equal(manifest.version,'1.2.31');
-assert.equal(manifest.beta_version,'1.2.31');
+assert.equal(pkg.version,'1.2.32');
+assert.equal(manifest.version,'1.2.32');
+assert.equal(manifest.beta_version,'1.2.32');
 assert.ok(app.includes('exploratoryGuidance'));
 assert.ok(app.includes('Your answers crossed several connected areas of English, so think of these as starting points—places to explore rather than limits on where your interests can take you.'));
 assert.ok(app.includes('Start with your strongest curricular pathway, then take a look at the other graduate pathways that fit.'));

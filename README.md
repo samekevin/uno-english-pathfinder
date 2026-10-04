@@ -1,4 +1,4 @@
-# UNO English Pathfinder Beta v1.2.31 — EXPLORE! English
+# UNO English Pathfinder Beta v1.2.32 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
@@ -94,7 +94,7 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.31 — EXPLORE! English**
+**UNO English Pathfinder Beta v1.2.32 — EXPLORE! English**
 
 214 nodes · 552 explicit edges · 27 active faculty · 0 dangling graph edges.
 
@@ -167,3 +167,11 @@ The renderer also fixes a mobile-motion bug that calculated secondary oscillatio
 - Corrects Undergraduate and Graduate TESOL certificate faculty connections to Sarah Faltin Osborn and Kevin Samejon (removing John Turnbull from those certificate connections).
 - Replaces the Night mode text control on the welcome screen with the existing icon only, centered beneath the EXPLORE! invitation.
 - Makes the mobile interstitial explicit that a **desktop computer** is recommended for the fullest constellation experience.
+
+
+## v1.2.32 EXPLORE! identity refinement
+
+- Preserves the v1.2.30/v1.2.31 Explore renderer unchanged.
+- Changes the in-constellation category eyebrow from **EXPLORE** to **EXPLORE!**.
+- Simplifies the non-desktop entry message to **Not on desktop?** followed by **EXPLORE! works here, too.**
+- Renames the non-desktop action to **EXPLORE! here**.

@@ -557,7 +557,7 @@ function renderWelcome({suppressExplore=false}={}){
     let cancelled=false;
     exploreLauncher={destroy(){cancelled=true;}};
     try{
-      const mod=await import('./explore/app.js?v=1.2.31');
+      const mod=await import('./explore/app.js?v=1.2.32');
       if(cancelled || phase!=='welcome') return;
       const controller=await mod.mountExploreOverlay({
         onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },

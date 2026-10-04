@@ -258,7 +258,7 @@ body.night-mode .explore-node circle{fill:#2f2925;stroke:#776b5f}.night-mode .ex
 /* v1.2.30 — environment-aware Explore invitation */
 .explore-welcome-note{margin:14px 0 0;padding:11px 13px;border:1px solid #ded5c9;border-radius:12px;background:rgba(255,253,249,.48);color:#62584f;font-size:.79rem;line-height:1.42}.explore-welcome-note strong{display:block;margin-bottom:2px;color:#3a322c;font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif;font-size:1rem;font-weight:500}.explore-welcome-note span{display:block}body.night-mode .explore-welcome-note{border-color:#51483f;background:rgba(47,41,37,.38);color:#cfc3b7}body.night-mode .explore-welcome-note strong{color:#f4eee6}@media(max-width:700px){.explore-welcome-note{font-size:.76rem;padding:10px 11px}}
 
-/* v1.2.31 — EXPLORE! branding and compact night-mode control; renderer unchanged */
+/* v1.2.32 — EXPLORE! branding refinement; renderer unchanged */
 .welcome-night-control{display:flex;justify-content:center;margin-top:10px}
 .night-mode-toggle.night-mode-icon-only{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:1rem;line-height:1}
 .explore-welcome-note .explore-brand-inline{display:inline;margin:0;color:inherit;font-family:inherit;font-size:inherit;font-weight:700;letter-spacing:.025em}
