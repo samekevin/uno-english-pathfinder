@@ -5,7 +5,7 @@ const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
 const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
 const layout=fs.readFileSync(new URL("src/explore-layout.js",root),"utf8");
 const styles=fs.readFileSync(new URL("styles.css",root),"utf8");
-assert.equal(pkg.version,"1.2.29");
+assert.equal(pkg.version,"1.2.30");
 assert.ok(explore.includes("new ResizeObserver"));
 assert.ok(explore.includes("layoutExploreNodes"));
 assert.ok(explore.includes("visibleNodes"));

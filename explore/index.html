@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Explore English at UNO: people, ideas, opportunities, and pathways.">
   <title>Explore English | UNO Pathfinder</title>
-  <link rel="stylesheet" href="./styles.css?v=1.2.29">
+  <link rel="stylesheet" href="./styles.css?v=1.2.30" data-explore-styles="true">
 </head>
 <body class="explore-standalone">
   <main id="explore-app" aria-label="Explore English"></main>
-  <script src="../data/explore-runtime.js?v=1.2.29"></script>
+  <script src="../data/explore-runtime.js?v=1.2.30"></script>
   <script type="module">
-    import { mountExplorePage } from './app.js?v=1.2.29';
+    import { mountExplorePage } from './app.js?v=1.2.30';
     mountExplorePage({onFindPath:()=>{location.href='../';}}).catch(err=>{
       document.querySelector('#explore-app').innerHTML='<div class="explore-load-error"><h1>Explore English</h1><p>There was a problem opening the exploration map.</p><a href="../">Return to Pathfinder</a></div>';
       console.error(err);

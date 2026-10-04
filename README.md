@@ -1,4 +1,4 @@
-# UNO English Pathfinder Beta v1.2.29 — Explore English
+# UNO English Pathfinder Beta v1.2.30 — Explore English
 
 Research/content snapshot: **2026-10-03**
 
@@ -94,7 +94,7 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.27 — Explore English**
+**UNO English Pathfinder Beta v1.2.30 — Explore English**
 
 214 nodes · 552 explicit edges · 27 active faculty · 0 dangling graph edges.
 
@@ -151,3 +151,10 @@ Line reveal timing refinement: connection lines begin about 1.3 seconds sooner a
 
 Explore English now uses a compact mobile motion profile: continuous drift is more perceptible within narrow viewports, bounded travel expands modestly, and a slow secondary oscillation keeps the constellation visibly alive on phones without introducing rapid or chaotic movement. Desktop motion remains unchanged, hover settling remains intact, and `prefers-reduced-motion` still removes continuous motion.
 
+
+
+## v1.2.30 mobile Safari renderer hardening
+
+Explore English now detects compact touch environments automatically and introduces a touch-specific entry message: **Find your way through English.** Mobile visitors are told how to tap, drag, and pinch without having to choose a device mode, while a larger screen is still recommended for the fullest spatial experience.
+
+The renderer also fixes a mobile-motion bug that calculated secondary oscillation and then cleared it before drawing. Pan/zoom is now applied with SVG group transforms rather than a CSS transform on the entire SVG, reducing Safari compositing risk. Touch node activation is explicit on pointer-up rather than depending on a synthetic click, the Explore stylesheet is lazy-loaded into the Pathfinder overlay so standalone and embedded Explore use the same rendering rules, and a visible-page animation watchdog plus pageshow/orientation wake handling protects against stalled requestAnimationFrame loops. Desktop motion and reduced-motion behavior remain preserved.

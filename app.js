@@ -529,6 +529,17 @@ function startPathfinder(){
   answers={};cursor=0;phase='quick';quickPlan=[];bonusPlan=[];provisionalResult=null;renderQuestion();
 }
 
+function compactTouchEnvironment(){
+  const touch=(navigator.maxTouchPoints||0)>0||window.matchMedia?.('(pointer:coarse)').matches;
+  return Boolean(touch&&(window.innerWidth||document.documentElement.clientWidth)<900);
+}
+
+function exploreWelcomeNote(){
+  return compactTouchEnvironment()
+    ? '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span>Explore English will use a touch-optimized view on this device. A larger screen gives you the fullest constellation experience.</span></div>'
+    : '<div class="explore-welcome-note"><strong>Find your way through English.</strong><span>Explore people, ideas, programs, and opportunities across UNO English as a living constellation.</span></div>';
+}
+
 function renderWelcome({suppressExplore=false}={}){
   clearResultTransition();
   stopExplore();
@@ -538,7 +549,7 @@ function renderWelcome({suppressExplore=false}={}){
   applyNightMode();
   resetViewport();
   app.setAttribute('tabindex','-1');
-  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><div class="welcome-path-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="btn explore-launch-btn" id="exploreLaunch" aria-label="Explore English"><span class="explore-launch-label">Explore English</span></button></div><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>`;
+  app.innerHTML=`<div class="progress">A curiosity guide, not a personality test</div><div class="question">Let’s figure out what part of English keeps pulling you back.</div><p>Pick what sounds interesting. You can change your mind. Pathfinder starts broad, notices patterns as you answer, then asks a few sharper questions before showing you where your path leads.</p><div class="welcome-actions"><div class="welcome-path-actions"><button class="btn primary" id="start">Start Pathfinder</button><button type="button" class="btn explore-launch-btn" id="exploreLaunch" aria-label="Explore English"><span class="explore-launch-label">Explore English</span></button></div><button type="button" class="night-mode-toggle" id="nightModeToggle" aria-pressed="${nightMode}"><span aria-hidden="true">◐</span><span class="night-mode-label">${nightMode?'Night mode on':'Night mode'}</span></button></div>${exploreWelcomeNote()}`;
   app.querySelector('#nightModeToggle').addEventListener('click',toggleNightMode);
   app.querySelector('#start').addEventListener('click',startPathfinder);
   const launchExplore=async()=>{
@@ -546,12 +557,13 @@ function renderWelcome({suppressExplore=false}={}){
     let cancelled=false;
     exploreLauncher={destroy(){cancelled=true;}};
     try{
-      const mod=await import('./explore/app.js?v=1.2.29');
+      const mod=await import('./explore/app.js?v=1.2.30');
       if(cancelled || phase!=='welcome') return;
-      const controller=mod.mountExploreOverlay({
+      const controller=await mod.mountExploreOverlay({
         onFindPath:()=>{ window.location.href='./?exploreReturn=1'; },
         getNightMode:()=>nightMode
       });
+      if(cancelled || phase!=='welcome'){controller.destroy();return;}
       exploreLauncher={destroy(){controller.destroy();cancelled=true;},controller};
     }catch(err){
       console.warn('Explore English could not load; Pathfinder continues normally.',err);

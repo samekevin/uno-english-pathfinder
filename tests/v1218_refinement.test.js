@@ -6,14 +6,14 @@ const manifest=JSON.parse(fs.readFileSync(new URL("data/manifest.json",root),"ut
 const app=fs.readFileSync(new URL("app.js",root),"utf8");
 const css=fs.readFileSync(new URL("styles.css",root),"utf8");
 const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
-assert.equal(pkg.version,"1.2.29");
-assert.equal(manifest.version,"1.2.29");
-assert.equal(manifest.beta_version,"1.2.29");
+assert.equal(pkg.version,"1.2.30");
+assert.equal(manifest.version,"1.2.30");
+assert.equal(manifest.beta_version,"1.2.30");
 assert.ok(app.includes("? 5000 : 30000"));
 assert.ok(explore.includes("const PRODUCTION_IDLE_MS = 30000"));
 assert.ok(app.includes('id="exploreLaunch"'));
 assert.ok(app.includes("app.querySelector('#exploreLaunch').addEventListener('click',launchExplore)"));
-assert.ok(app.includes("import('./explore/app.js?v=1.2.29')"));
+assert.ok(app.includes("import('./explore/app.js?v=1.2.30')"));
 assert.ok(css.includes('.explore-launch-btn{'));
 assert.ok(css.includes('background:#805c31'));
 assert.ok(!css.includes('explore-button-glint'));

@@ -1,6 +1,6 @@
 {
   "name": "UNO English Pathfinder Machine-Readable Specification",
-  "version": "1.2.29",
+  "version": "1.2.30",
   "source": "UNO English Pathfinder Question Bank v1.3",
   "generated_on": "2026-10-01",
   "principles": [
@@ -28,6 +28,6 @@
     "README.md",
     "docs/qsf-portability.md"
   ],
-  "implementation_note": "Synchronized with Pathfinder Beta v1.2.29: production Explore idle restored to 30 seconds, landing action hover decoration removed except Night mode, node expansion slowed to about two seconds with slight timing variation, jitter made modestly livelier, and autoplay category dwell increased to 15 seconds. v1.2.29 adds the Social Media resource/community hub with department, SoLaS Lab, and Writing Center social resources, and refines hover context so the hovered node foregrounds while direct relationships surface without flattening the graph. v1.2.29 adjudicates the semantic hygiene queue: Writing Center Pedagogy merges into Writing Pedagogy, Editing & Publishing capitalization is normalized, 13 reviewed pairs remain explicitly distinct, and unresolved near-duplicate candidates are zero.",
-  "beta_version": "1.2.29"
+  "implementation_note": "Synchronized with Pathfinder Beta v1.2.29: production Explore idle restored to 30 seconds, landing action hover decoration removed except Night mode, node expansion slowed to about two seconds with slight timing variation, jitter made modestly livelier, and autoplay category dwell increased to 15 seconds. v1.2.29 adds the Social Media resource/community hub with department, SoLaS Lab, and Writing Center social resources, and refines hover context so the hovered node foregrounds while direct relationships surface without flattening the graph. v1.2.29 adjudicates the semantic hygiene queue: Writing Center Pedagogy merges into Writing Pedagogy, Editing & Publishing capitalization is normalized, 13 reviewed pairs remain explicitly distinct, and unresolved near-duplicate candidates are zero. v1.2.30 hardens Explore English for mobile Safari with environment-aware touch messaging, explicit touch activation, shared Explore styling between overlay and standalone modes, SVG-group pan/zoom transforms, corrected mobile oscillation, and animation wake/watchdog handling.",
+  "beta_version": "1.2.30"
 }

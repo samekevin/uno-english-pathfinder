@@ -1,5 +1,7 @@
 import { createExploreGraph } from '../src/explore-graph.js';
 import { layoutExploreNodes } from '../src/explore-layout.js';
+import { readExploreEnvironment } from '../src/explore-environment.js';
+import { getExploreMotionProfile, getMobileOscillation } from '../src/explore-motion.js';
 
 const TEST_IDLE_MS = 5000;
 const PRODUCTION_IDLE_MS = 30000;
@@ -8,9 +10,11 @@ const AUTOPLAY_HOLD_MS = 15000;
 const AUTOPLAY_HOME_REST_MS = 3400;
 const AUTOPLAY_CYCLES = 4;
 const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.29';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.29';
+const VERSION = '1.2.30';
+const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.30';
 let graphPromise = null;
+let stylePromise = null;
+const STYLE_SELECTOR = 'link[data-explore-styles]';
 
 function esc(value){return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
@@ -18,6 +22,22 @@ function seededHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.c
 function shuffleStable(items,seed){return [...items].sort((a,b)=>seededHash(`${seed}:${a.id}`)-seededHash(`${seed}:${b.id}`));}
 function isTestMode(){return location.hostname==='localhost'||location.hostname==='127.0.0.1'||new URLSearchParams(location.search).has('exploreTest');}
 function getIdleMs(){return isTestMode()?TEST_IDLE_MS:PRODUCTION_IDLE_MS;}
+
+function ensureExploreStyles(){
+  if(document.querySelector(STYLE_SELECTOR))return Promise.resolve();
+  if(stylePromise)return stylePromise;
+  stylePromise=new Promise(resolve=>{
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href=new URL(`./styles.css?v=${VERSION}`,import.meta.url).href;
+    link.dataset.exploreStyles='true';
+    link.addEventListener('load',()=>resolve(),{once:true});
+    link.addEventListener('error',()=>resolve(),{once:true});
+    document.head.appendChild(link);
+  });
+  return stylePromise;
+}
+
 function loadExploreGraph(){
   if(!graphPromise){
     graphPromise=fetch(GRAPH_URL,{cache:'no-store'})
@@ -42,6 +62,7 @@ export function mountExploreOverlay({onFindPath=()=>{},getNightMode=()=>false}={
 }
 
 async function mount(root,{mode,onFindPath,getNightMode=()=>false,host=document.body}={}){
+  await ensureExploreStyles();
   const data=await loadExploreGraph();
   const controller=createController({data,root,mode,onFindPath,getNightMode,host});
   controller.show();
@@ -50,7 +71,7 @@ async function mount(root,{mode,onFindPath,getNightMode=()=>false,host=document.
 
 function createController({data,root,mode,onFindPath,getNightMode,host}){
   let destroyed=false;
-  let overlay=null,stage=null,view=null,svg=null,edgesGroup=null,nodesGroup=null,centerCard=null;
+  let overlay=null,stage=null,view=null,svg=null,edgesGroup=null,nodesGroup=null,centerCard=null,entryCard=null;
   let focusId='english';
   let positions=new Map();
   let nodeEls=new Map();
@@ -66,9 +87,12 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   const hoverProgress=new Map();
   const hoverContextProgress=new Map();
   const motionState=new Map();
-  let resizeObserver=null,raf=0,burstStart=0;
+  let resizeObserver=null,raf=0,burstStart=0,motionWatchdog=null,lastRafPaint=0,lastMotionTs=0;
   let nodeRevealStart=0,edgeRevealStart=0;
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMedia=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let reduced=reducedMedia.matches;
+  const environment=readExploreEnvironment();
+  let lastDirectActivation={id:null,at:0};
 // Historical compatibility assertions retained so the cumulative regression suite continues to guard the hover architecture:
 // const hoverFieldOpacity=hoverId ? (id===hoverId ? 1 : (hoverRelated ? normalOpacity : .045)) : normalOpacity;
 // const baseOpacity=hoverFieldOpacity;
@@ -79,13 +103,24 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     overlay.className=full?'explore-page':'explore-overlay';
     if(!full){overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');}
     overlay.dataset.namespace=NAMESPACE;
+    overlay.dataset.environment=environment.compactTouch?'mobile':'desktop';
+    overlay.dataset.mobileSafari=environment.mobileSafari?'true':'false';
+    const mobileEntry=environment.compactTouch?`<section class="explore-entry" role="dialog" aria-modal="true" aria-labelledby="explore-entry-title">
+      <div class="explore-entry-kicker">Explore English</div>
+      <h1 id="explore-entry-title">Find your way through English.</h1>
+      <p>You’re in the touch-optimized view. Tap a point to follow its connections, drag the field to look around, and pinch to zoom.</p>
+      <p class="explore-entry-note">For the fullest constellation experience, a larger screen is still recommended.</p>
+      <div class="explore-entry-actions"><button type="button" class="explore-enter-btn">Explore on this phone</button><button type="button" class="explore-entry-path">Start Pathfinder instead</button></div>
+    </section>`:'';
     overlay.innerHTML=`<div class="explore-stage">
       <div class="explore-viz" aria-label="Interactive English opportunity and faculty map" tabindex="0">
         <svg class="explore-svg" role="img" aria-label="English connections"><g class="explore-edges"></g><g class="explore-nodes"></g></svg>
         <div class="explore-center-card" aria-live="polite"></div>
       </div>
       <button type="button" class="explore-path-btn">Find my path</button>
+      ${mobileEntry}
     </div>`;
+    overlay.classList.toggle('has-entry',Boolean(mobileEntry));
     host.appendChild(overlay);
     stage=overlay.querySelector('.explore-stage');
     view=overlay.querySelector('.explore-viz');
@@ -93,17 +128,20 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     edgesGroup=overlay.querySelector('.explore-edges');
     nodesGroup=overlay.querySelector('.explore-nodes');
     centerCard=overlay.querySelector('.explore-center-card');
+    entryCard=overlay.querySelector('.explore-entry');
     bind();
     resizeObserver=new ResizeObserver(()=>reflow(true));
     resizeObserver.observe(view);
     reflow(false);
     requestAnimationFrame(()=>overlay.classList.add('is-visible'));
-    raf=requestAnimationFrame(tick);
+    startAnimationLoop();
     scheduleAutoplay();
   }
 
   function bind(){
     overlay.querySelector('.explore-path-btn').addEventListener('click',()=>{noteActivity();const cb=onFindPath;destroy();cb?.();});
+    overlay.querySelector('.explore-enter-btn')?.addEventListener('click',dismissEntry);
+    overlay.querySelector('.explore-entry-path')?.addEventListener('click',()=>{const cb=onFindPath;destroy();cb?.();});
     view.addEventListener('pointerdown',onPointerDown,{passive:false});
     view.addEventListener('pointermove',onPointerMove,{passive:false});
     view.addEventListener('pointerup',onPointerUp,{passive:false});
@@ -111,6 +149,35 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     view.addEventListener('wheel',onWheel,{passive:false});
     view.addEventListener('keydown',onKeyDown);
     view.addEventListener('mouseleave',()=>setHover(null));
+    document.addEventListener('visibilitychange',onVisibilityChange);
+    window.addEventListener('pageshow',wakeAnimation);
+    window.addEventListener('orientationchange',onOrientationChange);
+    reducedMedia.addEventListener?.('change',onReducedMotionChange);
+  }
+  function dismissEntry(){
+    if(!entryCard)return;
+    noteActivity();
+    overlay.classList.remove('has-entry');
+    entryCard.classList.add('is-dismissed');
+    window.setTimeout(()=>{entryCard?.remove();entryCard=null;view?.focus?.({preventScroll:true});},260);
+  }
+  function onVisibilityChange(){if(!document.hidden)wakeAnimation();}
+  function onOrientationChange(){window.setTimeout(()=>{reflow(true);wakeAnimation();},120);}
+  function onReducedMotionChange(e){reduced=Boolean(e.matches);lastMotionTs=0;if(!reduced)reflow(true);wakeAnimation();}
+  function wakeAnimation(){
+    if(destroyed)return;
+    lastMotionTs=0;
+    if(raf)cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(tick);
+  }
+  function startAnimationLoop(){
+    wakeAnimation();
+    clearInterval(motionWatchdog);
+    motionWatchdog=window.setInterval(()=>{
+      if(destroyed||document.hidden||reduced)return;
+      const now=performance.now();
+      if(now-lastRafPaint>360)draw(now);
+    },240);
   }
 
   function noteActivity(){lastActivity=Date.now();cancelAutoplay();scheduleAutoplay();}
@@ -220,7 +287,11 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       g.append(c,hit,t);nodesGroup.appendChild(g);nodeEls.set(id,g);hoverProgress.set(id,0);hoverContextProgress.set(id,0);
       g.addEventListener('pointerenter',()=>setHover(id));
       g.addEventListener('pointerleave',()=>{if(hoverId===id)setHover(null);});
-      g.addEventListener('click',(e)=>{e.stopPropagation();activateNode(id);});
+      g.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        if(lastDirectActivation.id===id&&performance.now()-lastDirectActivation.at<700)return;
+        activateNode(id);
+      });
     }
   }
   function activateNode(id){ if(!id||destroyed)return; noteActivity(); focusNode(id); }
@@ -248,19 +319,10 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const t=ts/1000;
     const width=view?.clientWidth||760;
     const height=view?.clientHeight||520;
-    const compact=width<620;
     const coarse=window.matchMedia('(pointer:coarse)').matches;
-    const mobileProfile=compact || (coarse && width<900);
-    // Phones need more perceptible travel than desktop: the same sub-pixel-per-frame drift
-    // can be technically continuous yet visually disappear inside a narrow viewport.
-    const motionScale=mobileProfile?3.2:1;
-    // Historical regression expressions retained for compatibility checks: Math.min(88,(view?.clientWidth||760)*.078) / Math.min(64,(view?.clientHeight||520)*.064)
-    const maxX=mobileProfile
-      ? Math.max(44,Math.min(96,width*.13))
-      : Math.max(38,Math.min(88,width*.078));
-    const maxY=mobileProfile
-      ? Math.max(32,Math.min(72,height*.085))
-      : Math.max(28,Math.min(64,height*.064));
+    const {mobileProfile,motionScale,maxX,maxY}=getExploreMotionProfile({width,height,coarse});
+    const frameScale=lastMotionTs?clamp((ts-lastMotionTs)/16.667,.35,3.2):1;
+    lastMotionTs=ts;
     // Slow continuous drift: steer toward a gently changing heading instead of jittering.
     for(const id of ids){
       const m=motionState.get(id); if(!m)continue;
@@ -273,13 +335,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       const settle=frozen?.90:.018;
       m.vx += ((frozen?0:targetVx)-m.vx)*settle;
       m.vy += ((frozen?0:targetVy)-m.vy)*settle;
-      if(mobileProfile && !frozen){
-        const oscAmp=id===focusId?.22:(.9+depth*1.45);
-        m.oscX=Math.sin(t*.17 + m.phase)*oscAmp + Math.cos(t*.105 + m.phase*1.37)*oscAmp*.42;
-        m.oscY=Math.cos(t*.145 + m.phase*.83)*oscAmp*.72 + Math.sin(t*.09 + m.phase*1.61)*oscAmp*.30;
-      }else{
-        m.oscX=0;m.oscY=0;
-      }
+      const osc=getMobileOscillation({t,phase:m.phase,depth,isFocus:id===focusId,mobileProfile,frozen});
+      m.oscX=osc.x;m.oscY=osc.y;
     }
     // Courteous avoidance: a broad comfort zone bends trajectories; a close zone adds firmer steering.
     for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){
@@ -311,8 +368,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       if(edgeX>.68)m.vx+=-Math.sign(m.x)*Math.pow((edgeX-.68)/.32,2)*.00085;
       if(edgeY>.68)m.vy+=-Math.sign(m.y)*Math.pow((edgeY-.68)/.32,2)*.00085;
       m.vx=clamp(m.vx,-.010,.010);m.vy=clamp(m.vy,-.009,.009);
-      if(!frozen){m.x=clamp(m.x+m.vx*amp*60,-maxX,maxX);m.y=clamp(m.y+m.vy*amp*60,-maxY,maxY);}
-      m.oscX=0;m.oscY=0;
+      if(!frozen){m.x=clamp(m.x+m.vx*amp*60*frameScale,-maxX,maxX);m.y=clamp(m.y+m.vy*amp*60*frameScale,-maxY,maxY);}
     }
   }
   function drawPoint(id,p,ts,nodeElapsed){
@@ -373,9 +429,12 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       el.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)})`);el.style.opacity=(baseOpacity*nodeEase).toFixed(3);el.classList.toggle('is-active',id===activeId);el.classList.toggle('is-hovered',id===hoverId);
       shape.setAttribute('r',r.toFixed(2));hit.setAttribute('r',Math.max(18,r+(window.matchMedia('(pointer:coarse)').matches?8:4)).toFixed(2));text.textContent=n.label;text.setAttribute('y',(r+9).toFixed(2));text.style.fontSize=`${font.toFixed(2)}px`;
     }
-    svg.style.transform=`translate(${transform.x.toFixed(2)}px,${transform.y.toFixed(2)}px) scale(${transform.k.toFixed(3)})`;
+    const worldTransform=`translate(${transform.x.toFixed(2)} ${transform.y.toFixed(2)}) scale(${transform.k.toFixed(3)})`;
+    edgesGroup.setAttribute('transform',worldTransform);
+    nodesGroup.setAttribute('transform',worldTransform);
+    svg.style.transform='';
   }
-  function tick(ts){if(destroyed)return;draw(ts);raf=requestAnimationFrame(tick);}
+  function tick(ts){if(destroyed)return;lastRafPaint=performance.now();draw(ts);raf=requestAnimationFrame(tick);}
   function setHover(id){
     if(hoverId===id){
       if(id){lastActivity=Date.now();cancelAutoplay();}
@@ -391,8 +450,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const worldX=(localX-transform.x)/Math.max(transform.k,.001),worldY=(localY-transform.y)/Math.max(transform.k,.001);
     let best=null,bestD=Infinity;
     for(const [id,p] of positions){
-      const m=motionState.get(id)||{x:0,y:0};
-      const x=p.x+m.x,y=p.y+m.y,d=Math.hypot(worldX-x,worldY-y);
+      const m=motionState.get(id)||{x:0,y:0,oscX:0,oscY:0};
+      const x=p.x+m.x+(m.oscX||0),y=p.y+m.y+(m.oscY||0),d=Math.hypot(worldX-x,worldY-y);
       const hit=Math.max(18,p.radius+(window.matchMedia('(pointer:coarse)').matches?8:4));
       if(d<=hit&&d<bestD){best=id;bestD=d;}
     }
@@ -403,7 +462,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const targetNode=e.target.closest?.('.explore-node');
     const nodeId=targetNode?.dataset?.id||nodeAt(e.clientX,e.clientY);
     noteActivity();
-    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,nodeId,moved:false});
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,nodeId,moved:false,pointerType:e.pointerType});
+    try{view.setPointerCapture?.(e.pointerId);}catch{}
     if(pointers.size===1)pointerState=pointers.get(e.pointerId);
     if(pointers.size===2){const pts=[...pointers.values()];gesture={distance:Math.hypot(pts[1].x-pts[0].x,pts[1].y-pts[0].y),cx:(pts[0].x+pts[1].x)/2,cy:(pts[0].y+pts[1].y)/2};}
     if(!nodeId)e.preventDefault();
@@ -412,7 +472,11 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const p=pointers.get(e.pointerId);if(!p)return;
     p.x=e.clientX;p.y=e.clientY;
     if(pointers.size===1){
-      if(p.nodeId){if(e.pointerType==='mouse')setHover(p.nodeId);return;}
+      if(p.nodeId){
+        if(Math.hypot(e.clientX-p.startX,e.clientY-p.startY)>10)p.moved=true;
+        if(e.pointerType==='mouse')setHover(p.nodeId);
+        return;
+      }
       const dx=e.clientX-p.startX,dy=e.clientY-p.startY;
       if(Math.hypot(dx,dy)>6){p.moved=true;transform.x=clamp(transform.x+dx,-Math.min(56,view.clientWidth*.055),Math.min(56,view.clientWidth*.055));transform.y=clamp(transform.y+dy,-Math.min(48,view.clientHeight*.05),Math.min(48,view.clientHeight*.05));p.startX=e.clientX;p.startY=e.clientY;draw(performance.now());e.preventDefault();}
     } else if(pointers.size===2){
@@ -422,7 +486,15 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     }
   }
   function onPointerUp(e){
-    const p=pointers.get(e.pointerId);if(!p)return;pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;
+    const p=pointers.get(e.pointerId);if(!p)return;
+    pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;
+    try{view.releasePointerCapture?.(e.pointerId);}catch{}
+    const directTouchActivation=p.nodeId&&!p.moved&&p.pointerType!=='mouse';
+    if(directTouchActivation){
+      lastDirectActivation={id:p.nodeId,at:performance.now()};
+      activateNode(p.nodeId);
+      e.preventDefault();
+    }
     pointerState=null;
   }
   function onPointerCancel(e){pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;pointerState=null;}
@@ -445,7 +517,16 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const links=(node.links||[]).filter(l=>l?.url&&l.status!=='inactive').slice(0,3);
     centerCard.innerHTML=`<div class="explore-center-type">${esc(type)}</div><h2>${esc(node.label)}</h2><p>${esc(node.center_blurb||'?')}</p>${links.length?`<div class="explore-center-links">${links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label||'Open source')} ↗</a>`).join('')}</div>`:''}`;
   }
-  function destroy(){if(destroyed)return;destroyed=true;cancelAutoplay();resizeObserver?.disconnect();if(raf)cancelAnimationFrame(raf);overlay?.remove();overlay=null;}
+  function destroy(){
+    if(destroyed)return;
+    destroyed=true;cancelAutoplay();resizeObserver?.disconnect();
+    if(raf)cancelAnimationFrame(raf);clearInterval(motionWatchdog);
+    document.removeEventListener('visibilitychange',onVisibilityChange);
+    window.removeEventListener('pageshow',wakeAnimation);
+    window.removeEventListener('orientationchange',onOrientationChange);
+    reducedMedia.removeEventListener?.('change',onReducedMotionChange);
+    overlay?.remove();overlay=null;
+  }
   return {show,destroy};
 }
 
