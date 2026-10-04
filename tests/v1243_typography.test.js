@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../explore/styles.css',import.meta.url),'utf8');
+assert.ok(app.includes('explore-autoplay-kicker">EXPLORE! ENGLISH'));
+assert.ok(app.includes('explore-autoplay-path">Try Pathfinder, too!</button>'));
+assert.ok(!app.includes('EXPLORE! English.</div><button type="button" class="explore-autoplay-path">Try Pathfinder, too.</button>'));
+assert.ok(css.includes('.explore-autoplay-kicker{'));
+assert.ok(css.includes('letter-spacing:.16em'));
+assert.ok(css.includes('font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif'));
+console.log('PASS: v1.2.43 elegant autoplay typography');

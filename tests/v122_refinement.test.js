@@ -4,7 +4,7 @@ const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const styles=fs.readFileSync(new URL('../styles.css',import.meta.url),'utf8');
 const copy=JSON.parse(fs.readFileSync(new URL('../data/copy.json',import.meta.url),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.32');
+assert.equal(pkg.version,'1.2.43');
 assert.equal(copy.EXPLORATORY_KEY,'A FEW PATHS ARE OPENING UP.');
 assert.ok(app.includes('spec.copy.profile_shape?.EXPLORATORY_KEY'));
 assert.ok(app.includes('You chose the room where something is about to be published.'));

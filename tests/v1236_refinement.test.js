@@ -1,0 +1,12 @@
+import fs from 'node:fs'; import assert from 'node:assert/strict';
+const app=fs.readFileSync('explore/app.js','utf8');
+const graph=JSON.parse(fs.readFileSync('data/explore-english.graph.json','utf8'));
+const edge=(a,b)=>graph.edges.some(e=>(e.source===a&&e.target===b)||(e.source===b&&e.target===a));
+assert.ok(app.includes("label.style.top=(b.y-54)+'px'"),'shortcut labels should sit farther above launch nodes');
+assert.ok(app.includes("const programPrimaryIds=['ba_english','graduate_studies','minors','certificates']"),'Programs must retain four starting doors');
+assert.ok(!app.includes('programViewBridges'),'Programs should use verified graph relationships rather than view-only bridges');
+assert.ok(!app.includes("relation:'pathway_bridge'"),'legacy view-only pathway bridges must be removed');
+assert.ok(!app.includes('pos.font*=mobile?.86:.90'),'Programs must not invent a special shrunken typography tier');
+assert.ok(!app.includes("activeId==='programs'&&p.layer"),'Programs must use the normal EXPLORE! opacity/depth logic');
+assert.ok(edge('programs','english'),'Programs must remain directly connected to English');
+console.log('v1.2.43 Programs convention-integration checks passed');

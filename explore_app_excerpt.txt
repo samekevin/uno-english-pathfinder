@@ -1,82 +1,3 @@
-import { createExploreGraph } from '../src/explore-graph.js';
-import { layoutExploreNodes } from '../src/explore-layout.js';
-import { readExploreEnvironment } from '../src/explore-environment.js';
-import { getExploreMotionProfile, getMobileOscillation } from '../src/explore-motion.js';
-
-const TEST_IDLE_MS = 5000;
-const PRODUCTION_IDLE_MS = 30000;
-const AUTOPLAY_IDLE_MS = 5000;
-const AUTOPLAY_HOLD_MS = 21600;
-const AUTOPLAY_TRANSITION_MS = 3400;
-const AUTOPLAY_CYCLES = 4;
-const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.43';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.43';
-let graphPromise = null;
-let stylePromise = null;
-const STYLE_SELECTOR = 'link[data-explore-styles]';
-
-function esc(value){return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
-function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
-function seededHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
-function shuffleStable(items,seed){return [...items].sort((a,b)=>seededHash(`${seed}:${a.id}`)-seededHash(`${seed}:${b.id}`));}
-function isTestMode(){return location.hostname==='localhost'||location.hostname==='127.0.0.1'||new URLSearchParams(location.search).has('exploreTest');}
-function getIdleMs(){return isTestMode()?TEST_IDLE_MS:PRODUCTION_IDLE_MS;}
-
-function ensureExploreStyles(){
-  if(document.querySelector(STYLE_SELECTOR))return Promise.resolve();
-  if(stylePromise)return stylePromise;
-  stylePromise=new Promise(resolve=>{
-    const link=document.createElement('link');
-    link.rel='stylesheet';
-    link.href=new URL(`./styles.css?v=${VERSION}`,import.meta.url).href;
-    link.dataset.exploreStyles='true';
-    link.addEventListener('load',()=>resolve(),{once:true});
-    link.addEventListener('error',()=>resolve(),{once:true});
-    document.head.appendChild(link);
-  });
-  return stylePromise;
-}
-
-function loadExploreGraph(){
-  if(!graphPromise){
-    graphPromise=fetch(GRAPH_URL,{cache:'no-store'})
-      .then(r=>{if(!r.ok) throw new Error(`HTTP ${r.status}`);return r.json();})
-      .then(createExploreGraph)
-      .catch(async()=>{
-        if(window.__EXPLORE_GRAPH__) return createExploreGraph(window.__EXPLORE_GRAPH__);
-        throw new Error('Explore graph unavailable');
-      });
-  }
-  return graphPromise;
-}
-
-export async function mountExplorePage({root=document.querySelector('#explore-app'),onFindPath=()=>{location.href='../?exploreReturn=1';}}={}){
-  return mount(root,{mode:'page',onFindPath});
-}
-
-export function mountExploreOverlay({onFindPath=()=>{},getNightMode=()=>false}={}){
-  const host=document.body;
-  const mountPoint=document.createElement('div');
-  return mount(mountPoint,{mode:'overlay',onFindPath,getNightMode,host});
-}
-
-async function mount(root,{mode,onFindPath,getNightMode=()=>false,host=document.body}={}){
-  await ensureExploreStyles();
-  const data=await loadExploreGraph();
-  const controller=createController({data,root,mode,onFindPath,getNightMode,host});
-  controller.show();
-  return controller;
-}
-
-function createController({data,root,mode,onFindPath,getNightMode,host}){
-  let destroyed=false;
-  let overlay=null,stage=null,view=null,svg=null,edgesGroup=null,nodesGroup=null,centerCard=null,entryCard=null,shortcutCluster=null;
-  let focusId='english';
-  let positions=new Map();
-  let nodeEls=new Map();
-  let edgeEls=new Map();
-  let visibleNodes=[];
   let transform={x:0,y:0,k:1};
   let pointers=new Map();
   let pointerState=null;
@@ -93,9 +14,11 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   let reduced=reducedMedia.matches;
   const environment=readExploreEnvironment();
   let lastDirectActivation={id:null,at:0};
-  // Programs uses the ordinary EXPLORE! graph/layout/hover conventions.
-  // Only these four direct children receive the Programs-entry visual cue while Programs is focused.
+  // UI-only category center: this never enters the editable semantic graph.
   const programPrimaryIds=['ba_english','graduate_studies','minors','certificates'];
+  const programSecondaryIds=['conc_literatures','conc_cnf','conc_language','conc_secondary','ma_english','english_minor','grad_english_minor'];
+  const programTertiaryIds=['ug_tesol','grad_cnf_cert','grad_techcomm_cert','grad_litculture_cert','grad_tesol_cert','grad_dual_enroll_cert'];
+  const programIds=[...programPrimaryIds,...programSecondaryIds,...programTertiaryIds];
   const shortcutLabels={opportunities:'Student Opportunities',programs:'Programs',social_media:'Social Media'};
   const shortcutTargets={opportunities:'opportunities',programs:'programs',social_media:'social_media'};
   const viewEdges=()=>data.raw.edges||[];
@@ -218,7 +141,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     });
     shortcutCluster.querySelectorAll('.explore-shortcut-label').forEach(label=>{
       const key=label.dataset.label;const i=key==='opportunities'?0:key==='programs'?1:2;const b=base[i];
-      label.style.left=b.x+'px';label.style.top=(b.y-54)+'px';
+      label.style.left=b.x+'px';label.style.top=(b.y-42)+'px';
     });
     syncShortcutGeometry(0);
   }
@@ -306,35 +229,19 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     autoplayRunning=true;
     overlay?.classList.add('is-idle');
     const candidates=autoplayCandidates();
-    const sequence=candidates.slice(0,AUTOPLAY_CYCLES);
-    for(let i=0;i<sequence.length;i++){
-      const node=sequence[i];
+    for(const node of candidates.slice(0,AUTOPLAY_CYCLES)){
       if(destroyed||token!==autoplayToken)break;
       focusNode(node.id,{autoplay:true});
       await wait(AUTOPLAY_HOLD_MS);
       if(destroyed||token!==autoplayToken)break;
-      if(i<sequence.length-1)await showAutoplayTransition(token);
+      resetFocus({autoplay:true});
+      await wait(AUTOPLAY_HOME_REST_MS);
     }
     autoplayRunning=false;
     overlay?.classList.remove('is-idle');
     lastActivity=Date.now();
     scheduleAutoplay();
   }
-
-  async function showAutoplayTransition(token){
-    if(destroyed||token!==autoplayToken)return;
-    overlay.classList.add('shortcut-preview');
-    const preview=document.createElement('div');
-    preview.className='explore-shortcut-preview explore-autoplay-preview';
-    preview.innerHTML=`<div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><button type="button" class="explore-autoplay-path">Try Pathfinder, too!</button>`;
-    stage.appendChild(preview);
-    preview.querySelector('.explore-autoplay-path')?.addEventListener('click',()=>{const cb=onFindPath;destroy();cb?.();});
-    requestAnimationFrame(()=>preview.classList.add('is-visible'));
-    await wait(AUTOPLAY_TRANSITION_MS);
-    preview.remove();
-    overlay?.classList.remove('shortcut-preview');
-  }
-
   function cancelAutoplay(){autoplayToken++;autoplayRunning=false;clearTimeout(autoplayTimer);autoplayTimer=null;}
   function wait(ms){return new Promise(r=>setTimeout(r,ms));}
   function autoplayCandidates(){
@@ -351,6 +258,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   function visibleNodesForFocus(id){
     const center=data.byId.get(id); if(!center)return rootInitialNodes();
     if(id==='english')return [center,...rootInitialNodes()];
+    if(id==='programs')return [center,...programIds.map(x=>data.byId.get(x)).filter(Boolean)];
     const direct=data.neighbors(id).filter(n=>n.active!==false);
     const selected=[center,...direct];
     if(center.type==='faculty')for(const item of (data.facultyToFaculty.get(center.id)||[]).slice(0,4))selected.push(item.via,item.node);
@@ -368,7 +276,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const rect=view.getBoundingClientRect();
     const w=Math.max(280,rect.width),h=Math.max(360,rect.height);
     visibleNodes=visibleNodesForFocus(focusId);
-    positions=layoutExploreNodes({nodes:visibleNodes,centerId:focusId,width:w,height:h,rootMode:focusId==='english'});
+    positions=focusId==='programs' ? layoutProgramsNodes({nodes:visibleNodes,width:w,height:h}) : layoutExploreNodes({nodes:visibleNodes,centerId:focusId,width:w,height:h,rootMode:focusId==='english'});
     for(const [id] of positions){
       if(!motionState.has(id)){
         const seed=seededHash(`${focusId}::motion::${id}`);
@@ -391,6 +299,14 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     for(const [id,el] of nodeEls){if(!visibleIds.has(id)){el.remove();nodeEls.delete(id);hoverProgress.delete(id);hoverContextProgress.delete(id);motionState.delete(id);if(hoverId===id)hoverId=null;}}
     for(const [key,el] of edgeEls){const [a,b]=key.split('|');if(!visibleIds.has(a)||!visibleIds.has(b)){el.remove();edgeEls.delete(key);}}
     let activeEdges=viewEdges().filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target));
+    if(focusId==='programs'){
+      const allowedProgramSpokes=new Set(programPrimaryIds);
+      activeEdges=activeEdges.filter(e=>{
+        if(e.source==='programs')return allowedProgramSpokes.has(e.target);
+        if(e.target==='programs')return allowedProgramSpokes.has(e.source);
+        return true;
+      });
+    }
     const activeEdgeKeys=new Set(activeEdges.map(edge=>`${edge.source}|${edge.target}`));
     for(const [key,el] of edgeEls){if(!activeEdgeKeys.has(key)){el.remove();edgeEls.delete(key);}}
     for(const edge of activeEdges){
@@ -401,12 +317,11 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
         edgesGroup.appendChild(line);edgeEls.set(key,line);
       }
     }
-    for(const [id,el] of nodeEls)el.classList.toggle('program-entry',focusId==='programs'&&programPrimaryIds.includes(id));
     for(const [id] of positions){
       if(nodeEls.has(id))continue;
       const n=data.byId.get(id);
       const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-      g.classList.add('explore-node',n.type);g.classList.toggle('program-entry',focusId==='programs'&&programPrimaryIds.includes(id));g.dataset.id=id;g.setAttribute('role','button');g.setAttribute('tabindex','0');g.setAttribute('aria-label',n.label);
+      g.classList.add('explore-node',n.type);if(programPrimaryIds.includes(id))g.classList.add('program-entry');g.dataset.id=id;g.setAttribute('role','button');g.setAttribute('tabindex','0');g.setAttribute('aria-label',n.label);
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.classList.add('explore-node-shape');
       const hit=document.createElementNS('http://www.w3.org/2000/svg','circle');hit.classList.add('explore-hit');
       const t=document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -430,6 +345,52 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   function motionDepth(id){
     // Hover can pull the exact pointer target forward, but does not promote its parent/siblings.
     return id===hoverId ? 1 : baseMotionDepth(id);
+  }
+  function layoutProgramsNodes({nodes,width,height}){
+    const base=layoutExploreNodes({nodes,centerId:'programs',width,height,rootMode:false});
+    const p=base.get('programs');
+    if(!p)return base;
+    const mobile=width<620;
+    const short=Math.min(width,height);
+    const primaryRadius=short*(mobile?.235:.27);
+    const secondaryRadius=short*(mobile?.34:.39);
+    const tertiaryRadius=short*(mobile?.43:.50);
+    // Four starting doors: BA / Graduate Studies / Minors / Certificates.
+    const primaryAngles=[-155,-25,155,25].map(d=>d*Math.PI/180);
+    programPrimaryIds.forEach((id,i)=>{
+      const pos=base.get(id); if(!pos)return;
+      const a=primaryAngles[i];
+      pos.x=Math.cos(a)*primaryRadius;
+      pos.y=Math.sin(a)*primaryRadius*.72;
+      pos.layer=1;
+      base.set(id,pos);
+    });
+    // Undergraduate pathways occupy the middle depth, loosely downstream of the BA.
+    const secondaryAngles=[120,145,170,195,220].map(d=>d*Math.PI/180);
+    programSecondaryIds.forEach((id,i)=>{
+      const pos=base.get(id); if(!pos)return;
+      const a=secondaryAngles[i];
+      pos.x=Math.cos(a)*secondaryRadius;
+      pos.y=Math.sin(a)*secondaryRadius*.70+short*.06;
+      pos.layer=2;
+      // Keep EXPLORE!'s typography language uniform; depth is carried mostly by position/opacity.
+      pos.radius*=mobile?.94:.96;
+      base.set(id,pos);
+    });
+    // Graduate certificates begin farther back, but can foreground normally when followed.
+    const tertiaryAngles=[18,48,78,108,138].map(d=>d*Math.PI/180);
+    programTertiaryIds.forEach((id,i)=>{
+      const pos=base.get(id); if(!pos)return;
+      const a=tertiaryAngles[i];
+      pos.x=Math.cos(a)*tertiaryRadius;
+      pos.y=Math.sin(a)*tertiaryRadius*.72+short*.08;
+      pos.layer=3;
+      pos.radius*=mobile?.90:.93;
+      base.set(id,pos);
+    });
+    p.layer=0;
+    base.set('programs',p);
+    return base;
   }
   function isHoverNeighborhood(id){
     if(!hoverId)return false;
@@ -478,186 +439,3 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
         const depthGap=Math.abs(motionDepth(a)-motionDepth(b));
         const layerFactor=clamp(1-depthGap*.72,.28,1);
         const steer=(.00016 + closeness*closeness*.00125)*layerFactor;
-        // Side-step as well as separate: this creates a glide-around rather than a billiard-ball reversal.
-        const side=((ma.seed^mb.seed)&1)?1:-1;
-        ma.vx-=nx*steer;ma.vy-=ny*steer;mb.vx+=nx*steer;mb.vy+=ny*steer;
-        ma.vx+=-ny*steer*.42*side;ma.vy+=nx*steer*.42*side;
-        mb.vx+=ny*steer*.42*side;mb.vy+=-nx*steer*.42*side;
-      }
-    }
-    for(const id of ids){
-      const p=positions.get(id),m=motionState.get(id); if(!p||!m)continue;
-      const depth=motionDepth(id),frozen=isHoverNeighborhood(id);
-      const amp=id===focusId?.16:(.42+depth*.58);
-      // Boundaries are steering fields, not walls: nodes begin curving home before reaching the edge.
-      const edgeX=Math.abs(m.x)/maxX,edgeY=Math.abs(m.y)/maxY;
-      if(edgeX>.68)m.vx+=-Math.sign(m.x)*Math.pow((edgeX-.68)/.32,2)*.00085;
-      if(edgeY>.68)m.vy+=-Math.sign(m.y)*Math.pow((edgeY-.68)/.32,2)*.00085;
-      m.vx=clamp(m.vx,-.010,.010);m.vy=clamp(m.vy,-.009,.009);
-      if(!frozen){m.x=clamp(m.x+m.vx*amp*60*frameScale,-maxX,maxX);m.y=clamp(m.y+m.vy*amp*60*frameScale,-maxY,maxY);}
-    }
-  }
-  function drawPoint(id,p,ts,nodeElapsed){
-    const motion=motionState.get(id)||{x:0,y:0,oscX:0,oscY:0};
-    const revealDelay=(seededHash(id+'::reveal')%700)-350;
-    const localNodeT=reduced?1:clamp((nodeElapsed-revealDelay)/2000,0,1);
-    const nodeEase=1-Math.pow(1-localNodeT,3);
-    return {x:p.x*nodeEase+motion.x+(motion.oscX||0),y:p.y*nodeEase+motion.y+(motion.oscY||0),ease:nodeEase};
-  }
-  function draw(ts=performance.now()){
-    if(!view||!svg)return;
-    stepMotion(ts);
-    updateShortcutMotion(ts);
-    const rect=view.getBoundingClientRect();const w=rect.width,h=rect.height;
-    svg.setAttribute('viewBox',`${-w/2} ${-h/2} ${w} ${h}`);svg.setAttribute('width',w);svg.setAttribute('height',h);
-    const visibleIds=new Set(positions.keys());
-    let activeEdges=viewEdges().filter(e=>visibleIds.has(e.source)&&visibleIds.has(e.target));
-    const activeId=focusId;
-    const nodeElapsed=Math.max(0,ts-nodeRevealStart);
-    const edgeElapsed=Math.max(0,ts-edgeRevealStart);
-    const edgeT=reduced?1:clamp(edgeElapsed/900,0,1);
-    for(let i=0;i<activeEdges.length;i++){
-      const e=activeEdges[i],line=edgeEls.get(`${e.source}|${e.target}`),a=positions.get(e.source),b=positions.get(e.target);
-      if(!line||!a||!b)continue;
-      const related=activeId==='english'?(e.source==='english'||e.target==='english'):(e.source===activeId||e.target===activeId);
-      const hoverRelated=hoverId ? (e.source===hoverId||e.target===hoverId) : false;
-      const localDelay=Math.min(620,i*32); const t=reduced?1:clamp((edgeElapsed-localDelay)/720,0,1); const ease=1-Math.pow(1-t,3);
-      const da=drawPoint(e.source,a,ts,nodeElapsed),db=drawPoint(e.target,b,ts,nodeElapsed);
-      line.setAttribute('x1',da.x.toFixed(2));line.setAttribute('y1',da.y.toFixed(2));line.setAttribute('x2',db.x.toFixed(2));line.setAttribute('y2',db.y.toFixed(2));
-      let edgeBase;
-      if(hoverId){
-        edgeBase=hoverRelated?.48:(related?.10:.055);
-      } else {
-        edgeBase=related?.48:.11;
-      }
-      line.style.opacity=(edgeBase*ease*edgeT).toFixed(3);
-      line.classList.toggle('is-related',Boolean(related||hoverRelated));
-      line.classList.toggle('is-hover-related',Boolean(hoverRelated));
-    }
-    for(const [id,p] of positions){
-      const n=data.byId.get(id),el=nodeEls.get(id); if(!n||!el)continue;
-      const related=id===activeId||activeEdges.some(e=>(e.source===activeId||e.target===activeId)&&(e.source===id||e.target===id));
-      const hoverRelated=hoverId ? (id===hoverId||activeEdges.some(e=>(e.source===hoverId||e.target===hoverId)&&(e.source===id||e.target===id))) : false;
-      let normalOpacity=activeId==='english'?(n.display?.initial||id==='english'?1:.6):(id===activeId?1:(related?.9:.19));
-      // Hover is perceptual, not structural: the exact target foregrounds; its direct
-      // relationship context gently surfaces to establish the connection; everything
-      // else recedes toward the background. Direct context never outranks the target.
-      const hpTarget=id===hoverId?1:0; const hp=hoverProgress.get(id)||0; const next=hp+(hpTarget-hp)*(reduced?1:.13); hoverProgress.set(id,next);
-      const contextTarget=(hoverId&&id!==hoverId&&hoverRelated)?1:0; const cp=hoverContextProgress.get(id)||0; const contextEase=cp+(contextTarget-cp)*(reduced?1:.10); hoverContextProgress.set(id,contextEase);
-      let baseOpacity=normalOpacity;
-      if(hoverId){
-        if(id===hoverId) baseOpacity=1;
-        else if(hoverRelated) baseOpacity=normalOpacity+(Math.max(normalOpacity,.74)-normalOpacity)*contextEase;
-        else baseOpacity=.045;
-      }
-      const point=drawPoint(id,p,ts,nodeElapsed); const nodeEase=point.ease; const x=point.x,y=point.y;
-      const r=p.radius*(1+.06*next),font=p.font*(1+.035*next);
-      const shape=el.querySelector('.explore-node-shape'),hit=el.querySelector('.explore-hit'),text=el.querySelector('text');
-      el.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)})`);el.style.opacity=(baseOpacity*nodeEase).toFixed(3);el.classList.toggle('is-active',id===activeId);el.classList.toggle('is-hovered',id===hoverId);
-      shape.setAttribute('r',r.toFixed(2));hit.setAttribute('r',Math.max(18,r+(window.matchMedia('(pointer:coarse)').matches?8:4)).toFixed(2));text.textContent=n.label;text.setAttribute('y',(r+9).toFixed(2));text.style.fontSize=`${font.toFixed(2)}px`;
-    }
-    const worldTransform=`translate(${transform.x.toFixed(2)} ${transform.y.toFixed(2)}) scale(${transform.k.toFixed(3)})`;
-    edgesGroup.setAttribute('transform',worldTransform);
-    nodesGroup.setAttribute('transform',worldTransform);
-    svg.style.transform='';
-  }
-  function tick(ts){if(destroyed)return;lastRafPaint=performance.now();draw(ts);raf=requestAnimationFrame(tick);}
-  function setHover(id){
-    if(hoverId===id){
-      if(id){lastActivity=Date.now();cancelAutoplay();}
-      return;
-    }
-    hoverId=id;
-    noteActivity();
-  }
-  function nodeAt(clientX,clientY){
-    // Geometry fallback is circle-first only. Text targeting is handled by the persistent SVG text element.
-    const rect=view.getBoundingClientRect();
-    const localX=clientX-rect.left-rect.width/2,localY=clientY-rect.top-rect.height/2;
-    const worldX=(localX-transform.x)/Math.max(transform.k,.001),worldY=(localY-transform.y)/Math.max(transform.k,.001);
-    let best=null,bestD=Infinity;
-    for(const [id,p] of positions){
-      const m=motionState.get(id)||{x:0,y:0,oscX:0,oscY:0};
-      const x=p.x+m.x+(m.oscX||0),y=p.y+m.y+(m.oscY||0),d=Math.hypot(worldX-x,worldY-y);
-      const hit=Math.max(18,p.radius+(window.matchMedia('(pointer:coarse)').matches?8:4));
-      if(d<=hit&&d<bestD){best=id;bestD=d;}
-    }
-    return best;
-  }
-  function onPointerDown(e){
-    if(e.target.closest?.('.explore-center-card,.explore-path-btn,.explore-center-links'))return;
-    const targetNode=e.target.closest?.('.explore-node');
-    const nodeId=targetNode?.dataset?.id||nodeAt(e.clientX,e.clientY);
-    noteActivity();
-    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,nodeId,moved:false,pointerType:e.pointerType});
-    try{view.setPointerCapture?.(e.pointerId);}catch{}
-    if(pointers.size===1)pointerState=pointers.get(e.pointerId);
-    if(pointers.size===2){const pts=[...pointers.values()];gesture={distance:Math.hypot(pts[1].x-pts[0].x,pts[1].y-pts[0].y),cx:(pts[0].x+pts[1].x)/2,cy:(pts[0].y+pts[1].y)/2};}
-    if(!nodeId)e.preventDefault();
-  }
-  function onPointerMove(e){
-    const p=pointers.get(e.pointerId);if(!p)return;
-    p.x=e.clientX;p.y=e.clientY;
-    if(pointers.size===1){
-      if(p.nodeId){
-        if(Math.hypot(e.clientX-p.startX,e.clientY-p.startY)>10)p.moved=true;
-        if(e.pointerType==='mouse')setHover(p.nodeId);
-        return;
-      }
-      const dx=e.clientX-p.startX,dy=e.clientY-p.startY;
-      if(Math.hypot(dx,dy)>6){p.moved=true;transform.x=clamp(transform.x+dx,-Math.min(56,view.clientWidth*.055),Math.min(56,view.clientWidth*.055));transform.y=clamp(transform.y+dy,-Math.min(48,view.clientHeight*.05),Math.min(48,view.clientHeight*.05));p.startX=e.clientX;p.startY=e.clientY;draw(performance.now());e.preventDefault();}
-    } else if(pointers.size===2){
-      const pts=[...pointers.values()].slice(0,2),dist=Math.max(10,Math.hypot(pts[1].x-pts[0].x,pts[1].y-pts[0].y)),cx=(pts[0].x+pts[1].x)/2,cy=(pts[0].y+pts[1].y)/2;
-      if(gesture){zoomBy(dist/gesture.distance,cx,cy);transform.x=clamp(transform.x+(cx-gesture.cx),-Math.min(56,view.clientWidth*.055),Math.min(56,view.clientWidth*.055));transform.y=clamp(transform.y+(cy-gesture.cy),-Math.min(48,view.clientHeight*.05),Math.min(48,view.clientHeight*.05));draw(performance.now());}
-      gesture={distance:dist,cx,cy};pts.forEach(x=>x.moved=true);e.preventDefault();
-    }
-  }
-  function onPointerUp(e){
-    const p=pointers.get(e.pointerId);if(!p)return;
-    pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;
-    try{view.releasePointerCapture?.(e.pointerId);}catch{}
-    const directTouchActivation=p.nodeId&&!p.moved&&p.pointerType!=='mouse';
-    if(directTouchActivation){
-      lastDirectActivation={id:p.nodeId,at:performance.now()};
-      activateNode(p.nodeId);
-      e.preventDefault();
-    }
-    pointerState=null;
-  }
-  function onPointerCancel(e){pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;pointerState=null;}
-  function onWheel(e){e.preventDefault();noteActivity();zoomBy(Math.pow(1.0015,-e.deltaY),e.clientX,e.clientY);}
-  function zoomBy(factor,cx,cy){
-    const rect=view.getBoundingClientRect();const lx=cx-rect.left-rect.width/2,ly=cy-rect.top-rect.height/2;const next=clamp(transform.k*factor,.82,1.55),ratio=next/transform.k;
-    transform.x=clamp(lx-(lx-transform.x)*ratio,-Math.min(56,rect.width*.055),Math.min(56,rect.width*.055));transform.y=clamp(ly-(ly-transform.y)*ratio,-Math.min(48,rect.height*.05),Math.min(48,rect.height*.05));transform.k=next;
-  }
-  function onKeyDown(e){
-    const id=e.target.closest?.('.explore-node')?.dataset.id;
-    if(id&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activateNode(id);return;}
-    if(e.key==='r'){e.preventDefault();resetFocus();}
-    noteActivity();
-  }
-  function focusNode(id,{autoplay=false}={}){const node=data.byId.get(id);if(!node)return;focusId=id;reflow(false);overlay?.classList.toggle('is-focused',id!=='english');if(!autoplay)noteActivity();}
-  function resetFocus({autoplay=false}={}){focusNode('english',{autoplay});}
-  function updateCenter(node){
-    if(!node||!centerCard)return;
-    const type=node.id==='english'?'Your Home':node.id==='programs'?'EXPLORE!':node.type==='faculty'?'Faculty':node.type==='hub'?'EXPLORE!':node.type==='topic'?'Expertise':node.type.replaceAll('_',' ');
-    const displayLabel=node.id==='programs'?'Programs':node.label;
-    const links=(node.links||[]).filter(l=>l?.url&&l.status!=='inactive').slice(0,3);
-    const pathfinderInvite=node.id==='programs'?`<div class="explore-center-links"><button type="button" class="explore-center-pathfinder">Take Pathfinder now.</button></div>`:'';
-    centerCard.innerHTML=`<div class="explore-center-type">${esc(type)}</div><h2>${esc(displayLabel)}</h2><p>${esc(node.center_blurb||'?')}</p>${links.length?`<div class="explore-center-links">${links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><span>${esc(l.label||'Open source')}</span><span class="link-arrow" aria-hidden="true">↗</span></a>`).join('')}</div>`:''}${pathfinderInvite}`;
-    centerCard.querySelector('.explore-center-pathfinder')?.addEventListener('click',()=>{const cb=onFindPath;destroy();cb?.();});
-  }
-  function destroy(){
-    if(destroyed)return;
-    destroyed=true;cancelAutoplay();resizeObserver?.disconnect();
-    if(raf)cancelAnimationFrame(raf);clearInterval(motionWatchdog);
-    document.removeEventListener('visibilitychange',onVisibilityChange);
-    window.removeEventListener('pageshow',wakeAnimation);
-    window.removeEventListener('orientationchange',onOrientationChange);
-    reducedMedia.removeEventListener?.('change',onReducedMotionChange);
-    overlay?.remove();overlay=null;
-  }
-  return {show,destroy};
-}
-
-export function getExploreIdleMs(){return getIdleMs();}

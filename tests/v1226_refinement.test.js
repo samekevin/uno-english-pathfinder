@@ -11,7 +11,7 @@ assert.equal(graph.nodes.filter(n=>n.label==="First-Year Writing").length,1);
 assert.ok(!graph.nodes.some(n=>n.label==="First-year writing"));
 assert.ok(validator.includes("normalized duplicate active labels"));
 assert.ok(validator.includes("alias_of") && validator.includes("intentional_duplicate"));
-assert.ok(readme.includes("214 nodes"));
+assert.ok(readme.includes("216 nodes"));
 assert.ok(readme.includes("v1.2.27 data hygiene"));
 assert.ok(readme.includes("SEMANTIC_AUDIT.md"));
 console.log('v1.2.29 content hygiene checks passed');

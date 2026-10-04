@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const app=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../explore/styles.css',import.meta.url),'utf8');
+const g=JSON.parse(fs.readFileSync(new URL('../data/explore-english.graph.json',import.meta.url)));
+const edge=(a,b)=>g.edges.some(e=>(e.source===a&&e.target===b)||(e.source===b&&e.target===a));
+assert.ok(edge('english','programs'),'Programs & Credentials must be directly connected to English');
+for(const id of ['ba_english','graduate_studies','minors','certificates']) assert.ok(app.includes(`'${id}'`),'missing Programs category');
+assert.ok(app.includes("positions=layoutExploreNodes({nodes:visibleNodes,centerId:focusId,width:w,height:h,rootMode:focusId==='english'});"),'Programs must use the shared EXPLORE! layout path');
+assert.ok(css.includes('.explore-node[data-id="programs"]:not(.is-active)'), 'Programs daughter styling missing');
+assert.ok(css.includes('.explore-node.program-entry:not(.is-active) .explore-node-shape'), 'primary category styling missing');
+assert.ok(app.includes("label.style.top=(b.y-54)+'px'"),'shortcut labels should sit higher');
+console.log('PASS: v1.2.43 preserves shared spatial hierarchy and node-role styling');

@@ -16,7 +16,7 @@ function footprint(node,p){
   const textWidth=Math.min(150,Math.max(30,label.length*p.font*.50));
   return {w:Math.max(p.radius*2+8,textWidth+10),h:p.radius*2+Math.max(19,p.font*1.55)};
 }
-export function layoutExploreNodes({nodes,centerId,width,height,rootMode}){
+export function layoutExploreNodes({nodes,centerId,width,height,rootMode,preferredPositions=new Map(),preferredWeight=0,preferredOrder=[]}){
   const mobile=width<620;
   const narrow=width<900;
   const viewportScale=clamp(Math.min(width/860,height/720),.66,1);
@@ -27,7 +27,11 @@ export function layoutExploreNodes({nodes,centerId,width,height,rootMode}){
   if(!center)return positions;
   const centerP=presentationFor(center,true,viewportScale);
   positions.set(center.id,{x:0,y:0,...centerP,j:hash(center.id)%97});
-  const others=visible.filter(n=>n.id!==center.id).sort((a,b)=>(b.display?.priority||0)-(a.display?.priority||0)||hash(a.id)-hash(b.id));
+  const orderIndex=new Map(preferredOrder.map((id,i)=>[id,i]));
+  const others=visible.filter(n=>n.id!==center.id).sort((a,b)=>{
+    const ao=orderIndex.has(a.id)?orderIndex.get(a.id):-1, bo=orderIndex.has(b.id)?orderIndex.get(b.id):-1;
+    return (bo>=0?1:0)-(ao>=0?1:0) || ao-bo || (b.display?.priority||0)-(a.display?.priority||0)||hash(a.id)-hash(b.id);
+  });
   const safeX=Math.max(96,width*.40), safeY=Math.max(125,height*.35);
   const minR=Math.min(width,height)*(mobile?.10:narrow?.105:.11);
   const maxR=Math.min(width,height)*(rootMode?(mobile?.27:narrow?.31:.34):(mobile?.31:narrow?.35:.39));
@@ -36,10 +40,17 @@ export function layoutExploreNodes({nodes,centerId,width,height,rootMode}){
     const p=presentationFor(n,false,viewportScale),fp=footprint(n,p),seed=hash(`${centerId}:${n.id}`),closeness=(seed%1000)/1000;
     const preferred=minR+(maxR-minR)*(.08+.92*closeness),baseAngle=((seed>>>10)%6283)/1000-Math.PI;
     let best=null;
+    const pref=preferredPositions.get(n.id);
     for(let attempt=0;attempt<56;attempt++){
       const spiral=attempt*.31,r=clamp(preferred+(attempt%9-4)*8,minR,maxR);let x=Math.cos(baseAngle+spiral)*r,y=Math.sin(baseAngle+spiral)*r*.78;
+      if(pref){
+        const blend=clamp(preferredWeight*(attempt<12?1:.55),0,.35);
+        x=x*(1-blend)+pref.x*blend;
+        y=y*(1-blend)+pref.y*blend;
+      }
       x=clamp(x,-safeX+fp.w/2,safeX-fp.w/2);y=clamp(y,-safeY+fp.h/2,safeY-fp.h/2);
       let penalty=Math.max(0,66-Math.hypot(x,y))*.58;
+      if(pref) penalty += Math.hypot(x-pref.x,y-pref.y)*(preferredWeight*.08);
       for(const q of placed){
         const dx=Math.abs(x-q.x),dy=Math.abs(y-q.y),needX=(fp.w+q.fp.w)/2+8,needY=(fp.h+q.fp.h)/2+6;
         if(dx<needX&&dy<needY)penalty+=(needX-dx)+(needY-dy)*1.22;

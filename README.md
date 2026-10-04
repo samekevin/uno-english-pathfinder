@@ -1,8 +1,8 @@
-# UNO English Pathfinder Beta v1.2.32 — EXPLORE! English
+# UNO English Pathfinder Beta v1.2.43 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
-This repository contains the UNO English Pathfinder beta and its companion **Explore English** application. Explore English uses an editable graph data layer shared with Pathfinder, while the assessment remains a separate runtime. The current content graph contains 214 nodes and 552 explicit edges, including 27 active faculty nodes; faculty-to-faculty discovery is derived from shared topic nodes rather than maintained as a dense pairwise matrix.
+This repository contains the UNO English Pathfinder beta and its companion **Explore English** application. Explore English uses an editable graph data layer shared with Pathfinder, while the assessment remains a separate runtime. The current content graph contains 216 nodes and 595 explicit edges, including 27 active faculty nodes; faculty-to-faculty discovery is derived from shared topic nodes rather than maintained as a dense pairwise matrix.
 
 ## Use these files
 
@@ -94,9 +94,9 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.32 — EXPLORE! English**
+**UNO English Pathfinder Beta v1.2.43 — EXPLORE! English**
 
-214 nodes · 552 explicit edges · 27 active faculty · 0 dangling graph edges.
+216 nodes · 595 explicit edges · 27 active faculty · 0 dangling graph edges.
 
 ### v1.2.20
 
@@ -169,9 +169,49 @@ The renderer also fixes a mobile-motion bug that calculated secondary oscillatio
 - Makes the mobile interstitial explicit that a **desktop computer** is recommended for the fullest constellation experience.
 
 
-## v1.2.32 EXPLORE! identity refinement
+## v1.2.40 Dual Enrollment constellation integration
+- Gives the English Dual Enrollment Certificate meaningful verified exits into MA in English, Literature & Culture, Language & Linguistics, and Teaching & Pedagogy.
+- Keeps the existing EXPLORE! renderer and shortcut interaction architecture unchanged.
+
+## v1.2.37 EXPLORE! identity refinement
 
 - Preserves the v1.2.30/v1.2.31 Explore renderer unchanged.
 - Changes the in-constellation category eyebrow from **EXPLORE** to **EXPLORE!**.
 - Simplifies the non-desktop entry message to **Not on desktop?** followed by **EXPLORE! works here, too.**
 - Renames the non-desktop action to **EXPLORE! here**.
+
+### v1.2.37 — student launch cluster and graph refinements
+- Adds a three-point EXPLORE! launch cluster above Find My Path for Student Opportunities, Expertise, and Social Media. Labels remain hidden at rest; desktop hover adds a controlled excited jitter and reveals the label; click/tap commits the selection, moves the identity toward center, softens the field, and opens the selected constellation.
+- Expertise is implemented as a UI-only navigation category and does not add a semantic node to the editable Explore graph.
+- Harmonizes EXPLORE! external-link arrows with Pathfinder's arrow treatment.
+- Adds Kyle Simonsen to Sports writing; renames the SoLaS project display label to Onomatopoeias; directly connects Study Abroad to Rhetoric of Women’s Suffrage: Study Abroad to London; and connects The Linden Review to English Internships.
+- Removes the generic Education topic and its Annie Johnson-only dependency while preserving Annie's substantive Composition, Writing instruction, Hybrid instruction, First-Year Writing, and Teaching & Pedagogy relationships.
+- Normalizes the TESOL topic blurb to capitalized TESOL and verifies English -> Faculty remains a direct root relationship.
+- Preserves the v1.2.32 motion/layout/environment renderer modules unchanged.
+
+### v1.2.40 — Dual Enrollment constellation integration
+- Keeps the v1.2.37 Programs/constellation interaction model intact.
+- Gives the English Dual Enrollment Certificate real verified exits into the MA in English, Literature & Culture study area, Language & Linguistics, and Teaching & Pedagogy, instead of leaving it as a near-dead-end credential.
+- Grounds those connections in current UNO English and Dual Enrollment materials.
+
+### v1.2.37 — Programs integration and shortcut-state cleanup
+
+- Raises launch-cluster hover labels again for clean separation from excited nodes.
+- Clears shortcut excitement and connector geometry immediately on commit, preventing persistent jitter after launch.
+- Removes stale SVG edge elements when the active relationship set changes, eliminating ghost lines.
+- Removes the v1.2.36 view-only Programs pathway bridges; Programs now opens into verified graph relationships.
+- Audits Programs & Credentials dependencies against current UNO English/academic-program information.
+- Connects the BA to its related undergraduate TESOL certificate, gives the English Minor verified flexible concentration-focus routes, and gives the MA / Graduate English Minor meaningful graduate study-area relationships.
+- Connects the MA to current graduate certificate options listed by UNO English.
+- Gives BA, MA, English Minor, and Graduate English Minor a stronger filled-and-outlined entry-point treatment while retaining the shared EXPLORE! visual language.
+
+## v1.2.43 Programs convention unification
+
+Programs & Credentials now obeys the same graph, layout, hover-isolation, and node-role conventions as the rest of EXPLORE!. The Programs hub remains directly connected to English, but its direct semantic neighborhood is intentionally limited to English plus the four category doors: BA in English, Graduate Studies, Minors, and Certificates. Legacy direct Programs edges to deeper credentials and concentrations were removed so hidden relationships can no longer keep the Programs hub foregrounded during unrelated hover states. Programs no longer uses a special visible-node selector, special layout function, hidden edge filter, or Programs-only opacity levels. The four category doors retain their contextual darker-outline entry treatment only while Programs itself is the focused constellation.
+
+## v1.2.43 Programs copy, Dual Enrollment, and autoplay journey
+- Refines the Programs center copy to “Turn your interests into a flexible academic path.” and adds the understated “Take Pathfinder now.” action.
+- Adds English Dual Enrollment Certificate directly under Graduate Studies while preserving its Certificates membership, MA relationship, and broader English-constellation connections.
+- Replaces the autoplay return-to-English rest with a 3.4-second EXPLORE!-style transition reading “EXPLORE! ENGLISH” / “Try Pathfinder, too!”
+- Sets each autoplay constellation hold to 21.6 seconds, producing a 25-second arrival-to-arrival cadence when combined with the 3.4-second transition.
+- Preserves the v1.2.41 Programs graph/layout/hover convention cleanup.

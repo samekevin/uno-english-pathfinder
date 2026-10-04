@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const app=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const graph=JSON.parse(fs.readFileSync(new URL('../data/explore-english.graph.json',import.meta.url),'utf8'));
+const edge=(a,b)=>graph.edges.some(e=>(e.source===a&&e.target===b)||(e.source===b&&e.target===a));
+const programs=graph.nodes.find(n=>n.id==='programs');
+assert.equal(programs.center_blurb,'Turn your interests into a flexible academic path.');
+assert.ok(edge('graduate_studies','grad_dual_enroll_cert'),'Dual Enrollment must be directly available from Graduate Studies');
+assert.ok(edge('certificates','grad_dual_enroll_cert'),'Dual Enrollment must remain under Certificates');
+assert.ok(edge('ma_english','grad_dual_enroll_cert'),'Dual Enrollment must retain its direct MA relationship');
+assert.ok(app.includes('const AUTOPLAY_HOLD_MS = 21600;'));
+assert.ok(app.includes('const AUTOPLAY_TRANSITION_MS = 3400;'));
+assert.ok(!app.includes('AUTOPLAY_HOME_REST_MS'),'autoplay should no longer return to English/Home between random constellations');
+assert.ok(app.includes('EXPLORE! ENGLISH'));
+assert.ok(app.includes('Try Pathfinder, too!'));
+assert.ok(app.includes('Take Pathfinder now.'));
+assert.ok(app.includes('await showAutoplayTransition(token)'));
+console.log('PASS: v1.2.43 Programs copy, Dual Enrollment, and 25-second autoplay transition');

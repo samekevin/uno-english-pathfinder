@@ -1,0 +1,14 @@
+import fs from 'node:fs'; import assert from 'node:assert/strict';
+const app=fs.readFileSync('explore/app.js','utf8');
+const css=fs.readFileSync('explore/styles.css','utf8');
+const graph=JSON.parse(fs.readFileSync('data/explore-english.graph.json','utf8'));
+const edge=(a,b,r)=>graph.edges.some(e=>((e.source===a&&e.target===b)||(e.source===b&&e.target===a))&&(!r||e.relation===r));
+assert.ok(app.includes("clearShortcutHover();\n    shortcutCluster.querySelectorAll('.explore-shortcut')"),'launch commit must clear excited shortcut state');
+assert.ok(app.includes('activeEdgeKeys=new Set'),'stale edge elements must be removed when relationships change');
+assert.ok(css.includes('.explore-node.program-entry:not(.is-active) .explore-node-shape'),'primary program entry points need filled/outlined treatment');
+assert.ok(edge('ba_english','ug_tesol','related_certificate'),'BA should connect to related undergraduate TESOL certificate');
+for(const id of ['conc_literatures','conc_cnf','conc_language']) assert.ok(edge('english_minor',id,'possible_focus'),`English Minor should open toward ${id}`);
+for(const id of ['grad_cnf_cert','grad_techcomm_cert','grad_litculture_cert','grad_tesol_cert']) assert.ok(edge('ma_english',id,'graduate_program_option'),`MA should connect to current graduate option ${id}`);
+for(const id of ['writing_publishing','language_hub','literature_hub','topic_composition_theory','topic_rhetoric','topic_technical_writing']) assert.ok(edge('grad_english_minor',id,'graduate_study_area'),`Graduate English Minor should open into ${id}`);
+assert.ok(edge('grad_english_minor','ramon_guerra','graduate_program_contact'),'Graduate English Minor should surface the graduate program contact');
+console.log('v1.2.43 integrated Programs dependency checks passed');

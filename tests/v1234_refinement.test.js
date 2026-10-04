@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const graph=JSON.parse(fs.readFileSync(new URL('../data/explore-english.graph.json',import.meta.url),'utf8'));
+const app=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../explore/styles.css',import.meta.url),'utf8');
+const byId=new Map(graph.nodes.map(n=>[n.id,n]));
+assert.equal(byId.get('topic_multilingualism')?.label,'Multilingualism');
+assert.equal(byId.get('topic_sociophonetics')?.label,'Sociophonetics');
+assert.ok(app.includes("'topic_multilingualism'"));
+assert.ok(app.includes("'topic_sociophonetics'"));
+assert.ok(css.includes('exploreShortcutExcited'));
+assert.ok(css.includes('width:20px;height:20px'));
+assert.ok(!css.includes('scale(1.05)'));
+assert.ok(!css.includes('scale(1.16)'));
+assert.ok(css.includes('animation:none}.explore-shortcut-preview'));
+assert.ok(app.includes('x1="18" y1="17" x2="56" y2="9"'));
+assert.ok(app.includes('x1="56" y1="9" x2="94" y2="17"'));
+console.log('v1.2.43 refinement tests passed.');

@@ -4,9 +4,9 @@ const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const styles=fs.readFileSync(new URL('../styles.css',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 const manifest=JSON.parse(fs.readFileSync(new URL('../data/manifest.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.32');
-assert.equal(manifest.version,'1.2.32');
-assert.equal(manifest.beta_version,'1.2.32');
+assert.equal(pkg.version,'1.2.43');
+assert.equal(manifest.version,'1.2.43');
+assert.equal(manifest.beta_version,'1.2.43');
 // Handoff holding document: preserve viewport responsiveness and use the canonical transition geometry.
 assert.ok(app.includes('name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"'));
 assert.ok(app.includes('font-size:clamp(1.75rem,5.1vw,3.8rem)'));

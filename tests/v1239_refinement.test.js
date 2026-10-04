@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const g=JSON.parse(fs.readFileSync(new URL('../data/explore-english.graph.json',import.meta.url)));
+const app=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
+const edge=(a,b,r)=>g.edges.some(e=>((e.source===a&&e.target===b)||(e.source===b&&e.target===a))&&(!r||e.relation===r));
+for(const id of ['graduate_studies','minors','certificates']) assert.ok(g.nodes.some(n=>n.id===id&&n.type==='hub'),`missing category ${id}`);
+for(const id of ['ba_english','graduate_studies','minors','certificates']) assert.ok(app.includes(`'${id}'`),`opening category missing ${id}`);
+assert.ok(edge('certificates','grad_dual_enroll_cert','contains_credential'));
+assert.ok(edge('ma_english','grad_dual_enroll_cert','graduate_program_option'));
+for(const cert of ['ug_tesol','grad_tesol_cert']) for(const id of ['topic_applied_linguistics','topic_ai_and_writing','topic_writing_center_studies','service_learning','english_internships','topic_multilingualism','topic_sociophonetics']) assert.ok(edge(cert,id,'related_area'),`${cert} missing ${id}`);
+assert.ok(app.includes("g.classList.toggle('program-entry',focusId==='programs'&&programPrimaryIds.includes(id))"));
+console.log('PASS: v1.2.43 Programs doors + TESOL ecosystem refinement');
