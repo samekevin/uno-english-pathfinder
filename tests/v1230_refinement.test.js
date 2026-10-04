@@ -1,0 +1,15 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+const root=new URL("../",import.meta.url);
+const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
+const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
+const manifest=JSON.parse(fs.readFileSync(new URL("data/manifest.json",root),"utf8"));
+assert.equal(pkg.version,"1.2.29");
+assert.equal(manifest.version,"1.2.29");
+assert.equal(manifest.beta_version,"1.2.29");
+assert.ok(explore.includes("const VERSION = '1.2.29'"));
+assert.ok(explore.includes("const motionScale=mobileProfile?3.2:1"));
+assert.ok(explore.includes("oscAmp=id===focusId?.22:(.9+depth*1.45)"));
+assert.ok(explore.includes("const compact=width<620"));
+assert.ok(explore.includes("const coarse=window.matchMedia('(pointer:coarse)').matches"));
+console.log("v1.2.30 mobile motion refinement checks passed");

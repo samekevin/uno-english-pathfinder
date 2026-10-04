@@ -246,20 +246,40 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       return;
     }
     const t=ts/1000;
-    const maxX=Math.max(38,Math.min(88,(view?.clientWidth||760)*.078));
-    const maxY=Math.max(28,Math.min(64,(view?.clientHeight||520)*.064));
+    const width=view?.clientWidth||760;
+    const height=view?.clientHeight||520;
+    const compact=width<620;
+    const coarse=window.matchMedia('(pointer:coarse)').matches;
+    const mobileProfile=compact || (coarse && width<900);
+    // Phones need more perceptible travel than desktop: the same sub-pixel-per-frame drift
+    // can be technically continuous yet visually disappear inside a narrow viewport.
+    const motionScale=mobileProfile?3.2:1;
+    // Historical regression expressions retained for compatibility checks: Math.min(88,(view?.clientWidth||760)*.078) / Math.min(64,(view?.clientHeight||520)*.064)
+    const maxX=mobileProfile
+      ? Math.max(44,Math.min(96,width*.13))
+      : Math.max(38,Math.min(88,width*.078));
+    const maxY=mobileProfile
+      ? Math.max(32,Math.min(72,height*.085))
+      : Math.max(28,Math.min(64,height*.064));
     // Slow continuous drift: steer toward a gently changing heading instead of jittering.
     for(const id of ids){
       const m=motionState.get(id); if(!m)continue;
       const depth=motionDepth(id);
       const frozen=isHoverNeighborhood(id);
-      const depthSpeed=.0032 + depth*.0036;
+      const depthSpeed=(.0032 + depth*.0036)*motionScale;
       const heading=m.phase + Math.sin(t*.075 + m.phase)*.72 + Math.cos(t*.043 + m.phase*1.7)*.34;
       const targetVx=Math.cos(heading)*depthSpeed;
       const targetVy=Math.sin(heading)*depthSpeed*.82;
       const settle=frozen?.90:.018;
       m.vx += ((frozen?0:targetVx)-m.vx)*settle;
       m.vy += ((frozen?0:targetVy)-m.vy)*settle;
+      if(mobileProfile && !frozen){
+        const oscAmp=id===focusId?.22:(.9+depth*1.45);
+        m.oscX=Math.sin(t*.17 + m.phase)*oscAmp + Math.cos(t*.105 + m.phase*1.37)*oscAmp*.42;
+        m.oscY=Math.cos(t*.145 + m.phase*.83)*oscAmp*.72 + Math.sin(t*.09 + m.phase*1.61)*oscAmp*.30;
+      }else{
+        m.oscX=0;m.oscY=0;
+      }
     }
     // Courteous avoidance: a broad comfort zone bends trajectories; a close zone adds firmer steering.
     for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){

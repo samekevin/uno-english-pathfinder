@@ -147,3 +147,7 @@ Connection lines now begin approximately 1.3 seconds earlier after the node reve
 ### v1.2.29
 
 Line reveal timing refinement: connection lines begin about 1.3 seconds sooner after node reveal; node reveal timing is unchanged.
+## Mobile motion renderer refinement
+
+Explore English now uses a compact mobile motion profile: continuous drift is more perceptible within narrow viewports, bounded travel expands modestly, and a slow secondary oscillation keeps the constellation visibly alive on phones without introducing rapid or chaotic movement. Desktop motion remains unchanged, hover settling remains intact, and `prefers-reduced-motion` still removes continuous motion.
+
