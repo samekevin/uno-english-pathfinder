@@ -576,8 +576,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const frameScale=lastMotionTs?clamp((ts-lastMotionTs)/16.667,.35,3.2):1;
     lastMotionTs=ts;
     if(quietMobileLife){
-      const quietMaxX=clamp(width*.018,5.5,8);
-      const quietMaxY=clamp(height*.014,5,8);
+      const quietMaxX=clamp(width*.026,7,10);
+      const quietMaxY=clamp(height*.022,7,14);
       for(const id of ids){
         const m=motionState.get(id); if(!m)continue;
         const depth=motionDepth(id);

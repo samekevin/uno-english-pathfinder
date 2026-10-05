@@ -70,3 +70,11 @@ The Explore graph now treats retired content removals as dependency-safe graph m
 ## v1.3.0 autoplay handoff refinement
 - During the final 800ms handoff, the next constellation is focused first, then autoplay preview ownership and the Pathfinder prompt backdrop state are released before the callout and connector finish exiting. This lets the new constellation emerge while the previous blur is already receding.
 - The handoff uses the existing transition lifecycle; no additional autoplay timer or competing transition state is introduced.
+
+
+## v1.3.0 mobile-motion milestone
+The mobile-motion experiment was validated on a real iPhone/iPad Safari setup. The diagnostic harness established that Safari can animate JavaScript-driven SVG transforms, CSS-transformed SVG, HTML/CSS motion, and a nested SVG hierarchy. Live inspection of production EXPLORE! then showed `requestAnimationFrame` remained active while node `transform="translate(...)"` values stayed static. The production cause was the `prefers-reduced-motion: reduce` branch zeroing node displacement, velocity, and oscillation on every frame.
+
+The accepted production strategy is not to override the preference with full motion. Compact touch views instead use a restrained reduced-motion micro-motion profile that preserves perceptible life while sharply reducing amplitude/speed. The mobile stage uses the dynamic viewport (`100dvh`) and `visualViewport` resize handling. Future debugging should reproduce this sequence before changing the shared SVG renderer: verify RAF, inspect actual node transforms, check reduced-motion state, compare with a controlled motion harness, then change only the responsible layer.
+
+The v1.3.0 breathing-room refinement expands the compact-touch motion bounds modestly in X and more noticeably in Y while keeping the successful motion character unchanged.
