@@ -8,13 +8,13 @@ const standalone=read("explore/index.html");
 const app=read("app.js");
 const readBytes=p=>fs.readFileSync(new URL("../"+p,import.meta.url));
 
-assert.equal(pkg.version,"1.2.48");
-assert.equal(manifest.version,"1.2.48");
-assert.equal(manifest.beta_version,"1.2.48");
-assert.ok(explore.includes("const VERSION = '1.2.48'"));
-assert.ok(standalone.includes('styles.css?v=1.2.48'));
-assert.ok(standalone.includes('explore-runtime.js?v=1.2.48'));
-assert.ok(app.includes("import('./explore/app.js?v=1.2.48')"));
+assert.equal(pkg.version,"1.3.0");
+assert.equal(manifest.version,"1.3.0");
+assert.equal(manifest.beta_version,"1.3.0");
+assert.ok(explore.includes("const VERSION = '1.3.0'"));
+assert.ok(standalone.includes('styles.css?v=1.3.0'));
+assert.ok(standalone.includes('explore-runtime.js?v=1.3.0'));
+assert.ok(app.includes("import('./explore/app.js?v=1.3.0')"));
 
 assert.ok(explore.includes("node.type==='hub'?'EXPLORE!':"));
 assert.ok(explore.includes('<h1 id="explore-entry-title">Not on desktop?</h1>'));
@@ -24,10 +24,10 @@ assert.ok(explore.includes('EXPLORE! here'));
 assert.ok(explore.includes('Start Pathfinder instead'));
 assert.ok(!explore.includes('Find your way through English.'));
 
-// Motion/environment remain frozen; the shared layout solver is intentionally revised in v1.2.48.
+// Motion/environment remain frozen; the shared layout solver is intentionally revised in v1.3.0.
 const before={
   motion:'fe4a545ff5d5d0e19d1206d11e40fc5f818bf7657d60de3b6e92eb1af3ea5321',
-  layout:'975fe7b5d935e91ae6dbfe377aebbf3abc8e0585d0fadd662b284586b53d0dfc',
+  layout:'b15b2a05b392d6382a8b47155e3dc1ae0ed965c74718411381c32fec97930445',
   environment:'e617fee8f16017c95c603b320181c4000290a156a637999f849768d3715e538c'
 };
 // Hash via built-in crypto keeps this test dependency-free.
@@ -37,4 +37,4 @@ for(const [key,file] of Object.entries({motion:"src/explore-motion.js",layout:"s
   assert.equal(got,before[key],file+' must remain unchanged');
 }
 
-console.log('v1.2.48 branding and frozen-renderer checks passed');
+console.log('v1.3.0 branding and frozen-renderer checks passed');

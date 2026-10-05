@@ -260,3 +260,11 @@ Programs & Credentials now obeys the same graph, layout, hover-isolation, and no
 - Promotes the Explore English graph to the 1.3.0 milestone after a dependency-safe content cleanup.
 - The two retired language-topic nodes and every incident relationship are removed from the editable graph and generated local fallbacks.
 - No Pathfinder scoring, routing, interaction, motion, layout, autoplay, shortcut, or callout behavior is changed by this milestone.
+
+### v1.3.0 mobile constellation breathing-room refinement
+
+After the iOS reduced-motion micro-motion breakthrough, real-device screenshots showed that mobile constellations were alive but still initialized in a desktop-like huddle. The cause was geometric: the shared layout derived both axes from `min(width,height)` and compressed Y to 78%, so a tall 393px-wide phone inherited a squat initial footprint despite having much more usable vertical space.
+
+The mobile layout now uses independent X/Y placement radii. Horizontal spread grows modestly from viewport width; vertical spread is derived from the actual mobile viewport height. This changes the *initial composition*, not zoom and not motion intensity. The existing desktop/narrow radial path is preserved unchanged. Collision/label-footprint checks and safe viewport clamps remain authoritative, and the successful compact-touch reduced-motion micro-motion profile remains unchanged.
+
+Debugging rule: if mobile nodes are moving but look huddled, inspect initial layout geometry separately from the motion envelope. Do not increase motion amplitude or apply mobile-only zoom to compensate for a cramped starting composition.

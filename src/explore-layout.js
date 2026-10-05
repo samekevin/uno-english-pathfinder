@@ -33,8 +33,13 @@ export function layoutExploreNodes({nodes,centerId,width,height,rootMode,preferr
     return (bo>=0?1:0)-(ao>=0?1:0) || ao-bo || (b.display?.priority||0)-(a.display?.priority||0)||hash(a.id)-hash(b.id);
   });
   const safeX=Math.max(96,width*.40), safeY=Math.max(125,height*.35);
+  // Mobile is tall and narrow: do not derive both axes from min(width,height).
+  // Give compact viewports an explicitly taller initial constellation footprint while
+  // preserving the established desktop/narrow-screen radial geometry unchanged.
   const minR=Math.min(width,height)*(mobile?.10:narrow?.105:.11);
   const maxR=Math.min(width,height)*(rootMode?(mobile?.27:narrow?.31:.34):(mobile?.31:narrow?.35:.39));
+  const mobileMinRX=width*.14, mobileMaxRX=width*(rootMode?.32:.36);
+  const mobileMinRY=height*.12, mobileMaxRY=height*(rootMode?.285:.315);
   const placed=[];
   for(const n of others){
     const p=presentationFor(n,false,viewportScale),fp=footprint(n,p),seed=hash(`${centerId}:${n.id}`),closeness=(seed%1000)/1000;
@@ -42,7 +47,18 @@ export function layoutExploreNodes({nodes,centerId,width,height,rootMode,preferr
     let best=null;
     const pref=preferredPositions.get(n.id);
     for(let attempt=0;attempt<56;attempt++){
-      const spiral=attempt*.31,r=clamp(preferred+(attempt%9-4)*8,minR,maxR);let x=Math.cos(baseAngle+spiral)*r,y=Math.sin(baseAngle+spiral)*r*.78;
+      const spiral=attempt*.31,r=clamp(preferred+(attempt%9-4)*8,minR,maxR);
+      let x,y;
+      if(mobile){
+        const spread=.08+.92*closeness;
+        const rx=clamp(mobileMinRX+(mobileMaxRX-mobileMinRX)*spread+(attempt%9-4)*6,mobileMinRX,mobileMaxRX);
+        const ry=clamp(mobileMinRY+(mobileMaxRY-mobileMinRY)*spread+(attempt%9-4)*9,mobileMinRY,mobileMaxRY);
+        x=Math.cos(baseAngle+spiral)*rx;
+        y=Math.sin(baseAngle+spiral)*ry;
+      }else{
+        x=Math.cos(baseAngle+spiral)*r;
+        y=Math.sin(baseAngle+spiral)*r*.78;
+      }
       if(pref){
         const blend=clamp(preferredWeight*(attempt<12?1:.55),0,.35);
         x=x*(1-blend)+pref.x*blend;

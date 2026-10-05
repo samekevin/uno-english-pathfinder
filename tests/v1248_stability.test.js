@@ -64,7 +64,7 @@ assert.equal(hold+transition,25000);
 // Core renderer modules remain byte-for-byte at the v1.2.43 visual baseline.
 const frozen={
   'src/explore-motion.js':'fe4a545ff5d5d0e19d1206d11e40fc5f818bf7657d60de3b6e92eb1af3ea5321',
-  'src/explore-layout.js':'975fe7b5d935e91ae6dbfe377aebbf3abc8e0585d0fadd662b284586b53d0dfc',
+  'src/explore-layout.js':'b15b2a05b392d6382a8b47155e3dc1ae0ed965c74718411381c32fec97930445',
   'src/explore-environment.js':'e617fee8f16017c95c603b320181c4000290a156a637999f849768d3715e538c',
   'src/explore-graph.js':'56d96bc94c321b2c630ef5941b87faabe4fd282e2e916d8279a425ecdbe039f3'
 };

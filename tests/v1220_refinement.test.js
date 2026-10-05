@@ -6,9 +6,9 @@ const manifest=JSON.parse(fs.readFileSync(new URL('data/manifest.json',root),'ut
 const css=fs.readFileSync(new URL('styles.css',root),'utf8');
 const exploreCss=fs.readFileSync(new URL('explore/styles.css',root),'utf8');
 const readme=fs.readFileSync(new URL('README.md',root),'utf8');
-assert.equal(pkg.version,'1.2.48');
-assert.equal(manifest.version,'1.2.48');
-assert.equal(manifest.beta_version,'1.2.48');
+assert.equal(pkg.version,'1.3.0');
+assert.equal(manifest.version,'1.3.0');
+assert.equal(manifest.beta_version,'1.3.0');
 assert.ok(css.includes('/* v1.2.29 — compact, matched landing actions */'));
 assert.ok(css.includes('height:40px'));
 assert.ok(css.includes('font-size:.78rem'));
