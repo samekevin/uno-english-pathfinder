@@ -1,8 +1,8 @@
-# UNO English Pathfinder Beta v1.2.48 — EXPLORE! English
+# UNO English Pathfinder Beta v1.3.0 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
-This repository contains the UNO English Pathfinder beta and its companion **Explore English** application. Explore English uses an editable graph data layer shared with Pathfinder, while the assessment remains a separate runtime. The current content graph contains 216 nodes and 595 explicit edges, including 27 active faculty nodes; faculty-to-faculty discovery is derived from shared topic nodes rather than maintained as a dense pairwise matrix.
+This repository contains the UNO English Pathfinder beta and its companion **Explore English** application. Explore English uses an editable graph data layer shared with Pathfinder, while the assessment remains a separate runtime. The current content graph contains 214 nodes and 588 explicit edges, including 27 active faculty nodes; faculty-to-faculty discovery is derived from shared topic nodes rather than maintained as a dense pairwise matrix.
 
 ## Use these files
 
@@ -29,7 +29,7 @@ Pathfinder and Explore English are intentionally separate runtimes in one deploy
 - `/explore/` — standalone Explore English application.
 - `data/explore-english.graph.json` — shared, manually editable Explore content.
 
-The landing page can lazy-load Explore after the idle threshold. Explore can return to the Pathfinder landing page through **Find my path**. Explore failure should not prevent Pathfinder from functioning.
+The landing page can lazy-load Explore after the idle threshold. Explore can return to the Pathfinder landing page through **Pathfinder**. Explore failure should not prevent Pathfinder from functioning.
 
 ## Timing and local preview
 
@@ -46,6 +46,20 @@ The current beta is the result of incremental design, content, scoring, portabil
 ### v1.0.4 — participant-facing Pathfinder cleanup
 
 The early working Pathfinder received participant-facing cleanup: debug controls/debug output were removed, Q02 was revised while preserving scoring, multi-select helper copy was simplified, pilot/test closing language was replaced with a launch-ready invitation, a Chair mailto handoff was added, obsolete department-email content was removed, and the repository README was updated. These points are documented in `docs/prototype-v1.0.4-notes.md`.
+
+## v1.3.0 graph cleanup
+- Retires two language-topic entries from the Explore English graph entirely.
+- Removes every incident edge and runtime reference associated with those retired entries.
+- Preserves all unrelated faculty, program, language, SoLaS, opportunity, and constellation relationships.
+- Adds a regression guard that the retired entries and IDs cannot reappear or leave dangling dependencies.
+
+## v1.2.49 interaction/autoplay refinement
+- Resets autoplay inactivity timing on meaningful mouse/pen movement over the Explore field.
+- Adds a restrained transition-state glow to Find My Path during the autoplay Pathfinder invitation.
+
+## v1.2.49 pointer-activity and prompt emphasis
+- Resets autoplay to zero on meaningful mouse/pen movement over the constellation.
+- Gently emphasizes the existing Find My Path control during the autoplay Pathfinder invitation; reduced-motion users receive no added glow animation.
 
 ## v1.2.48 interaction-lifecycle stabilization
 
@@ -71,7 +85,7 @@ The architecture was split into two runtime applications in the same project: Pa
 
 ### v1.2.12–v1.2.17 — interaction and visual stabilization
 
-The Explore renderer was rebuilt around persistent SVG nodes, responsive/collision-aware layout, bounded movement, node-first/line-second reveals, adaptive typography, relationship-aware hover, hover-aware autoplay, and a single intentional exit through **Find my path**. The landing-page return path was made deterministic so Pathfinder's interactive landing state was restored correctly.
+The Explore renderer was rebuilt around persistent SVG nodes, responsive/collision-aware layout, bounded movement, node-first/line-second reveals, adaptive typography, relationship-aware hover, hover-aware autoplay, and a single intentional exit through **Pathfinder**. The landing-page return path was made deterministic so Pathfinder's interactive landing state was restored correctly.
 
 ### v1.2.18 — landing discovery and timing refinement
 
@@ -79,7 +93,7 @@ The production Explore idle trigger was reduced to 15 seconds, local testing rem
 
 ### v1.2.20 — simplified landing control
 
-The landing Explore control is intentionally simplified: no shimmer or animated border, a solid brown fill from the existing palette, and the same basic dimensions and typographic weight as **Start Pathfinder**. The Explore **Find my path** control is also reduced so it reads as a quieter action within the ambient interface.
+The landing Explore control is intentionally simplified: no shimmer or animated border, a solid brown fill from the existing palette, and the same basic dimensions and typographic weight as **Start Pathfinder**. The Explore **Pathfinder** control is also reduced so it reads as a quieter action within the ambient interface.
 
 
 ### v1.2.21 — ambient timing and motion refinement
@@ -100,13 +114,13 @@ The Explore graph has been canonicalized so one front-facing concept is represen
 
 ## Current Explore behavior
 
-Explore English remains a screensaver-like discovery space: nodes can be explored without leaving the graph, hover focuses the hovered node and its immediate neighborhood while muting unrelated elements, hover counts as active interaction, and autoplay resumes only after a genuine idle period. The central English node is labeled **Your Home**. The landing page is intentionally the only application-level destination from Explore, reached through **Find my path**.
+Explore English remains a screensaver-like discovery space: nodes can be explored without leaving the graph, hover focuses the hovered node and its immediate neighborhood while muting unrelated elements, hover counts as active interaction, and autoplay resumes only after a genuine idle period. The central English node is labeled **Your Home**. The landing page is intentionally the only application-level destination from Explore, reached through **Pathfinder**.
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.48 — EXPLORE! English**
+**UNO English Pathfinder Beta v1.3.0 — EXPLORE! English**
 
-216 nodes · 595 explicit edges · 27 active faculty · 0 dangling graph edges.
+214 nodes · 588 explicit edges · 27 active faculty · 0 dangling graph edges.
 
 ### v1.2.20
 
@@ -225,3 +239,16 @@ Programs & Credentials now obeys the same graph, layout, hover-isolation, and no
 - Replaces the autoplay return-to-English rest with a 3.4-second EXPLORE!-style transition reading “EXPLORE! ENGLISH” / “Try Pathfinder, too!”
 - Sets each autoplay constellation hold to 21.6 seconds, producing a 25-second arrival-to-arrival cadence when combined with the 3.4-second transition.
 - Preserves the v1.2.41 Programs graph/layout/hover convention cleanup.
+
+## v1.2.52 — living Pathfinder callout refinement
+- Keeps the stabilized v1.2.48/49 interaction and lifecycle boundaries intact.
+- Keeps the automatic constellation cadence at a 17-second visible hold plus an 8-second transition, preserving a 25-second arrival-to-arrival rhythm.
+- Refines the callout to **EXPLORE! ENGLISH / Follow your interests.** with static centered typography inside a true circular outline.
+- Gives only the circle a restrained independent drift; the message itself stays still and legible.
+- Continuously anchors the connector from the moving circle circumference to the actual top edge of the persistent **Pathfinder** button, and traces that line downward before the Pathfinder halo strengthens.
+- The constellation and shortcut launch cluster continue to recede together during the single unified callout state; node input, shortcut launch behavior, Programs, graph motion, and autoplay lifecycle ownership are unchanged.
+
+## v1.3.0 — graph milestone
+- Promotes the Explore English graph to the 1.3.0 milestone after a dependency-safe content cleanup.
+- The two retired language-topic nodes and every incident relationship are removed from the editable graph and generated local fallbacks.
+- No Pathfinder scoring, routing, interaction, motion, layout, autoplay, shortcut, or callout behavior is changed by this milestone.

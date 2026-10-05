@@ -10,4 +10,4 @@ assert.ok(app.includes("positions=layoutExploreNodes({nodes:visibleNodes,centerI
 assert.ok(css.includes('.explore-node[data-id="programs"]:not(.is-active)'), 'Programs daughter styling missing');
 assert.ok(css.includes('.explore-node.program-entry:not(.is-active) .explore-node-shape'), 'primary category styling missing');
 assert.ok(app.includes("label.style.top=(b.y-54)+'px'"),'shortcut labels should sit higher');
-console.log('PASS: v1.2.48 preserves shared spatial hierarchy and node-role styling');
+console.log('PASS: v1.3.0 preserves shared spatial hierarchy and node-role styling');

@@ -8,7 +8,7 @@ const bytes=p=>fs.readFileSync(new URL(p,root));
 const app=read('explore/app.js');
 const css=read('explore/styles.css');
 const pkg=JSON.parse(read('package.json'));
-assert.equal(pkg.version,'1.2.48');
+assert.equal(pkg.version,'1.3.0');
 
 // Node activation is one policy across mouse/touch/pen, with drag rejection.
 for(const pointerType of ['mouse','touch','pen']){
@@ -57,8 +57,8 @@ assert.ok(app.includes('function cancelAutoplay({schedule=false}={})'));
 // 21.6 s visible + 3.4 s transition remains exactly 25 seconds arrival-to-arrival.
 const hold=Number(app.match(/AUTOPLAY_HOLD_MS = (\d+);/)?.[1]);
 const transition=Number(app.match(/AUTOPLAY_TRANSITION_MS = (\d+);/)?.[1]);
-assert.equal(hold,21600);
-assert.equal(transition,3400);
+assert.equal(hold,17000);
+assert.equal(transition,8000);
 assert.equal(hold+transition,25000);
 
 // Core renderer modules remain byte-for-byte at the v1.2.43 visual baseline.
@@ -72,4 +72,4 @@ for(const [file,expected] of Object.entries(frozen)){
   const got=crypto.createHash('sha256').update(bytes(file)).digest('hex');
   assert.equal(got,expected,`${file} changed unexpectedly`);
 }
-console.log('PASS: v1.2.48 stabilizes input, hover/focus, previews, autoplay, and persistent shortcut motion');
+console.log('PASS: v1.3.0 stabilizes input, hover/focus, previews, autoplay, and persistent shortcut motion');

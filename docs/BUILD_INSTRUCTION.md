@@ -17,7 +17,7 @@ Use the existing UNO English Pathfinder Beta v1.2.11 app as the base. **Do not a
 - Production idle threshold: **30 seconds**.
 - Enter Explore English with a smooth transition; no flash of a differently styled landing page.
 - Start from the single `English` node, then expand into the configured `ui.initial_cloud_node_ids`.
-- Keep **Find my path** persistently available in the lower-middle/lower-quarter region; activating it stops Explore mode and begins the existing Pathfinder journey.
+- Keep **Pathfinder** persistently available in the lower-middle/lower-quarter region; activating it stops Explore mode and begins the existing Pathfinder journey.
 
 ## Graph interaction
 
@@ -47,7 +47,7 @@ Use the existing UNO English Pathfinder Beta v1.2.11 app as the base. **Do not a
 
 - One responsive visualization, not separate desktop/mobile apps.
 - On phones, reduce simultaneous node density rather than shrinking everything.
-- Maintain legible labels, pinch zoom, pan/drag, safe touch targets, and an unobscured Find my path button.
+- Maintain legible labels, pinch zoom, pan/drag, safe touch targets, and an unobscured Pathfinder button.
 - Prevent the graph gesture layer from accidentally hijacking normal page scroll except while the user is actively manipulating the graph.
 
 ## Visual language
@@ -73,12 +73,12 @@ Use the existing UNO English Pathfinder Beta v1.2.11 app as the base. **Do not a
 - Mobile interaction is usable at narrow widths.
 - Reduced-motion mode has no continuous motion.
 - Autoplay reliably stops on user interaction.
-- Find my path always returns to the existing assessment start flow.
+- Pathfinder always returns to the existing assessment start flow.
 
 
 ### v1.2.11 architecture contract
 
-Pathfinder and Explore English are two runtime applications sharing the same project and editable content graph. Pathfinder must not statically import Explore. The landing page may lazy-load `explore/app.js` after the configured idle delay. `/explore/index.html` must run Explore independently. `Find my path` always returns to Pathfinder landing (`../`), never directly to the first survey question. Explore nodes are persistent SVG elements: do not replace SVG innerHTML on every animation frame. Background panning is optional and bounded; node taps/clicks always take precedence over pan gestures. `data/explore-english.graph.json` remains the editable source of truth.
+Pathfinder and Explore English are two runtime applications sharing the same project and editable content graph. Pathfinder must not statically import Explore. The landing page may lazy-load `explore/app.js` after the configured idle delay. `/explore/index.html` must run Explore independently. `Pathfinder` always returns to Pathfinder landing (`../`), never directly to the first survey question. Explore nodes are persistent SVG elements: do not replace SVG innerHTML on every animation frame. Background panning is optional and bounded; node taps/clicks always take precedence over pan gestures. `data/explore-english.graph.json` remains the editable source of truth.
 
 
 ### v1.2.27 content hygiene contract

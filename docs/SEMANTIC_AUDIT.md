@@ -5,7 +5,7 @@ This pass validates canonical labels and records editorial decisions so reviewed
 ## Exact normalized-label rule
 
 - Active nodes may not share the same normalized human-facing label unless they explicitly declare `alias_of` or `intentional_duplicate`.
-- Active nodes checked: **216**
+- Active nodes checked: **214**
 - Exact-label conflicts: **0**
 
 ## Adjudicated merge

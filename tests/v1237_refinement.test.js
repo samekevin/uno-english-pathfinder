@@ -11,4 +11,4 @@ for(const id of ['conc_literatures','conc_cnf','conc_language']) assert.ok(edge(
 for(const id of ['grad_cnf_cert','grad_techcomm_cert','grad_litculture_cert','grad_tesol_cert']) assert.ok(edge('ma_english',id,'graduate_program_option'),`MA should connect to current graduate option ${id}`);
 for(const id of ['writing_publishing','language_hub','literature_hub','topic_composition_theory','topic_rhetoric','topic_technical_writing']) assert.ok(edge('grad_english_minor',id,'graduate_study_area'),`Graduate English Minor should open into ${id}`);
 assert.ok(edge('grad_english_minor','ramon_guerra','graduate_program_contact'),'Graduate English Minor should surface the graduate program contact');
-console.log('v1.2.48 integrated Programs dependency checks passed');
+console.log('v1.3.0 integrated Programs dependency checks passed');

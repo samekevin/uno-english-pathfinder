@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const root=new URL('../',import.meta.url);
+const read=p=>fs.readFileSync(new URL(p,root),'utf8');
+const app=read('explore/app.js');
+const css=read('explore/styles.css');
+const pkg=JSON.parse(read('package.json'));
+const manifest=JSON.parse(read('data/manifest.json'));
+
+assert.equal(pkg.version,'1.3.0');
+assert.equal(manifest.version,'1.3.0');
+assert.ok(app.includes('Follow your interests.'));
+assert.ok(!app.includes('See where your interests lead.'));
+assert.ok(app.includes('class="explore-autoplay-callout"'));
+assert.ok(app.includes('class="explore-autoplay-orbit" aria-hidden="true"'));
+assert.ok(app.includes('pathLength="1"'));
+assert.ok(app.includes('const radius=Math.max(1,Math.min(or.width,or.height)/2);'));
+assert.ok(app.includes('const x1=cx+(dx/distance)*radius;'));
+assert.ok(app.includes("line.setAttribute('y2',by.toFixed(2));"));
+assert.ok(app.includes('if(autoplayPreview&&autoplayConnector)positionAutoplayConnector();'));
+assert.ok(css.includes('aspect-ratio:1/1'));
+assert.ok(css.includes('@keyframes autoplayOrbitDrift'));
+assert.ok(css.includes('stroke-dasharray:1'));
+assert.ok(css.includes('stroke-dashoffset:1'));
+assert.ok(css.includes('.explore-autoplay-connector.is-visible line{stroke-dashoffset:0}'));
+assert.ok(css.includes('animation-delay:1.05s'));
+console.log('PASS: v1.3.0 callout uses a living true circle with a continuously anchored traced connector');

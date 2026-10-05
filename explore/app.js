@@ -7,12 +7,12 @@ import { shouldActivatePointer, isDuplicateActivation } from '../src/explore-int
 const TEST_IDLE_MS = 5000;
 const PRODUCTION_IDLE_MS = 30000;
 const AUTOPLAY_IDLE_MS = 5000;
-const AUTOPLAY_HOLD_MS = 21600;
-const AUTOPLAY_TRANSITION_MS = 3400;
+const AUTOPLAY_HOLD_MS = 17000;
+const AUTOPLAY_TRANSITION_MS = 8000;
 const AUTOPLAY_CYCLES = 4;
 const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.48';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.48';
+const VERSION = '1.3.0';
+const GRAPH_URL = '../data/explore-english.graph.json?v=1.3.0';
 let graphPromise = null;
 let stylePromise = null;
 const STYLE_SELECTOR = 'link[data-explore-styles]';
@@ -83,7 +83,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   let pointerState=null;
   let gesture=null;
   let lastActivity=Date.now();
-  let autoplayTimer=null,autoplayToken=0,autoplayRunning=false,autoplaySequenceToken=0,autoplayPreview=null;
+  let lastPointerActivitySignal=0;
+  let autoplayTimer=null,autoplayToken=0,autoplayRunning=false,autoplaySequenceToken=0,autoplayPreview=null,autoplayConnector=null;
   const previewOwners=new Set();
   let shortcutTransitionTimer=null,shortcutTransitionToken=0;
   let hoverId=null;
@@ -137,7 +138,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
         <div class="explore-shortcut-label" data-label="programs">Programs</div>
         <div class="explore-shortcut-label" data-label="social_media">Social Media</div>
       </div>
-      <button type="button" class="explore-path-btn">Find my path</button>
+      <button type="button" class="explore-path-btn">Pathfinder</button>
       ${mobileEntry}
     </div>`;
     overlay.classList.toggle('has-entry',Boolean(mobileEntry));
@@ -192,7 +193,41 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   }
   function clearAutoplayPreview(){
     if(autoplayPreview){autoplayPreview.remove();autoplayPreview=null;}
+    if(autoplayConnector){autoplayConnector.remove();autoplayConnector=null;}
+    overlay?.classList.remove('pathfinder-prompt-active');
     setPreviewOwner('autoplay',false);
+  }
+
+  function positionAutoplayConnector(){
+    if(!autoplayPreview||!autoplayConnector||!stage)return;
+    const orbit=autoplayPreview.querySelector('.explore-autoplay-orbit');
+    const button=overlay?.querySelector('.explore-path-btn');
+    const line=autoplayConnector.querySelector('line');
+    if(!orbit||!button||!line)return;
+    const sr=stage.getBoundingClientRect();
+    const or=orbit.getBoundingClientRect();
+    const br=button.getBoundingClientRect();
+    const width=Math.max(1,Math.round(sr.width));
+    const height=Math.max(1,Math.round(sr.height));
+    autoplayConnector.setAttribute('viewBox',`0 0 ${width} ${height}`);
+
+    // The upper anchor is the actual circumference of the moving circle in the
+    // direction of Pathfinder. The lower anchor is the actual top-center edge
+    // of the static Pathfinder button. No decorative gaps are introduced.
+    const cx=(or.left+or.width/2)-sr.left;
+    const cy=(or.top+or.height/2)-sr.top;
+    const bx=(br.left+br.width/2)-sr.left;
+    const by=(br.top)-sr.top;
+    const radius=Math.max(1,Math.min(or.width,or.height)/2);
+    const dx=bx-cx,dy=by-cy;
+    const distance=Math.max(1,Math.hypot(dx,dy));
+    const x1=cx+(dx/distance)*radius;
+    const y1=cy+(dy/distance)*radius;
+    line.setAttribute('x1',x1.toFixed(2));
+    line.setAttribute('y1',y1.toFixed(2));
+    line.setAttribute('x2',bx.toFixed(2));
+    line.setAttribute('y2',by.toFixed(2));
+    line.style.opacity=by>y1?'1':'0';
   }
 
   function launchShortcut(btn){
@@ -341,10 +376,10 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     for(let i=0;i<sequence.length;i++){
       const node=sequence[i];
       if(destroyed||sequenceToken!==autoplayToken)break;
-      focusNode(node.id,{autoplay:true});
+      if(i===0)focusNode(node.id,{autoplay:true});
       await wait(AUTOPLAY_HOLD_MS);
       if(destroyed||sequenceToken!==autoplayToken)break;
-      if(i<sequence.length-1)await showAutoplayTransition(sequenceToken);
+      if(i<sequence.length-1)await showAutoplayTransition(sequenceToken,sequence[i+1].id);
     }
     if(autoplaySequenceToken===sequenceToken&&sequenceToken===autoplayToken){
       autoplayRunning=false;
@@ -355,26 +390,52 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     }
   }
 
-  async function showAutoplayTransition(token){
+  async function showAutoplayTransition(token,nextId){
     if(destroyed||token!==autoplayToken)return;
     clearAutoplayPreview();
     setPreviewOwner('autoplay',true);
     const preview=document.createElement('div');
     autoplayPreview=preview;
     preview.className='explore-shortcut-preview explore-autoplay-preview';
-    preview.innerHTML=`<div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><button type="button" class="explore-autoplay-path">Try Pathfinder, too!</button>`;
+    preview.innerHTML=`<div class="explore-autoplay-callout"><div class="explore-autoplay-orbit" aria-hidden="true"></div><div class="explore-autoplay-content"><div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><div class="explore-autoplay-message">Follow your interests.</div></div></div>`;
     stage.appendChild(preview);
-    preview.querySelector('.explore-autoplay-path')?.addEventListener('click',()=>{const cb=onFindPath;destroy();cb?.();});
-    requestAnimationFrame(()=>{if(!destroyed&&token===autoplayToken&&autoplayPreview===preview)preview.classList.add('is-visible');});
-    await wait(AUTOPLAY_TRANSITION_MS);
+    const connector=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    connector.classList.add('explore-autoplay-connector');
+    connector.setAttribute('aria-hidden','true');
+    connector.innerHTML='<line pathLength="1" x1="0" y1="0" x2="0" y2="0"></line>';
+    autoplayConnector=connector;
+    stage.appendChild(connector);
+    overlay?.classList.add('pathfinder-prompt-active');
+    window.requestAnimationFrame(()=>{
+      if(!destroyed&&token===autoplayToken&&autoplayPreview===preview){
+        preview.classList.add('is-visible');
+        connector.classList.add('is-visible');
+        window.requestAnimationFrame(positionAutoplayConnector);
+      }
+    });
+    const exitMs=800;
+    const settleMs=AUTOPLAY_TRANSITION_MS-exitMs;
+    await wait(Math.max(0,settleMs));
     if(destroyed||token!==autoplayToken||autoplayPreview!==preview){
-      if(preview.isConnected)preview.remove();
-      if(autoplayPreview===preview)autoplayPreview=null;
-      if(!autoplayPreview)setPreviewOwner('autoplay',false);
+      return;
+    }
+    // Handoff: stage the next constellation, then release the previous
+    // callout's backdrop ownership so the new field can emerge underneath
+    // while the message/orbit finishes its graceful exit.
+    focusNode(nextId,{autoplay:true});
+    setPreviewOwner('autoplay',false);
+    overlay?.classList.remove('pathfinder-prompt-active');
+    preview.classList.add('is-exiting');
+    connector.classList.add('is-exiting');
+    await wait(exitMs);
+    if(destroyed||token!==autoplayToken||autoplayPreview!==preview){
       return;
     }
     preview.remove();
+    if(autoplayConnector===connector)connector.remove();
     autoplayPreview=null;
+    autoplayConnector=null;
+    overlay?.classList.remove('pathfinder-prompt-active');
     setPreviewOwner('autoplay',false);
   }
 
@@ -436,6 +497,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     else {nodeRevealStart=performance.now()-1800;edgeRevealStart=performance.now()-760;}
     syncElements();
     positionShortcuts();
+    if(autoplayPreview)window.requestAnimationFrame(positionAutoplayConnector);
     updateCenter(data.byId.get(focusId));
   }
   function syncElements(){
@@ -560,6 +622,9 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     if(!view||!svg)return;
     stepMotion(ts);
     updateShortcutMotion(ts);
+    // Keep the connector attached while the callout circle performs its own
+    // restrained jitter. Text remains static; only geometry follows the ring.
+    if(autoplayPreview&&autoplayConnector)positionAutoplayConnector();
     const rect=view.getBoundingClientRect();const w=rect.width,h=rect.height;
     svg.setAttribute('viewBox',`${-w/2} ${-h/2} ${w} ${h}`);svg.setAttribute('width',w);svg.setAttribute('height',h);
     const visibleIds=new Set(positions.keys());
@@ -652,6 +717,13 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     if(!nodeId)e.preventDefault();
   }
   function onPointerMove(e){
+    if(e.pointerType==='mouse'||e.pointerType==='pen'){
+      const now=Date.now();
+      if(now-lastPointerActivitySignal>=120){
+        lastPointerActivitySignal=now;
+        noteActivity();
+      }
+    }
     if(hoverSuppressedUntilPointerMove&&(e.pointerType==='mouse'||e.pointerType==='pen')){
       hoverSuppressedUntilPointerMove=false;
       const targetNode=e.target.closest?.('.explore-node');

@@ -56,7 +56,7 @@
         <div class="explore-shortcut-label" data-label="programs">Programs</div>
         <div class="explore-shortcut-label" data-label="social_media">Social Media</div>
       </div>
-      <button type="button" class="explore-path-btn">Find my path</button>
+      <button type="button" class="explore-path-btn">Pathfinder</button>
       ${mobileEntry}
     </div>`;
     overlay.classList.toggle('has-entry',Boolean(mobileEntry));

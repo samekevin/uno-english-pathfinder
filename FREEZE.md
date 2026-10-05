@@ -13,3 +13,6 @@ This build freezes the adjudicated semantic hygiene pass.
 # v1.2.48 stabilization freeze
 
 This release intentionally preserves the v1.2.43 graph layout, motion engine, environment detection, and visual transition baseline. It separates node input policy, focus/hover lifecycle, autoplay lifecycle, preview ownership, and persistent shortcut motion so later surgical changes are less likely to cross-break neighboring systems.
+
+# v1.3.0 graph cleanup milestone
+This release fully retires two language-topic entries from the Explore graph and removes every incident edge/reference. All unrelated graph content and interaction architecture remain intact.

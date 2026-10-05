@@ -14,7 +14,7 @@ Do **not** merge Explore content into `pathfinder.spec.json`. The assessment spe
 1. Add the graph JSON under the existing `data/` directory.
 2. Add a small graph adapter/index module rather than placing content or graph traversal rules directly in `app.js`.
 3. Enter/exit the visualization from the landing-page idle state only.
-4. Route **Find my path** into the current start flow.
+4. Route **Pathfinder** into the current start flow.
 5. Keep every existing assessment test as a regression gate.
 
 ## Baseline checks run before this package
@@ -45,3 +45,28 @@ Changes to one boundary should not directly rewrite another boundary. In particu
 - focus changes must always start with clean hover state and a live animation loop.
 
 The `tests/v1248_stability.test.js` contract and browser smoke diagnostics should be rerun after any future change touching EXPLORE! interaction code.
+
+
+## v1.2.49 pointer-activity and prompt emphasis (historical)
+Meaningful mouse/pen movement over the Explore field resets autoplay to the beginning of its inactivity lifecycle without changing hover state semantics. The autoplay transition adds a temporary Pathfinder prompt state that gently emphasizes the existing Find My Path control; the glow is removed when the transition ends and is disabled under prefers-reduced-motion.
+
+
+## v1.2.52 autoplay callout refinement
+- Autoplay holds each random constellation for 17 seconds, then uses one 8-second Pathfinder callout, preserving a 25-second arrival-to-arrival cadence.
+- The callout is one shared prompt state: the constellation and shortcut launch cluster soften together, an outlined orbit and connector point toward the persistent Pathfinder control, and Pathfinder receives a stronger atmospheric glow.
+- The callout can be cancelled cleanly by activity without leaving transition UI or glow state behind.
+
+
+## v1.2.52 Pathfinder callout geometry refinement
+- The autoplay callout message is now `Follow your interests.` with static centered typography inside a true 1:1 circular outline.
+- Only the circular outline receives restrained ambient drift; the text remains stationary for legibility.
+- The connector is geometry-driven on every animation frame: its upper endpoint intersects the moving circle circumference along the direction of Pathfinder, and its lower endpoint touches the Pathfinder button's actual top-center boundary.
+- The connector traces from circle to Pathfinder using a normalized SVG path length; the Pathfinder halo strengthens after the trace begins.
+- These refinements remain owned by the existing unified autoplay callout state and do not alter node input, graph motion, shortcut launch behavior, Programs, or autoplay lifecycle ownership.
+
+## v1.3.0 graph cleanup milestone
+The Explore graph now treats retired content removals as dependency-safe graph migrations: nodes are removed from the editable source, all incident edges are removed, generated local fallbacks are regenerated, and the release suite checks for both retired IDs and dangling relationships.
+
+## v1.3.0 autoplay handoff refinement
+- During the final 800ms handoff, the next constellation is focused first, then autoplay preview ownership and the Pathfinder prompt backdrop state are released before the callout and connector finish exiting. This lets the new constellation emerge while the previous blur is already receding.
+- The handoff uses the existing transition lifecycle; no additional autoplay timer or competing transition state is introduced.
