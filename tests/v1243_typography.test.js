@@ -8,4 +8,4 @@ assert.ok(!app.includes('EXPLORE! English.</div><button type="button" class="exp
 assert.ok(css.includes('.explore-autoplay-kicker{'));
 assert.ok(css.includes('letter-spacing:.16em'));
 assert.ok(css.includes('font-family:"Goudy Old Style","Goudy Old Style MT",Georgia,serif'));
-console.log('PASS: v1.2.43 elegant autoplay typography');
+console.log('PASS: v1.2.44 elegant autoplay typography');

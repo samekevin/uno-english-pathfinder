@@ -1,4 +1,4 @@
-# UNO English Pathfinder Beta v1.2.43 — EXPLORE! English
+# UNO English Pathfinder Beta v1.2.44 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
@@ -94,7 +94,7 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.43 — EXPLORE! English**
+**UNO English Pathfinder Beta v1.2.44 — EXPLORE! English**
 
 216 nodes · 595 explicit edges · 27 active faculty · 0 dangling graph edges.
 
@@ -205,11 +205,11 @@ The renderer also fixes a mobile-motion bug that calculated secondary oscillatio
 - Connects the MA to current graduate certificate options listed by UNO English.
 - Gives BA, MA, English Minor, and Graduate English Minor a stronger filled-and-outlined entry-point treatment while retaining the shared EXPLORE! visual language.
 
-## v1.2.43 Programs convention unification
+## v1.2.44 Programs convention unification
 
 Programs & Credentials now obeys the same graph, layout, hover-isolation, and node-role conventions as the rest of EXPLORE!. The Programs hub remains directly connected to English, but its direct semantic neighborhood is intentionally limited to English plus the four category doors: BA in English, Graduate Studies, Minors, and Certificates. Legacy direct Programs edges to deeper credentials and concentrations were removed so hidden relationships can no longer keep the Programs hub foregrounded during unrelated hover states. Programs no longer uses a special visible-node selector, special layout function, hidden edge filter, or Programs-only opacity levels. The four category doors retain their contextual darker-outline entry treatment only while Programs itself is the focused constellation.
 
-## v1.2.43 Programs copy, Dual Enrollment, and autoplay journey
+## v1.2.44 Programs copy, Dual Enrollment, and autoplay journey
 - Refines the Programs center copy to “Turn your interests into a flexible academic path.” and adds the understated “Take Pathfinder now.” action.
 - Adds English Dual Enrollment Certificate directly under Graduate Studies while preserving its Certificates membership, MA relationship, and broader English-constellation connections.
 - Replaces the autoplay return-to-English rest with a 3.4-second EXPLORE!-style transition reading “EXPLORE! ENGLISH” / “Try Pathfinder, too!”

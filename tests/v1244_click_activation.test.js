@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const root=new URL("../",import.meta.url);
+const explore=fs.readFileSync(new URL("explore/app.js",root),"utf8");
+const pkg=JSON.parse(fs.readFileSync(new URL("package.json",root),"utf8"));
+assert.equal(pkg.version,"1.2.44");
+assert.ok(explore.includes("const directActivation=p.nodeId&&!p.moved"));
+assert.ok(explore.includes("lastDirectActivation={id:p.nodeId,at:performance.now()};"));
+assert.ok(explore.includes("activateNode(p.nodeId);"));
+assert.ok(explore.includes("view.setPointerCapture?.(e.pointerId)"));
+assert.ok(explore.includes("g.addEventListener('click'"));
+assert.ok(explore.includes("if(lastDirectActivation.id===id&&performance.now()-lastDirectActivation.at<700)return;"));
+assert.ok(!explore.includes("p.pointerType!=='mouse'"),"mouse activation must no longer depend on synthetic click after pointer capture");
+console.log('v1.2.44 pointer-capture-safe mouse/touch activation checks passed');

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const explore=fs.readFileSync(new URL('../explore/app.js',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
-assert.equal(pkg.version,'1.2.43');
+assert.equal(pkg.version,'1.2.44');
 assert.match(app,/function renderWelcome\(\{suppressExplore=false\}=\{\}\)/);
 assert.match(app,/new URLSearchParams\(location\.search\)\.get\('exploreReturn'\)===.1./);
 assert.match(app,/location\.replace\(landingUrlAfterExploreReturn\(\)\)/);

@@ -10,8 +10,8 @@ const AUTOPLAY_HOLD_MS = 21600;
 const AUTOPLAY_TRANSITION_MS = 3400;
 const AUTOPLAY_CYCLES = 4;
 const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.43';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.43';
+const VERSION = '1.2.44';
+const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.44';
 let graphPromise = null;
 let stylePromise = null;
 const STYLE_SELECTOR = 'link[data-explore-styles]';
@@ -616,8 +616,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const p=pointers.get(e.pointerId);if(!p)return;
     pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;
     try{view.releasePointerCapture?.(e.pointerId);}catch{}
-    const directTouchActivation=p.nodeId&&!p.moved&&p.pointerType!=='mouse';
-    if(directTouchActivation){
+    const directActivation=p.nodeId&&!p.moved;
+    if(directActivation){
       lastDirectActivation={id:p.nodeId,at:performance.now()};
       activateNode(p.nodeId);
       e.preventDefault();

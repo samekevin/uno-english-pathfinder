@@ -15,4 +15,4 @@ assert.ok(app.includes('EXPLORE! ENGLISH'));
 assert.ok(app.includes('Try Pathfinder, too!'));
 assert.ok(app.includes('Take Pathfinder now.'));
 assert.ok(app.includes('await showAutoplayTransition(token)'));
-console.log('PASS: v1.2.43 Programs copy, Dual Enrollment, and 25-second autoplay transition');
+console.log('PASS: v1.2.44 Programs copy, Dual Enrollment, and 25-second autoplay transition');

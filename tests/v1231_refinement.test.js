@@ -7,8 +7,8 @@ const graph=JSON.parse(read('data/explore-english.graph.json'));
 const app=read('app.js');
 const explore=read('explore/app.js');
 const css=read('styles.css');
-assert.equal(pkg.version,'1.2.43');
-assert.equal(manifest.version,'1.2.43');
+assert.equal(pkg.version,'1.2.44');
+assert.equal(manifest.version,'1.2.44');
 assert.ok(app.includes('EXPLORE! English'));
 assert.ok(app.includes('EXPLORE!</strong> lets you follow UNO English as a living constellation'));
 assert.ok(explore.includes('EXPLORE! ENGLISH'));
@@ -26,4 +26,4 @@ for (const target of ['ug_tesol','grad_tesol_cert']) {
   assert.ok(sources.includes('kevin_samejon'), target+' adds Kevin');
   assert.ok(!sources.includes('john_turnbull'), target+' removes John');
 }
-console.log('v1.2.43 refinement tests passed');
+console.log('v1.2.44 refinement tests passed');

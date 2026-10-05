@@ -39,8 +39,8 @@ assert.ok(app.includes('Your path ·'));
 assert.ok(app.includes('Your answers can confirm, sharpen, or change your path.'));
 assert.ok(!app.includes('Your map ·'));
 assert.ok(!app.includes('Provisional map ·'));
-assert.ok(index.includes('styles.css?v=1.2.43'));
-assert.ok(index.includes('app.js?v=1.2.43'));
+assert.ok(index.includes('styles.css?v=1.2.44'));
+assert.ok(index.includes('app.js?v=1.2.44'));
 assert.ok(styles.includes('.result .pathway-link,.result .resource-link{font-size:1rem'));
 
 assert.ok(app.includes('class="link-arrow" aria-hidden="true">↗</span>'));
@@ -76,8 +76,8 @@ for (const blurb of [
 ]) assert.ok(app.includes(blurb), `missing primary-home blurb: ${blurb}`);
 assert.ok(styles.includes('.primary-home-blurb{margin:.45rem 0 0;color:#554d45;font-size:1rem;line-height:1.45;font-style:normal}'));
 assert.ok(styles.includes('@media (max-width:700px){.primary-home-blurb{font-size:.98rem;line-height:1.45;max-width:100%;overflow-wrap:anywhere}}'));
-assert.ok(index.includes('styles.css?v=1.2.43'));
-assert.ok(index.includes('app.js?v=1.2.43'));
+assert.ok(index.includes('styles.css?v=1.2.44'));
+assert.ok(index.includes('app.js?v=1.2.44'));
 
 for (const label of ['Undergraduate Programs','Graduate Programs','Course Catalog']) assert.ok(app.includes(label), `missing shortened resource label: ${label}`);
 for (const stale of ["english_undergraduate: 'English undergraduate programs'","english_graduate: 'English graduate programs'","english_catalog: 'English course catalog'"]) assert.ok(!app.includes(stale), `stale long resource label mapping: ${stale}`);
