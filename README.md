@@ -1,4 +1,4 @@
-# UNO English Pathfinder Beta v1.2.44 — EXPLORE! English
+# UNO English Pathfinder Beta v1.2.48 — EXPLORE! English
 
 Research/content snapshot: **2026-10-03**
 
@@ -47,6 +47,16 @@ The current beta is the result of incremental design, content, scoring, portabil
 
 The early working Pathfinder received participant-facing cleanup: debug controls/debug output were removed, Q02 was revised while preserving scoring, multi-select helper copy was simplified, pilot/test closing language was replaced with a launch-ready invitation, a Chair mailto handoff was added, obsolete department-email content was removed, and the repository README was updated. These points are documented in `docs/prototype-v1.0.4-notes.md`.
 
+## v1.2.48 interaction-lifecycle stabilization
+
+- Rebuilds from the user-validated v1.2.43 visual/transition baseline instead of stacking later interaction patches.
+- Replaces the unreliable v1.2.43 node activation path with a single tested pointer-up policy for mouse, touch, and pen, while preserving click as a guarded fallback.
+- Adds guarded autoplay sequence tokens and singleton autoplay transition cleanup without allowing autoplay to remove shortcut-transition dimming.
+- Centralizes the shared blur/fade state through preview ownership so shortcut and autoplay transitions cannot stomp each other.
+- Restores gentle bounded idle drift to the three shortcut launch nodes while retaining the stronger controlled hover shake.
+- Keeps shortcut launchers mounted and visible during launch instead of fading the selected launcher to zero opacity.
+- Adds regression coverage for deterministic pointer activation, focus/hover handoff, shortcut fade persistence, autoplay race guards, ambient launcher motion, and the 25-second autoplay cadence.
+
 ### v1.2.6 — core Pathfinder beta baseline
 
 The v1.2.6 build is the pre-Explore baseline used for the major integration work. It carried the machine-readable Pathfinder specification, responsive question/result presentation, provisional/final result flows, bonus-round behavior, Start Over behavior, and the architecture intended to remain compatible with a later QSF implementation.
@@ -94,7 +104,7 @@ Explore English remains a screensaver-like discovery space: nodes can be explore
 
 ## Current build
 
-**UNO English Pathfinder Beta v1.2.44 — EXPLORE! English**
+**UNO English Pathfinder Beta v1.2.48 — EXPLORE! English**
 
 216 nodes · 595 explicit edges · 27 active faculty · 0 dangling graph edges.
 
@@ -205,11 +215,11 @@ The renderer also fixes a mobile-motion bug that calculated secondary oscillatio
 - Connects the MA to current graduate certificate options listed by UNO English.
 - Gives BA, MA, English Minor, and Graduate English Minor a stronger filled-and-outlined entry-point treatment while retaining the shared EXPLORE! visual language.
 
-## v1.2.44 Programs convention unification
+## v1.2.43 Programs convention unification
 
 Programs & Credentials now obeys the same graph, layout, hover-isolation, and node-role conventions as the rest of EXPLORE!. The Programs hub remains directly connected to English, but its direct semantic neighborhood is intentionally limited to English plus the four category doors: BA in English, Graduate Studies, Minors, and Certificates. Legacy direct Programs edges to deeper credentials and concentrations were removed so hidden relationships can no longer keep the Programs hub foregrounded during unrelated hover states. Programs no longer uses a special visible-node selector, special layout function, hidden edge filter, or Programs-only opacity levels. The four category doors retain their contextual darker-outline entry treatment only while Programs itself is the focused constellation.
 
-## v1.2.44 Programs copy, Dual Enrollment, and autoplay journey
+## v1.2.43 Programs copy, Dual Enrollment, and autoplay journey
 - Refines the Programs center copy to “Turn your interests into a flexible academic path.” and adds the understated “Take Pathfinder now.” action.
 - Adds English Dual Enrollment Certificate directly under Graduate Studies while preserving its Certificates membership, MA relationship, and broader English-constellation connections.
 - Replaces the autoplay return-to-English rest with a 3.4-second EXPLORE!-style transition reading “EXPLORE! ENGLISH” / “Try Pathfinder, too!”

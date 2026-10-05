@@ -7,9 +7,9 @@ const graph=JSON.parse(fs.readFileSync(new URL('data/explore-english.graph.json'
 const explore=fs.readFileSync(new URL('explore/app.js',root),'utf8');
 const readme=fs.readFileSync(new URL('README.md',root),'utf8');
 const audit=fs.readFileSync(new URL('docs/SEMANTIC_AUDIT.md',root),'utf8');
-assert.equal(pkg.version,'1.2.44');
-assert.equal(manifest.version,'1.2.44');
-assert.equal(manifest.beta_version,'1.2.44');
+assert.equal(pkg.version,'1.2.48');
+assert.equal(manifest.version,'1.2.48');
+assert.equal(manifest.beta_version,'1.2.48');
 assert.ok(graph.nodes.some(n=>n.id==='social_media' && n.type==='hub' && n.metadata?.category==='resource_community'));
 for(const id of ['social_english_facebook','social_english_instagram','social_solas_facebook','social_solas_links','social_writing_center_instagram']) assert.ok(graph.nodes.some(n=>n.id===id));
 assert.ok(explore.includes('if(id===hoverId) baseOpacity=1;'));

@@ -9,4 +9,4 @@ assert.ok(edge('certificates','grad_dual_enroll_cert','contains_credential'));
 assert.ok(edge('ma_english','grad_dual_enroll_cert','graduate_program_option'));
 for(const cert of ['ug_tesol','grad_tesol_cert']) for(const id of ['topic_applied_linguistics','topic_ai_and_writing','topic_writing_center_studies','service_learning','english_internships','topic_multilingualism','topic_sociophonetics']) assert.ok(edge(cert,id,'related_area'),`${cert} missing ${id}`);
 assert.ok(app.includes("g.classList.toggle('program-entry',focusId==='programs'&&programPrimaryIds.includes(id))"));
-console.log('PASS: v1.2.44 Programs doors + TESOL ecosystem refinement');
+console.log('PASS: v1.2.48 Programs doors + TESOL ecosystem refinement');

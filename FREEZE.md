@@ -8,3 +8,8 @@ This build freezes the adjudicated semantic hygiene pass.
 - unresolved semantic audit queue: 0
 - exact normalized-label conflicts: 0
 - Social Media remains resource/community, not expertise
+
+
+# v1.2.48 stabilization freeze
+
+This release intentionally preserves the v1.2.43 graph layout, motion engine, environment detection, and visual transition baseline. It separates node input policy, focus/hover lifecycle, autoplay lifecycle, preview ownership, and persistent shortcut motion so later surgical changes are less likely to cross-break neighboring systems.

@@ -15,4 +15,4 @@ assert.ok(!css.includes('scale(1.16)'));
 assert.ok(css.includes('animation:none}.explore-shortcut-preview'));
 assert.ok(app.includes('x1="18" y1="17" x2="56" y2="9"'));
 assert.ok(app.includes('x1="56" y1="9" x2="94" y2="17"'));
-console.log('v1.2.44 refinement tests passed.');
+console.log('v1.2.48 refinement tests passed.');

@@ -24,3 +24,24 @@ The unmodified v1.2.6 app passed its existing npm test suite and Pathfinder spec
 ## Why a separate graph file
 
 This keeps recurring editorial work—new faculty titles, changed opportunities, event dates, links, blurbs, and relationships—from requiring a scoring rebuild. If the renderer treats node IDs and edge IDs generically, most future updates become edit → validate → upload JSON → reload.
+
+## v1.2.48 interaction stability contract
+
+EXPLORE! now treats five interaction concerns as separate lifecycle boundaries:
+
+1. **Node activation** — one pointer-up policy decides activation for mouse, touch, and pen; drag gestures are rejected. The SVG `click` handler remains only as a guarded fallback for browser/accessibility behavior.
+2. **Focus vs. hover** — a constellation focus change clears the previous hover and suppresses DOM-reflow `pointerenter` effects until the user makes fresh pointer movement. This prevents a newly opened constellation from starting in a hover-frozen state.
+3. **Shortcut UI** — the three launcher nodes are persistent UI, not graph nodes. Their idle drift and excited hover shake are bounded to the launch cluster and do not participate in the semantic graph layout.
+4. **Preview ownership** — shortcut transitions and autoplay transitions independently own the shared blur/dim state. One subsystem cannot remove another subsystem's preview state.
+5. **Autoplay** — one sequence token and one preview instance are allowed at a time. Cancellation invalidates stale async work before a new idle cycle can begin.
+
+### Surgical-change rule
+
+Changes to one boundary should not directly rewrite another boundary. In particular:
+
+- input fixes should not alter motion/layout;
+- autoplay fixes should not alter shortcut transition classes;
+- shortcut motion fixes should not alter graph node activation;
+- focus changes must always start with clean hover state and a live animation loop.
+
+The `tests/v1248_stability.test.js` contract and browser smoke diagnostics should be rerun after any future change touching EXPLORE! interaction code.

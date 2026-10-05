@@ -2,6 +2,7 @@ import { createExploreGraph } from '../src/explore-graph.js';
 import { layoutExploreNodes } from '../src/explore-layout.js';
 import { readExploreEnvironment } from '../src/explore-environment.js';
 import { getExploreMotionProfile, getMobileOscillation } from '../src/explore-motion.js';
+import { shouldActivatePointer, isDuplicateActivation } from '../src/explore-interaction.js';
 
 const TEST_IDLE_MS = 5000;
 const PRODUCTION_IDLE_MS = 30000;
@@ -10,8 +11,8 @@ const AUTOPLAY_HOLD_MS = 21600;
 const AUTOPLAY_TRANSITION_MS = 3400;
 const AUTOPLAY_CYCLES = 4;
 const NAMESPACE = 'uno-explore';
-const VERSION = '1.2.44';
-const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.44';
+const VERSION = '1.2.48';
+const GRAPH_URL = '../data/explore-english.graph.json?v=1.2.48';
 let graphPromise = null;
 let stylePromise = null;
 const STYLE_SELECTOR = 'link[data-explore-styles]';
@@ -82,8 +83,11 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   let pointerState=null;
   let gesture=null;
   let lastActivity=Date.now();
-  let autoplayTimer=null,autoplayToken=0,autoplayRunning=false;
+  let autoplayTimer=null,autoplayToken=0,autoplayRunning=false,autoplaySequenceToken=0,autoplayPreview=null;
+  const previewOwners=new Set();
+  let shortcutTransitionTimer=null,shortcutTransitionToken=0;
   let hoverId=null;
+  let hoverSuppressedUntilPointerMove=false;
   const hoverProgress=new Map();
   const hoverContextProgress=new Map();
   const motionState=new Map();
@@ -172,15 +176,28 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     view.addEventListener('pointercancel',onPointerCancel,{passive:false});
     view.addEventListener('wheel',onWheel,{passive:false});
     view.addEventListener('keydown',onKeyDown);
-    view.addEventListener('mouseleave',()=>setHover(null));
+    view.addEventListener('mouseleave',()=>{hoverSuppressedUntilPointerMove=false;setHover(null,{activity:true});});
     document.addEventListener('visibilitychange',onVisibilityChange);
     window.addEventListener('pageshow',wakeAnimation);
     window.addEventListener('orientationchange',onOrientationChange);
     reducedMedia.addEventListener?.('change',onReducedMotionChange);
   }
+  function syncPreviewMode(){
+    overlay?.classList.toggle('shortcut-preview',previewOwners.size>0);
+  }
+  function setPreviewOwner(owner,active){
+    if(active)previewOwners.add(owner);
+    else previewOwners.delete(owner);
+    syncPreviewMode();
+  }
+  function clearAutoplayPreview(){
+    if(autoplayPreview){autoplayPreview.remove();autoplayPreview=null;}
+    setPreviewOwner('autoplay',false);
+  }
+
   function launchShortcut(btn){
     if(!btn||shortcutCluster?.classList.contains('is-launching'))return;
-    noteActivity(); setHover(null); cancelAutoplay();
+    noteActivity(); clearHoverState(); cancelAutoplay({schedule:false});
     const key=btn.dataset.shortcut;
     const labels=shortcutLabels;
     const targets=shortcutTargets;
@@ -189,16 +206,20 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     shortcutCluster.querySelectorAll('.explore-shortcut-label').forEach(x=>x.classList.remove('is-visible'));
     syncShortcutGeometry(0);
     shortcutCluster.classList.add('is-launching'); btn.classList.add('is-selected');
-    overlay.classList.add('shortcut-preview');
+    setPreviewOwner('shortcut',true);
+    const token=++shortcutTransitionToken;
     const preview=document.createElement('div'); preview.className='explore-shortcut-preview';
     preview.innerHTML=`<div class="explore-center-type">EXPLORE!</div><div class="explore-shortcut-preview-title">${esc(labels[key]||key)}</div>`;
     stage.appendChild(preview);
-    window.setTimeout(()=>preview.classList.add('is-visible'),40);
-    window.setTimeout(()=>{
+    window.requestAnimationFrame(()=>{if(!destroyed&&token===shortcutTransitionToken)preview.classList.add('is-visible');});
+    clearTimeout(shortcutTransitionTimer);
+    shortcutTransitionTimer=window.setTimeout(()=>{
+      if(destroyed||token!==shortcutTransitionToken)return;
       focusNode(targets[key]||'english');
-      preview.remove(); overlay.classList.remove('shortcut-preview');
+      preview.remove(); setPreviewOwner('shortcut',false);
       shortcutCluster.classList.remove('is-launching'); btn.classList.remove('is-selected');
-      clearShortcutHover(); syncShortcutGeometry(0);
+      clearShortcutHover(); syncShortcutGeometry(performance.now());
+      shortcutTransitionTimer=null;
     },1050);
   }
   function shortcutBasePositions(){return [{x:20,y:29},{x:60,y:19},{x:100,y:29}];}
@@ -222,6 +243,13 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     });
     syncShortcutGeometry(0);
   }
+  function shortcutIdleDrift(ts,index){
+    const t=ts/1000;
+    const phases=[.2,1.7,3.1]; const phase=phases[index]||0;
+    const x=Math.sin(t*1.7+phase)*.72+Math.sin(t*2.45+phase*1.6)*.34;
+    const y=Math.cos(t*1.9+phase)*.58+Math.sin(t*2.7+phase*.9)*.26;
+    return {x,y};
+  }
   function shortcutShake(ts,index){
     const t=ts/1000;
     const phases=[.2,1.7,3.1]; const phase=phases[index]||0;
@@ -234,7 +262,8 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const base=shortcutBasePositions();
     const buttons=[...shortcutCluster.querySelectorAll('.explore-shortcut')];
     buttons.forEach((btn,i)=>{
-      const shake=btn.classList.contains('is-excited')&&!reduced?shortcutShake(ts,i):{x:0,y:0};
+      const launching=shortcutCluster.classList.contains('is-launching');
+      const shake=!reduced&&!launching?(btn.classList.contains('is-excited')?shortcutShake(ts,i):shortcutIdleDrift(ts,i)):{x:0,y:0};
       btn.style.transform=`translate(${shake.x.toFixed(2)}px,${shake.y.toFixed(2)}px)`;
       btn.dataset.shakeX=String(shake.x);btn.dataset.shakeY=String(shake.y);
     });
@@ -286,7 +315,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     },240);
   }
 
-  function noteActivity(){lastActivity=Date.now();cancelAutoplay();scheduleAutoplay();}
+  function noteActivity(){lastActivity=Date.now();cancelAutoplay({schedule:false});scheduleAutoplay();}
   function scheduleAutoplay(){
     if(destroyed||autoplayRunning)return;
     clearTimeout(autoplayTimer);
@@ -304,38 +333,61 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   }
   async function runAutoplay(token){
     autoplayRunning=true;
+    const sequenceToken=token;
+    autoplaySequenceToken=sequenceToken;
     overlay?.classList.add('is-idle');
     const candidates=autoplayCandidates();
     const sequence=candidates.slice(0,AUTOPLAY_CYCLES);
     for(let i=0;i<sequence.length;i++){
       const node=sequence[i];
-      if(destroyed||token!==autoplayToken)break;
+      if(destroyed||sequenceToken!==autoplayToken)break;
       focusNode(node.id,{autoplay:true});
       await wait(AUTOPLAY_HOLD_MS);
-      if(destroyed||token!==autoplayToken)break;
-      if(i<sequence.length-1)await showAutoplayTransition(token);
+      if(destroyed||sequenceToken!==autoplayToken)break;
+      if(i<sequence.length-1)await showAutoplayTransition(sequenceToken);
     }
-    autoplayRunning=false;
-    overlay?.classList.remove('is-idle');
-    lastActivity=Date.now();
-    scheduleAutoplay();
+    if(autoplaySequenceToken===sequenceToken&&sequenceToken===autoplayToken){
+      autoplayRunning=false;
+      autoplaySequenceToken=0;
+      overlay?.classList.remove('is-idle');
+      lastActivity=Date.now();
+      scheduleAutoplay();
+    }
   }
 
   async function showAutoplayTransition(token){
     if(destroyed||token!==autoplayToken)return;
-    overlay.classList.add('shortcut-preview');
+    clearAutoplayPreview();
+    setPreviewOwner('autoplay',true);
     const preview=document.createElement('div');
+    autoplayPreview=preview;
     preview.className='explore-shortcut-preview explore-autoplay-preview';
     preview.innerHTML=`<div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><button type="button" class="explore-autoplay-path">Try Pathfinder, too!</button>`;
     stage.appendChild(preview);
     preview.querySelector('.explore-autoplay-path')?.addEventListener('click',()=>{const cb=onFindPath;destroy();cb?.();});
-    requestAnimationFrame(()=>preview.classList.add('is-visible'));
+    requestAnimationFrame(()=>{if(!destroyed&&token===autoplayToken&&autoplayPreview===preview)preview.classList.add('is-visible');});
     await wait(AUTOPLAY_TRANSITION_MS);
+    if(destroyed||token!==autoplayToken||autoplayPreview!==preview){
+      if(preview.isConnected)preview.remove();
+      if(autoplayPreview===preview)autoplayPreview=null;
+      if(!autoplayPreview)setPreviewOwner('autoplay',false);
+      return;
+    }
     preview.remove();
-    overlay?.classList.remove('shortcut-preview');
+    autoplayPreview=null;
+    setPreviewOwner('autoplay',false);
   }
 
-  function cancelAutoplay(){autoplayToken++;autoplayRunning=false;clearTimeout(autoplayTimer);autoplayTimer=null;}
+  function cancelAutoplay({schedule=false}={}){
+    autoplayToken++;
+    autoplayRunning=false;
+    autoplaySequenceToken=0;
+    clearTimeout(autoplayTimer);
+    autoplayTimer=null;
+    clearAutoplayPreview();
+    overlay?.classList.remove('is-idle');
+    if(schedule&&!destroyed)scheduleAutoplay();
+  }
   function wait(ms){return new Promise(r=>setTimeout(r,ms));}
   function autoplayCandidates(){
     const primary=data.neighbors('english').filter(n=>n.id!=='english');
@@ -415,7 +467,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
       g.addEventListener('pointerleave',()=>{if(hoverId===id)setHover(null);});
       g.addEventListener('click',(e)=>{
         e.stopPropagation();
-        if(lastDirectActivation.id===id&&performance.now()-lastDirectActivation.at<700)return;
+        if(isDuplicateActivation(lastDirectActivation,id,performance.now()))return;
         activateNode(id);
       });
     }
@@ -562,13 +614,17 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     svg.style.transform='';
   }
   function tick(ts){if(destroyed)return;lastRafPaint=performance.now();draw(ts);raf=requestAnimationFrame(tick);}
-  function setHover(id){
-    if(hoverId===id){
-      if(id){lastActivity=Date.now();cancelAutoplay();}
-      return;
-    }
+  function clearHoverState({suppressUntilPointerMove=false}={}){
+    hoverId=null;
+    hoverProgress.clear();
+    hoverContextProgress.clear();
+    hoverSuppressedUntilPointerMove=suppressUntilPointerMove;
+  }
+  function setHover(id,{activity=true}={}){
+    if(id&&hoverSuppressedUntilPointerMove)return;
+    if(hoverId===id)return;
     hoverId=id;
-    noteActivity();
+    if(activity)noteActivity();
   }
   function nodeAt(clientX,clientY){
     // Geometry fallback is circle-first only. Text targeting is handled by the persistent SVG text element.
@@ -596,6 +652,12 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     if(!nodeId)e.preventDefault();
   }
   function onPointerMove(e){
+    if(hoverSuppressedUntilPointerMove&&(e.pointerType==='mouse'||e.pointerType==='pen')){
+      hoverSuppressedUntilPointerMove=false;
+      const targetNode=e.target.closest?.('.explore-node');
+      const freshHoverId=targetNode?.dataset?.id||nodeAt(e.clientX,e.clientY);
+      setHover(freshHoverId,{activity:true});
+    }
     const p=pointers.get(e.pointerId);if(!p)return;
     p.x=e.clientX;p.y=e.clientY;
     if(pointers.size===1){
@@ -616,8 +678,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const p=pointers.get(e.pointerId);if(!p)return;
     pointers.delete(e.pointerId);if(pointers.size<2)gesture=null;
     try{view.releasePointerCapture?.(e.pointerId);}catch{}
-    const directActivation=p.nodeId&&!p.moved;
-    if(directActivation){
+    if(shouldActivatePointer(p)){
       lastDirectActivation={id:p.nodeId,at:performance.now()};
       activateNode(p.nodeId);
       e.preventDefault();
@@ -636,7 +697,15 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     if(e.key==='r'){e.preventDefault();resetFocus();}
     noteActivity();
   }
-  function focusNode(id,{autoplay=false}={}){const node=data.byId.get(id);if(!node)return;focusId=id;reflow(false);overlay?.classList.toggle('is-focused',id!=='english');if(!autoplay)noteActivity();}
+  function focusNode(id,{autoplay=false}={}){
+    const node=data.byId.get(id);if(!node)return;
+    clearHoverState({suppressUntilPointerMove:true});
+    focusId=id;
+    reflow(false);
+    wakeAnimation();
+    overlay?.classList.toggle('is-focused',id!=='english');
+    if(!autoplay)noteActivity();
+  }
   function resetFocus({autoplay=false}={}){focusNode('english',{autoplay});}
   function updateCenter(node){
     if(!node||!centerCard)return;
@@ -649,7 +718,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
   }
   function destroy(){
     if(destroyed)return;
-    destroyed=true;cancelAutoplay();resizeObserver?.disconnect();
+    destroyed=true;shortcutTransitionToken++;clearTimeout(shortcutTransitionTimer);shortcutTransitionTimer=null;cancelAutoplay({schedule:false});previewOwners.clear();resizeObserver?.disconnect();
     if(raf)cancelAnimationFrame(raf);clearInterval(motionWatchdog);
     document.removeEventListener('visibilitychange',onVisibilityChange);
     window.removeEventListener('pageshow',wakeAnimation);

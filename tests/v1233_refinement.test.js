@@ -23,4 +23,4 @@ assert.ok(css.includes('filter:blur(4px)'));
 assert.ok(app.includes('positionShortcuts();'));
 assert.ok(app.includes('syncShortcutGeometry(ts);'));
 assert.ok(app.includes('class="link-arrow"'));
-console.log('v1.2.44 refinement tests passed.');
+console.log('v1.2.48 refinement tests passed.');

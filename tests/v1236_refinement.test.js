@@ -9,4 +9,4 @@ assert.ok(!app.includes("relation:'pathway_bridge'"),'legacy view-only pathway b
 assert.ok(!app.includes('pos.font*=mobile?.86:.90'),'Programs must not invent a special shrunken typography tier');
 assert.ok(!app.includes("activeId==='programs'&&p.layer"),'Programs must use the normal EXPLORE! opacity/depth logic');
 assert.ok(edge('programs','english'),'Programs must remain directly connected to English');
-console.log('v1.2.44 Programs convention-integration checks passed');
+console.log('v1.2.48 Programs convention-integration checks passed');
