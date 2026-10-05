@@ -248,14 +248,6 @@ Programs & Credentials now obeys the same graph, layout, hover-isolation, and no
 - Continuously anchors the connector from the moving circle circumference to the actual top edge of the persistent **Pathfinder** button, and traces that line downward before the Pathfinder halo strengthens.
 - The constellation and shortcut launch cluster continue to recede together during the single unified callout state; node input, shortcut launch behavior, Programs, graph motion, and autoplay lifecycle ownership are unchanged.
 
-
-## v1.3.0 — mobile breathing-room refinement
-- Preserves the successfully validated compact-touch reduced-motion micro-motion profile that makes EXPLORE! visibly alive on iPhone/iPad Safari.
-- Expands the mobile motion envelope modestly horizontally and more generously vertically, giving the constellation more room to breathe without increasing motion intensity.
-- Keeps the full dynamic mobile viewport (`100dvh`) and `visualViewport` resize handling.
-- Documents the successful mobile-motion debugging milestone: controlled Safari diagnostics showed SVG/HTML animation works; the production freeze was traced to the reduced-motion branch zeroing continuous node motion.
-- Treats the mobile reduced-motion profile as a deliberate quiet-life mode: reduced amplitude and speed, preserved responsiveness, and no rapid jitter.
-
 ## v1.3.0 — graph milestone
 - Promotes the Explore English graph to the 1.3.0 milestone after a dependency-safe content cleanup.
 - The two retired language-topic nodes and every incident relationship are removed from the editable graph and generated local fallbacks.
