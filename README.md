@@ -133,7 +133,7 @@ Ambient timing and motion refinement. Production Explore idle returns to 30 seco
 
 ## v1.2.27 motion refinement
 
-Explore English now treats transparency as an implied depth cue and uses a lightweight soft-body motion field for the visible constellation. Nodes, labels, and their connection lines move as coherent relationship units; motion varies gently by depth and settles under hover. Nearby nodes use soft repulsion rather than a heavy physics engine, keeping the field alive while preserving readability and clickability. `prefers-reduced-motion` disables the motion layer.
+Explore English now treats transparency as an implied depth cue and uses a lightweight soft-body motion field for the visible constellation. Nodes, labels, and their connection lines move as coherent relationship units; motion varies gently by depth and settles under hover. Nearby nodes use soft repulsion rather than a heavy physics engine, keeping the field alive while preserving readability and clickability. `prefers-reduced-motion` keeps desktop motion disabled, while compact touch views use a bounded micro-motion profile so the constellation retains subtle life without rapid movement.
 
 
 ## v1.2.27 courteous motion and precision interaction
@@ -173,7 +173,7 @@ Connection lines now begin approximately 1.3 seconds earlier after the node reve
 Line reveal timing refinement: connection lines begin about 1.3 seconds sooner after node reveal; node reveal timing is unchanged.
 ## Mobile motion renderer refinement
 
-Explore English now uses a compact mobile motion profile: continuous drift is more perceptible within narrow viewports, bounded travel expands modestly, and a slow secondary oscillation keeps the constellation visibly alive on phones without introducing rapid or chaotic movement. Desktop motion remains unchanged, hover settling remains intact, and `prefers-reduced-motion` still removes continuous motion.
+Explore English now uses a compact mobile motion profile: continuous drift is more perceptible within narrow viewports, bounded travel expands modestly, and a slow secondary oscillation keeps the constellation visibly alive on phones without introducing rapid or chaotic movement. Desktop motion remains unchanged, hover settling remains intact, and `prefers-reduced-motion` still removes continuous motion on desktop; compact touch views use the restrained micro-motion experiment described below.
 
 
 

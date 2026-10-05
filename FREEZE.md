@@ -16,3 +16,6 @@ This release intentionally preserves the v1.2.43 graph layout, motion engine, en
 
 # v1.3.0 graph cleanup milestone
 This release fully retires two language-topic entries from the Explore graph and removes every incident edge/reference. All unrelated graph content and interaction architecture remain intact.
+
+# v1.3.0 mobile motion experiment
+This experiment preserves desktop and strict reduced-motion behavior, while compact touch Explore uses a bounded micro-motion profile under prefers-reduced-motion so the constellation retains subtle life on small screens. Dynamic mobile viewport changes trigger a reflow without changing the general renderer contract.
