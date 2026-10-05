@@ -23,7 +23,7 @@ assert.equal(hold+transition,25000);
 // Persistent Pathfinder destination and final copy.
 assert.ok(app.includes('class="explore-path-btn">Pathfinder</button>'));
 assert.ok(graph.ui?.cta?.label==='Pathfinder');
-assert.ok(app.includes('EXPLORE! ENGLISH</div><div class="explore-autoplay-message">Follow your interests.</div>'));
+assert.ok(app.includes('EXPLORE! ENGLISH</div><div class="explore-autoplay-message">Follow your curiosity.</div>'));
 assert.ok(!app.includes('Try Pathfinder, too!</button>'));
 
 // One unified prompt state owns the constellation blur, shortcut blur, callout, and Pathfinder glow.
@@ -51,7 +51,7 @@ assert.ok(connectorExitIdx>previewExitIdx);
 assert.ok(css.includes('.pathfinder-prompt-active .explore-shortcuts'));
 assert.ok(css.includes('.explore-autoplay-orbit'));
 assert.ok(css.includes('.explore-autoplay-connector'));
-assert.ok(css.includes('Follow your interests.') || app.includes('Follow your interests.'));
+assert.ok(css.includes('Follow your curiosity.') || app.includes('Follow your curiosity.'));
 assert.ok(css.includes('@keyframes pathfinderPromptGlow'));
 
 // Resize keeps the callout connector tied to the actual button/orbit geometry.

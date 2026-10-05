@@ -9,7 +9,7 @@ const manifest=JSON.parse(read('data/manifest.json'));
 
 assert.equal(pkg.version,'1.3.0');
 assert.equal(manifest.version,'1.3.0');
-assert.ok(app.includes('Follow your interests.'));
+assert.ok(app.includes('Follow your curiosity.'));
 assert.ok(!app.includes('See where your interests lead.'));
 assert.ok(app.includes('class="explore-autoplay-callout"'));
 assert.ok(app.includes('class="explore-autoplay-orbit" aria-hidden="true"'));

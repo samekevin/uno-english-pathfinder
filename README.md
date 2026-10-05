@@ -243,7 +243,7 @@ Programs & Credentials now obeys the same graph, layout, hover-isolation, and no
 ## v1.2.52 — living Pathfinder callout refinement
 - Keeps the stabilized v1.2.48/49 interaction and lifecycle boundaries intact.
 - Keeps the automatic constellation cadence at a 17-second visible hold plus an 8-second transition, preserving a 25-second arrival-to-arrival rhythm.
-- Refines the callout to **EXPLORE! ENGLISH / Follow your interests.** with static centered typography inside a true circular outline.
+- Refines the callout to **EXPLORE! ENGLISH / Follow your curiosity.** with static centered typography inside a true circular outline.
 - Gives only the circle a restrained independent drift; the message itself stays still and legible.
 - Continuously anchors the connector from the moving circle circumference to the actual top edge of the persistent **Pathfinder** button, and traces that line downward before the Pathfinder halo strengthens.
 - The constellation and shortcut launch cluster continue to recede together during the single unified callout state; node input, shortcut launch behavior, Programs, graph motion, and autoplay lifecycle ownership are unchanged.

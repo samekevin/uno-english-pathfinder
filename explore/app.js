@@ -408,7 +408,7 @@ function createController({data,root,mode,onFindPath,getNightMode,host}){
     const preview=document.createElement('div');
     autoplayPreview=preview;
     preview.className='explore-shortcut-preview explore-autoplay-preview';
-    preview.innerHTML=`<div class="explore-autoplay-callout"><div class="explore-autoplay-orbit" aria-hidden="true"></div><div class="explore-autoplay-content"><div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><div class="explore-autoplay-message">Follow your interests.</div></div></div>`;
+    preview.innerHTML=`<div class="explore-autoplay-callout"><div class="explore-autoplay-orbit" aria-hidden="true"></div><div class="explore-autoplay-content"><div class="explore-autoplay-kicker">EXPLORE! ENGLISH</div><div class="explore-autoplay-message">Follow your curiosity.</div></div></div>`;
     stage.appendChild(preview);
     const connector=document.createElementNS('http://www.w3.org/2000/svg','svg');
     connector.classList.add('explore-autoplay-connector');

@@ -58,7 +58,7 @@ Meaningful mouse/pen movement over the Explore field resets autoplay to the begi
 
 
 ## v1.2.52 Pathfinder callout geometry refinement
-- The autoplay callout message is now `Follow your interests.` with static centered typography inside a true 1:1 circular outline.
+- The autoplay callout message is now `Follow your curiosity.` with static centered typography inside a true 1:1 circular outline.
 - Only the circular outline receives restrained ambient drift; the text remains stationary for legibility.
 - The connector is geometry-driven on every animation frame: its upper endpoint intersects the moving circle circumference along the direction of Pathfinder, and its lower endpoint touches the Pathfinder button's actual top-center boundary.
 - The connector traces from circle to Pathfinder using a normalized SVG path length; the Pathfinder halo strengthens after the trace begins.
